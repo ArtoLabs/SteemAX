@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='SteemAX',
@@ -6,8 +6,8 @@ setup(
     packages=['steemax'],
     license='MIT',
     long_description=open('README.txt').read(),
-    keywords='funniest joke comedy flying circus',
-    url='http://github.com/storborg/funniest',
+    keywords='steemit steem upvote exchange',
+    url='http://github.com/artolabs/steemax',
     author='ArtoLabs',
     author_email='artopium@gmail.com',
     install_requires=[
@@ -15,6 +15,7 @@ setup(
         'steem',
         'pymysql',
     ],
+    python_requires='>=3',
     include_package_data=True,
     zip_safe=False
 )
