@@ -11,17 +11,12 @@ setup(
     author='ArtoLabs',
     author_email='artopium@gmail.com',
     install_requires=[
-        'dateutil.parser',
-        'datetime',
-        'random',
+        'python-dateutil',
         'steem',
-        'steem.converter',
-        'steem.amount',
-        'steembase.account',
-        'steembase.exceptions',
-        'cmd',
-        're'
+        'pymysql',
     ],
     include_package_data=True,
     zip_safe=False
 )
+
+# sudo apt install libssl-dev python-dev

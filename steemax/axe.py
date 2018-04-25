@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from steemax import axdb
-from steemax import axverify
+import axdb
+import axverify
 
 def x_run_exchanges(mode):
 

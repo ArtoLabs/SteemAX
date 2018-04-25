@@ -7,7 +7,7 @@ from steem.converter import Converter
 from steem.amount import Amount
 from steembase.account import PrivateKey
 from steembase.exceptions import InvalidWifError
-from steemax import axdb
+import axdb
 
 nodes = [
     'https://steemd.minnowsupportproject.org',

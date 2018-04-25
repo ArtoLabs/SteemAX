@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from cmd import Cmd
-from steemax import axe
-from steemax import axdb
-from steemax import axverify
+import axe
+import axdb
+import axverify
 import re
 
 
