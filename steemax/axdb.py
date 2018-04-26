@@ -5,6 +5,9 @@ from datetime import datetime
 import pymysql
 import random
 
+dbuser = "steemax"
+dbpass = "SteemAX_pass23"
+dbname = "steemax"
 
 def x_check_reward_fund_renewal(time):
 
@@ -20,7 +23,7 @@ def x_check_reward_fund_renewal(time):
 
 def x_save_reward_fund(rb, rc, base, mode):
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     sql = "UPDATE axglobal SET RewardBalance = '"+str(rb)+"', RecentClaims = '"+str(rc)+"', Base = '"+str(base)+"' WHERE ID = '1';"
@@ -42,7 +45,7 @@ def x_save_reward_fund(rb, rc, base, mode):
 
 def x_fetch_reward_fund(mode):
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     sql = "SELECT RewardBalance, RecentClaims, Base, Time FROM axglobal WHERE ID = '1';"
@@ -68,7 +71,7 @@ def x_verify_memoid(acct, memoid, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     # Get both account names if the Memo ID exists
@@ -99,7 +102,7 @@ def x_cancel (acct, memoid, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     # Either account can cancel
@@ -127,7 +130,7 @@ def x_update_invite(percent, ratio, duration, memoid, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     # Update the percentage, ratio and duration based on the Memo ID which is verified using
@@ -153,7 +156,7 @@ def x_verify_account (acct, memoid, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     asinviter = 0
@@ -222,7 +225,7 @@ def x_verify_invitee (acct2, memoid, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
 
     # Check that account is truly an invitee (Account2) and not inviter (Account1)
@@ -254,7 +257,7 @@ def x_accept_invite(acct2, memoid, key, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
     
     # Update the private posting key and set the Status to "1" which indicates
@@ -284,7 +287,7 @@ def x_add_invite (acct1, acct2, key1, percent, ratio, duration, mode):
 
     # Connect to database
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
     
     # Check for duplicate accounts
@@ -335,7 +338,7 @@ def x_add_invite (acct1, acct2, key1, percent, ratio, duration, mode):
 
 def get_axlist (mode):
 
-    db = pymysql.connect("localhost","bigbird","Snook_Nook_33","steemax")
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
     cursor = db.cursor()
     sql = """SELECT * FROM axlist WHERE 1;"""
     try:

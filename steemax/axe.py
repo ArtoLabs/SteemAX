@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
-import axdb
-import axverify
+import steemax.axdb
+import steemax.axverify
 
 def x_run_exchanges(mode):
 
-    results = axdb.get_axlist(mode)
+    results = steemax.axdb.get_axlist(mode)
 
     for row in results:
         idk = row[0]
@@ -20,10 +20,10 @@ def x_run_exchanges(mode):
         status = row[9]
         time = row[10]
 
-        if axverify.x_eligible_posts (acct1, acct2, mode):
+        if steemax.axverify.x_eligible_posts (acct1, acct2, mode):
 
         
-            if axverify.x_eligible_votes (acct1, acct2, per, ratio, mode, 0):
+            if steemax.axverify.x_eligible_votes (acct1, acct2, per, ratio, mode, 0):
 
 
                 print ("\nAuto exchange occured.\n")

@@ -7,7 +7,7 @@ from steem.converter import Converter
 from steem.amount import Amount
 from steembase.account import PrivateKey
 from steembase.exceptions import InvalidWifError
-import axdb
+import steemax.axdb
 
 nodes = [
     'https://steemd.minnowsupportproject.org',
@@ -22,9 +22,9 @@ c = Converter()
 
 def x_get_steemit_balances(mode):
 
-    results = axdb.x_fetch_reward_fund(mode)
+    results = steemax.axdb.x_fetch_reward_fund(mode)
 
-    if axdb.x_check_reward_fund_renewal(results[3]):    
+    if steemax.axdb.x_check_reward_fund_renewal(results[3]):    
 
         # Get and the current Steemit reward fund steem-python object used to retreive the following values
 
@@ -44,7 +44,7 @@ def x_get_steemit_balances(mode):
 
         # Save to database
 
-        axdb.x_save_reward_fund(reward_balance, recent_claims, base, mode)
+        steemax.axdb.x_save_reward_fund(reward_balance, recent_claims, base, mode)
 
         # Print to screen
 

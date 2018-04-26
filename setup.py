@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
+    python_requires='>=3.0',
     name='SteemAX',
-    version='0.1',
+    version='0.1.dev6',
     packages=['steemax'],
     license='MIT',
     long_description=open('README.txt').read(),
@@ -15,12 +16,14 @@ setup(
         'steem',
         'pymysql',
     ],
-    scripts = [
-        'scripts/steemax.sh'
-    ],
-    python_requires='>=2.7.12',
+    py_modules=['steemax'],
+    entry_points = {
+        'console_scripts': [
+            'steemax=steemax.steemax:run',
+        ],
+    },
     include_package_data=True,
     zip_safe=False
 )
 
-# sudo apt install python3 pip libssl-dev python-dev
+
