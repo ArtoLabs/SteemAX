@@ -15,6 +15,9 @@ setup(
         'steem',
         'pymysql',
     ],
+    scripts = [
+        'scripts/steemax.sh'
+    ],
     python_requires='>=2.7.12',
     include_package_data=True,
     zip_safe=False
