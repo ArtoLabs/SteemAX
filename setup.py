@@ -15,9 +15,9 @@ setup(
         'steem',
         'pymysql',
     ],
-    python_requires='>=3',
+    python_requires='>=2.7.12',
     include_package_data=True,
     zip_safe=False
 )
 
-# sudo apt install libssl-dev python-dev
+# sudo apt install python3 pip libssl-dev python-dev
