@@ -7,7 +7,7 @@ import steemax.axverify
 import re
 import sys
 
-def enter_account_name(a):
+def enter_account_name(a, mode):
 
     # Prompt user for their Steemit account name. 
     # 'a' indicates entering the account name for an invitee or inviter
@@ -21,7 +21,7 @@ def enter_account_name(a):
         if not re.match( r'^[a-z0-9\-]+$', acct) or len(acct) == 0 or len(acct) > 32:
             print ("The account name you entered is blank or contains invalid characters.")
         else:
-            if steemax.axverify.get_vote_value(acct, 100, 0, ""):
+            if steemax.axverify.get_vote_value(acct, 100, 0, mode):
                 break
 
     return acct
@@ -108,6 +108,7 @@ def enter_key(acct):
 
 def run(args=None):
 
+    steemax.axdb.x_first_time_setup("")
     prompt = MyPrompt()
     prompt.prompt = '[steemax]# '
     prompt.cmdloop('\n   ** Welcome to SteemAX ** \n')
@@ -124,10 +125,10 @@ class MyPrompt(Cmd):
 
     def do_invite(self, args):
 
-        acct1 = enter_account_name(1)
-        acct2 = enter_account_name(0)
+        acct1 = enter_account_name(1, "verbose")
+        acct2 = enter_account_name(0, "verbose")
         key = enter_key(acct1)
-        per = enter_percentage()
+        per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
 
@@ -143,7 +144,7 @@ class MyPrompt(Cmd):
 
     def do_accept(self, args):
 
-        acct = enter_account_name(1)
+        acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
         if not steemax.axdb.x_verify_invitee(acct, memoid, ""):
             return
@@ -158,7 +159,7 @@ class MyPrompt(Cmd):
 
     def do_barter(self, args):
 
-        acct = enter_account_name(1)
+        acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
         asin = steemax.axdb.x_verify_account(acct, memoid, "")
         if not asin:
@@ -188,7 +189,7 @@ class MyPrompt(Cmd):
 
     def do_cancel(self, args):
 
-        acct = enter_account_name(1)
+        acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
         if not steemax.axdb.x_verify_account(acct, memoid, ""):
             return
@@ -202,9 +203,9 @@ class MyPrompt(Cmd):
 
     def do_eligible(self, args):
 
-        acct1 = enter_account_name(1)    
-        acct2 = enter_account_name(0)
-        per = enter_percentage()
+        acct1 = enter_account_name(1, "verbose")    
+        acct2 = enter_account_name(0, "verbose")
+        per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 0)
 
 
@@ -212,7 +213,7 @@ class MyPrompt(Cmd):
 
     def do_account(self, args):
 
-        acct = enter_account_name(1)
+        acct = enter_account_name(1, "verbose")
         steemax.axdb.x_verify_account(acct, "", "")
 
 

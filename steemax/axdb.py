@@ -9,6 +9,77 @@ dbuser = "steemax"
 dbpass = "SteemAX_pass23"
 dbname = "steemax"
 
+
+def x_first_time_setup(mode):
+
+    db = pymysql.connect("localhost",dbuser,dbpass,dbname)
+    cursor = db.cursor()
+
+    # Check to see if the the table named "axlist" is present in the database "steemax". If not make it
+
+    sql = "SELECT * FROM axlist WHERE 1;"
+
+    try:
+        cursor.execute(sql)
+        results1 = cursor.fetchall()
+    except:
+        results1 = False
+        db.rollback()
+
+    if not results1:
+
+        sql = "CREATE TABLE IF NOT EXISTS axlist (ID int(10), Account1 varchar(50), Account2 varchar(50), Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+
+        try:
+            cursor.execute(sql)
+            db.commit()
+        except pymysql.InternalError as e:
+            if mode != "quiet":
+                print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+            db.rollback()
+
+        if mode != "quiet":
+            print ("Created and initialized axlist table in the steemax database.")
+
+    # Check to see if the the table named "axglobal" is present in the database "steemax". If not make it and initialize it
+
+    sql = "SELECT * FROM axglobal WHERE 1;"
+
+    try:
+        cursor.execute(sql)
+        results2 = cursor.fetchall()
+    except:
+        results2 = False
+        db.rollback()
+
+    if not results2:
+
+        sql = "CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), Base varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+
+        try:
+            cursor.execute(sql)
+            db.commit()
+        except pymysql.InternalError as e:
+            if mode != "quiet":
+                print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+            db.rollback()
+
+        sql = "INSERT INTO axglobal (ID, RewardBalance, RecentClaims, Base) VALUES ('1', '0', '0', '0');" 
+
+        try:
+            cursor.execute(sql)
+            db.commit()
+        except pymysql.InternalError as e:
+            if mode != "quiet":
+                print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+            db.rollback()
+            return False
+
+        if mode != "quiet":
+            print ("Created and initialized axglobal table in the steemax database.")
+
+    db.close()
+
 def x_check_reward_fund_renewal(time):
 
     now = datetime.now()
@@ -166,9 +237,9 @@ def x_verify_account (acct, memoid, mode):
 
     # Check to see if this is the inviter (Account1)
 
-    sql1 = "SELECT Account2 FROM axlist WHERE Account1 = '" + acct + "'"
+    sql1 = "SELECT Account2 FROM axlist WHERE Account1 = '" + acct + "'" # The ; gets added next steps
     if memoid:
-        sql1 = sql1 + " AND MemoID = '" + memoid + "';"
+        sql1 = sql1 + " AND (MemoID = '" + memoid + "');"
     else:
         sql1 = sql1 + ";"
     try:
@@ -188,9 +259,9 @@ def x_verify_account (acct, memoid, mode):
 
     # Check to see if this is the invitee (Account2)
 
-    sql2 = "SELECT Account1 FROM axlist WHERE Account2 = '" + acct + "';"
+    sql2 = "SELECT Account1 FROM axlist WHERE Account2 = '" + acct + "'" # The ; gets added next steps
     if memoid:
-        sql2 = sql2 + " AND MemoID = '" + memoid + "';"
+        sql2 = sql2 + " AND (MemoID = '" + memoid + "');"
     else:
         sql2 = sql2 + ";"
     try:

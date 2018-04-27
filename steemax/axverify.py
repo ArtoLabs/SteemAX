@@ -212,7 +212,7 @@ def get_vote_value (acctname, weight, power, mode):
     if mode == "verbose":
 
         # Convert rshares to Steem
-        sb = x_get_steemit_balances(mode)
+        sb = x_get_steemit_balances("quiet")
         votevalue = rshares * sb[0] / sb[1] * sb[2]
         votevalue = round(votevalue, 4)
 
