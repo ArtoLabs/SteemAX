@@ -6,7 +6,7 @@ SteemAX uses Python 3.0, MySQL and the [Steem-Python](https://github.com/steemit
 
 # Concept
 
-SteemAX provides a way for Steemians (users of [Steemit.com](https://www.steemit.com)) to barter and make agreements on exchanging upvotes with each other for a set period of time. They do this through a barter system, each taking turns bidding on the amount of thier upvotes they would like to exchange with each other. The upvotes are placed automatically by SteemAX for the agreed upon time period.
+SteemAX provides a way for Steemians (users of [Steemit.com](https://www.steemit.com)) to barter and make agreements on exchanging upvotes with each other for a set period of time. They do this through a barter system, each taking turns bidding on the amount of their upvotes they would like to exchange with each other. The upvotes are placed automatically by SteemAX for the agreed upon time period.
 
 ### Process
 
@@ -14,7 +14,7 @@ To start the process the inviter chooses a percentage of their upvote to exchang
 
 ### Exchange Rules
 
-SteemAX will periodicaly check the eligibility of the exchange participant's posts and if the following rules are met an exchange of upvotes will automatically take place.
+SteemAX will periodically check the eligibility of the exchange participant's posts and if the following rules are met an exchange of upvotes will automatically take place.
 
 1) Both accounts must have a recent post (not older than 5 days)
 
@@ -24,11 +24,19 @@ SteemAX will periodicaly check the eligibility of the exchange participant's pos
 
 # Reality
 
-SteemAX is currently in the development phase with most of the core features already present in command line form. Functionality for creating an invite, bartering, canceling, determining post eligibility, as well as the process of dertmining vote exchange values based on the current state of the Steem blockchain, have already been created. What's left is to create the Memo ID authentication process, and the shiny front-end, which most likely will be written with help from the [steem-js](https://github.com/steemit/steem-js) library. In it's current form, SteemAX is "disarmed" and does not actually exchange upvotes when it's run, but instead prints the message "Auto upvote exchange occured" when all eligibility requirements are met. SteemAX will be "armed" with the code necessary to exchange upvotes when most the bugs have been fixed and a stable version is running without problems.
+SteemAX is currently in the development phase with most of the core features already present in command line form. The current working version of SteemAX can be downloaded and installed using either git clone or pip. Functionality for creating an invite, bartering, canceling, determining post eligibility, as well as the process of determining vote exchange values based on the current state of the Steem blockchain, have already been created. What's left is to create the Memo ID authentication process, and the shiny front-end, which most likely will be written with help from the [steem-js](https://github.com/steemit/steem-js) library. In it's current form, SteemAX is "disarmed" and does not actually exchange upvotes when it's run, but instead prints the message "Auto upvote exchange occurred" when all eligibility requirements are met. SteemAX will be "armed" with the code necessary to exchange upvotes when most the bugs have been fixed and a stable version is running without problems.
+
+# Future Tasks
+
+There's a lot that still needs to be done to bring SteemAX to fruition. The very next step is to complete the Memo ID authentication process. Next, will be to research the possible use of SteemConnect as an alternative to storing private posting keys. The front end of SteemAX will utilize Steem-JS to fetch account info and process eligiblity requirements before being submitted to the back-end, a task that is practically it's own development project.
+
+### Instructions for installing SteemAX on Ubuntu 16.04
+
+[Please see INSTALLATION.md](https://github.com/ArtoLabs/SteemAX/blob/master/INSTALLATION.md)
 
 # Instructions for use
 
-Once SteemAX has been installed and the databse has been set up (using the instructions below), simply type "steemax" at the Ubuntu command prompt. If this is the first time SteemAX has been run, the SteemAX database tables will be created and initialized, then you will be taken to the SteemAX command prompt. Type "help" to get a list of SteemAX commands.
+Once SteemAX has been installed and the database has been set up (using the instructions below), simply type "steemax" at the Ubuntu command prompt. If this is the first time SteemAX has been run, the SteemAX database tables will be created and initialized, then you will be taken to the SteemAX command prompt. Type "help" to get a list of SteemAX commands.
 
 #### `   ** Welcome to SteemAX **   `
 
@@ -54,27 +62,39 @@ When all information is entered a unique Memo ID is generated that is then used 
 
 #### `[steemax]# barter` 
 
-Typing in the command "barter" at the steemax commnand prompt allows an Inviter or Invitee to modify the parameters of the exchange. Regardless of who starts the barter process, the parameters always affect the Inviter's upvote. If the Invitee wishes to exchange based on the value of their upvote they can cancel the exchange and start a new one as the Inviter. Whoever starts the barter will be asked the following questions:
+Typing in the command "barter" at the steemax command prompt allows an Inviter or Invitee to modify the parameters of the exchange. Regardless of who starts the barter process, the parameters always affect the Inviter's upvote. If the Invitee wishes to exchange based on the value of their upvote they can cancel the exchange and start a new one as the Inviter. Whoever starts the barter will be asked the following questions:
 
 1) Account name, either inviter or invitee.
 
 2) Memo ID that was generated during the invite process.
 
-3) Percentage of inviter's uvote to be exchanged.
+3) Percentage of inviter's upvote to be exchanged.
 
 4) Ratio between the two account's upvote values. This is defaulted to 1 to 1.
 
 5) Duration, in the number of days, for which the exchange should take place.
 
-Once all information has been entered the one making the barter must send at least 0.001 SBD along with the Memo ID to SteemAX so that thier account can be authenticated.
+Once all information has been entered the one making the barter must send at least 0.001 SBD along with the Memo ID to SteemAX so that their account can be authenticated.
 
 #### `[steemax]# accept`
 
-Typing in the command "accept" at the steemax commnand prompt asks two questions then starts the auto-upvote exchange as was agreed upon.
+Typing in the command "accept" at the steemax command prompt asks two questions then starts the auto-upvote exchange as was agreed upon.
 
 1) Account name of the one accepting. This will normally be the invitee unless a barter process has been started.
 
 2) Memo ID generated during the invite process.
+
+Once all information has been entered the one accepting must send at least 0.001 SBD along with the Memo ID to SteemAX so that their account can be authenticated.
+
+#### `[steemax]# cancel`
+
+Typing in the command "cancel" at the steemax command prompt asks two questions in order to cancel the auto-upvote exchange.
+
+1) Account name of the one accepting. This will normally be the invitee unless a barter process has been started.
+
+2) Memo ID generated during the invite process.
+
+Once all information has been entered the one cancelling must send at least 0.001 SBD along with the Memo ID to SteemAX so that their account can be authenticated.
 
 #### `[steemax]# account`
 
@@ -88,6 +108,4 @@ Typing in the command "eligible" at the steemax command prompt allows the user t
 
 Typing in the command "pool" at the steemax command prompt brings up the relevant information necessary for calculating the Steemit Reward Pool and the value of a Steemit account's upvote. SteemAX displays the current Reward Balance, the Recent Claims and the current price of Steem as delivered by the Witness Price Feed.
 
-### Instructions for installing SteemAX on Ubuntu 16.04
 
-[Please see INSTALLATION.md](https://github.com/ArtoLabs/SteemAX/blob/master/INSTALLATION.md)
