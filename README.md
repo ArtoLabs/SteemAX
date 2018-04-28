@@ -24,12 +24,69 @@ SteemAX will periodicaly check the eligibility of the exchange participant's pos
 
 # Reality
 
-SteemAX is currently in the development phase with most of the core features already present in command line form. Functionality for creating an invite, bartering, canceling, determining post eligibility, as well as the process of dertmining vote exchange values based on the current state of the Steem blockchain, have already been created. What's left is to create the Memo ID authentication process, and the shiny front-end, which most likely will be written with help from the [steem-js](https://github.com/steemit/steem-js) library. In it's current form, SteemAX is "disarmed" and does not actually exchange upvotes when it's run, but instead prints the message "Auto upvote exchange occured" when all eligibility requirements are met.
+SteemAX is currently in the development phase with most of the core features already present in command line form. Functionality for creating an invite, bartering, canceling, determining post eligibility, as well as the process of dertmining vote exchange values based on the current state of the Steem blockchain, have already been created. What's left is to create the Memo ID authentication process, and the shiny front-end, which most likely will be written with help from the [steem-js](https://github.com/steemit/steem-js) library. In it's current form, SteemAX is "disarmed" and does not actually exchange upvotes when it's run, but instead prints the message "Auto upvote exchange occured" when all eligibility requirements are met. SteemAX will be "armed" with the code necessary to exchange upvotes when most the bugs have been fixed and a stable version is running without problems.
 
 # Instructions for use
 
 Once SteemAX has been installed and the databse has been set up (using the instructions below), simply type "steemax" at the Ubuntu command prompt. If this is the first time SteemAX has been run, the SteemAX database tables will be created and initialized, then you will be taken to the SteemAX command prompt. Type "help" to get a list of SteemAX commands.
 
+#### `   ** Welcome to SteemAX **   `
+
+You will see this greeting when first running SteemAX.
+
+#### `[steemax]# invite`
+
+Typing the command "invite" at the steemax command prompt starts the invitation process. The inviter is asked the following questions:
+
+1) Inviter's account name. This is the inviter's Steemit.com account name, entered without the @ symbol.
+
+2) Invitee's account name. this is the invitee's Steemit.com account name.
+
+3) Private Posting Key, which is found in the inviter's Steemit wallet. This is used to automate the upvote exchanges.
+
+4) Percentage of the inviter's upvote the wish to exchange.
+
+5) Ratio between the two account's upvote values. This is defaulted to 1 to 1.
+
+6) Duration, in the number of days, for which the exchange should take place.
+
+When all information is entered a unique Memo ID is generated that is then used to reference this exchange in all future transactions. When all functionality is present, the Inviter will be asked to send at least 0.001 SBD along with this Memo ID to SteemAX so that the Inviter's account can be authenticated.
+
+#### `[steemax]# barter` 
+
+Typing in the command "barter" at the steemax commnand prompt allows an Inviter or Invitee to modify the parameters of the exchange. Regardless of who starts the barter process, the parameters always affect the Inviter's upvote. If the Invitee wishes to exchange based on the value of their upvote they can cancel the exchange and start a new one as the Inviter. Whoever starts the barter will be asked the following questions:
+
+1) Account name, either inviter or invitee.
+
+2) Memo ID that was generated during the invite process.
+
+3) Percentage of inviter's uvote to be exchanged.
+
+4) Ratio between the two account's upvote values. This is defaulted to 1 to 1.
+
+5) Duration, in the number of days, for which the exchange should take place.
+
+Once all information has been entered the one making the barter must send at least 0.001 SBD along with the Memo ID to SteemAX so that thier account can be authenticated.
+
+#### `[steemax]# accept`
+
+Typing in the command "accept" at the steemax commnand prompt asks two questions then starts the auto-upvote exchange as was agreed upon.
+
+1) Account name of the one accepting. This will normally be the invitee unless a barter process has been started.
+
+2) Memo ID generated during the invite process.
+
+#### `[steemax]# account`
+
+Typing in the command "account" at the steemax command prompt allows the user to enter a Steemit.com account name to verify it's existence. If the account exists SteemAX will return the the accounts' Steem Power, current Voting Power, and current Upvote Value.
+
+#### `[steemax]# eligible`
+
+Typing in the command "eligible" at the steemax command prompt allows the user to enter the same information as if they were starting an invite but without actually creating an invite so that it can be worked out what percentage and ratio  might be best between the two accounts. Please see the 'invite' command for more information.
+
+#### `[steemax]# pool`
+
+Typing in the command "pool" at the steemax command prompt brings up the relevant information necessary for calculating the Steemit Reward Pool and the value of a Steemit account's upvote. SteemAX displays the current Reward Balance, the Recent Claims and the current price of Steem as delivered by the Witness Price Feed.
 
 ### Instructions for installing SteemAX on Ubuntu 16.04
 
