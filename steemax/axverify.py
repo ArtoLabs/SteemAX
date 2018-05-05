@@ -153,18 +153,12 @@ def get_vote_value (acctname, weight, power, mode):
 
     vp = acct['voting_power']
     lvt = acct['last_vote_time']
-    vs = acct['vesting_shares']
 
-    # Remove the word VESTS from delegation results
+    # Get the Vests
 
-    a = vs.split(" ")
-    vs = a[0]
-    dvests = acct['delegated_vesting_shares']
-    a = dvests.split(" ")
-    dvests = a[0]
-    rvests = acct['received_vesting_shares']
-    a = rvests.split(" ")
-    rvests = a[0]
+    vs = Amount(account['vesting_shares']).amount
+    dvests = Amount(account['delegated_vesting_shares']).amount
+    rvests = Amount(account['received_vesting_shares']).amount
 
     # Find Vests after delegations
 
@@ -197,13 +191,15 @@ def get_vote_value (acctname, weight, power, mode):
         regenerated_vp = tt * 10000 / 86400 / 5
         vpow_scaled = vp + regenerated_vp
 
+        # If more time has passed then is needed to reach 100% then we are just at 100%
+
+        if vpow_scaled > 10000:
+            vpow_scaled = 10000
+
         # Convert range to normal percentage for printing to screen
 
         vpow = vpow_scaled / 100
         vpow = round(vpow, 2)
-
-        if vpow > 100:
-            vpow = 100
 
     # Convert to rshares
 
