@@ -20,3 +20,14 @@ class AXmsg:
         if self.mode != "quiet":
             print (msg)
         logger.error(msg)
+
+
+# Run as main
+
+if __name__ == "__main__":
+
+    a = AXmsg()
+    a.x_message("AXmsg class is up and running.")
+
+
+# EOF
