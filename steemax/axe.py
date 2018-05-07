@@ -3,7 +3,7 @@
 import axdb
 import axverify
 
-xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax", "")
 xverify = axverify.AXverify()
 
 def x_run_exchanges(mode):

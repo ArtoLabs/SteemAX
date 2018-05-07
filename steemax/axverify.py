@@ -18,7 +18,7 @@ nodes = [
 
 s = Steem(nodes)
 c = Converter()
-adb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+adb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax", "")
 
 class AXverify:
 
@@ -144,7 +144,7 @@ class AXverify:
             vpow = round(vpow, 2)
         rshares = c.sp_to_rshares(sp, vpow_scaled, voteweight)
         if mode == "verbose":
-            x_get_steemit_balances()
+            self.x_get_steemit_balances()
             votevalue = rshares * self.reward_balance / self.recent_claims * self.base
             votevalue = round(votevalue, 4)
             print ("\n__" + acctname + "__\n   Vote Power: " + str(vpow) + 

@@ -14,10 +14,11 @@ class AXdb:
     '''Used to retrieve and store data in the steemax MySQL database'''
 
 
-    def __init__(self, dbuser, dbpass, dbname):
+    def __init__(self, dbuser, dbpass, dbname, mode):
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
+        self.mode = mode
         self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
         self.cursor = self.db.cursor()
 
@@ -153,7 +154,7 @@ class AXdb:
         if self.x_get_results():
             self.x_message(acct + " is the inviter of " + str(len(self.dbresults)) + " exchange(s)")
             asinviter = len(self.dbresults)
-            invitee = self.results1[0][0]
+            invitee = self.dbresults[0][0]
         self.sql = "SELECT Account1 FROM axlist WHERE Account2 = '" + acct + "'" # The ; gets added next steps
         if memoid:
             self.sql = self.sql + " AND (MemoID = '" + memoid + "');"

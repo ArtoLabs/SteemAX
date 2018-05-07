@@ -7,7 +7,7 @@ import axverify
 import re
 import sys
 
-xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax", "")
 xverify = axverify.AXverify()
 
 def enter_account_name(flag, mode):
@@ -129,7 +129,7 @@ class MyPrompt(Cmd):
     def do_invite(self, args):
 
         acct1 = enter_account_name(1, "verbose")
-        acct2 = enter_account_name(0, "verbose"
+        acct2 = enter_account_name(0, "verbose")
         key = enter_key(acct1)
         per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 1)
@@ -164,7 +164,7 @@ class MyPrompt(Cmd):
 
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        asin = xdb.x_verify_account(acct, memoid, "")
+        asin = xdb.x_verify_account(acct, memoid)
         if not asin:
             return
         if asin[0] == 1 and asin[1] == 0:
@@ -194,7 +194,7 @@ class MyPrompt(Cmd):
 
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        if not xdb.x_verify_account(acct, memoid, ""):
+        if not xdb.x_verify_account(acct, memoid):
             return
         if xdb.x_cancel(acct, memoid, ""):
             print ("The exchange has been canceled")
@@ -217,7 +217,7 @@ class MyPrompt(Cmd):
     def do_account(self, args):
 
         acct = enter_account_name(1, "verbose")
-        xdb.x_verify_account(acct, "", "")
+        xdb.x_verify_account(acct, "")
 
 
     def do_pool(self, args):
