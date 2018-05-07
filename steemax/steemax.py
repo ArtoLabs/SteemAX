@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 
 from cmd import Cmd
-import steemax.axe
-import steemax.axdb
-import steemax.axverify
+import axe
+import axdb
+import axverify
 import re
 import sys
 
-def enter_account_name(a, mode):
+xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+xverify = axverify.AXverify()
+
+def enter_account_name(flag, mode):
 
     # Prompt user for their Steemit account name. 
-    # 'a' indicates entering the account name for an invitee or inviter
+    # 'flag' indicates entering the account name for an invitee or inviter
 
-    if a:
+    if flag:
         msg = 'Your account name @'
     else:
         msg = 'Their account name @'
@@ -21,7 +24,7 @@ def enter_account_name(a, mode):
         if not re.match( r'^[a-z0-9\-]+$', acct) or len(acct) == 0 or len(acct) > 32:
             print ("The account name you entered is blank or contains invalid characters.")
         else:
-            if steemax.axverify.get_vote_value(acct, 100, 0, mode):
+            if xverify.get_vote_value(acct, 100, 0, mode):
                 break
 
     return acct
@@ -36,7 +39,7 @@ def enter_memo_id(acct):
         if not re.match( r'^[0-9]+$', memoid) or len(memoid) == 0 or len(memoid) > 32:
             print ("The Memo ID you entered is blank or contains invalid characters.")
         else:
-            if steemax.axdb.x_verify_memoid(acct, memoid, ""):
+            if xdb.x_verify_memoid(acct, memoid, ""):
                 break
 
     return memoid
@@ -68,7 +71,7 @@ def enter_ratio(acct1, acct2, per, flag):
         if not re.match( r'^[0-9\.]+$', ratio) or len(ratio) == 0 or len(ratio) > 5 or float(ratio) < 0.01 or float(ratio) > 99:
             print ("Please enter a one or two digit number to represent a ratio in the format x to 1 where x is your input. Enter a decimal to two places to represent a ratio less than one. e.g. 0.05 to 1")
         else:
-            if steemax.axverify.x_eligible_votes(acct1, acct2, per, ratio, "", flag):
+            if xverify.x_eligible_votes(acct1, acct2, per, ratio, "", flag):
                 break
 
     return ratio
@@ -97,7 +100,7 @@ def enter_key(acct):
         if not re.match( r'^[A-Za-z0-9]+$', key) or len(key) == 0 or len(key) > 64:
             print ("The private posting key you entered is blank or contains invalid characters.")
         else:
-            if steemax.axverify.x_verify_key(acct, key, ""):
+            if xverify.x_verify_key(acct, key, ""):
                 break
 
     return key
@@ -108,7 +111,7 @@ def enter_key(acct):
 
 def run(args=None):
 
-    steemax.axdb.x_first_time_setup("")
+    xdb.x_first_time_setup()
     prompt = MyPrompt()
     prompt.prompt = '[steemax]# '
     prompt.cmdloop('\n   ** Welcome to SteemAX ** \n')
@@ -126,13 +129,13 @@ class MyPrompt(Cmd):
     def do_invite(self, args):
 
         acct1 = enter_account_name(1, "verbose")
-        acct2 = enter_account_name(0, "verbose")
+        acct2 = enter_account_name(0, "verbose"
         key = enter_key(acct1)
         per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
 
-        memoid = steemax.axdb.x_add_invite (acct1, acct2, key, per, ratio, dur, "")
+        memoid = xdb.x_add_invite (acct1, acct2, key, per, ratio, dur, "")
 
         if memoid:
             print ("An invite has been created. Here is your unique Memo ID for this exchange:\n\n   " + memoid + "\n")
@@ -146,10 +149,10 @@ class MyPrompt(Cmd):
 
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        if not steemax.axdb.x_verify_invitee(acct, memoid, ""):
+        if not xdb.x_verify_invitee(acct, memoid, ""):
             return
         key = enter_key(acct)
-        if steemax.axdb.x_accept_invite(acct, memoid, key, ""):
+        if xdb.x_accept_invite(acct, memoid, key, ""):
             print ("The exchange invite has been accepted and the auto-upvote exchanges will begin.")
         else:
             print ("Could not accept the invite.")
@@ -161,7 +164,7 @@ class MyPrompt(Cmd):
 
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        asin = steemax.axdb.x_verify_account(acct, memoid, "")
+        asin = xdb.x_verify_account(acct, memoid, "")
         if not asin:
             return
         if asin[0] == 1 and asin[1] == 0:
@@ -176,10 +179,10 @@ class MyPrompt(Cmd):
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
 
-        if not steemax.axdb.x_verify_memoid(acct, memoid, ""):
+        if not xdb.x_verify_memoid(acct, memoid, ""):
             print ("Memo ID does not match the account provided.")
         else:
-            if steemax.axdb.x_update_invite(per, ratio, dur, memoid, ""):
+            if xdb.x_update_invite(per, ratio, dur, memoid, ""):
                 print ("Invite for Memo ID " + memoid + " has been updated.")
             else:
                 print ("Could not update Memo ID " + memoid)
@@ -191,9 +194,9 @@ class MyPrompt(Cmd):
 
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        if not steemax.axdb.x_verify_account(acct, memoid, ""):
+        if not xdb.x_verify_account(acct, memoid, ""):
             return
-        if steemax.axdb.x_cancel(acct, memoid, ""):
+        if xdb.x_cancel(acct, memoid, ""):
             print ("The exchange has been canceled")
         else:
             print ("Could not cancel the exchange")
@@ -214,12 +217,12 @@ class MyPrompt(Cmd):
     def do_account(self, args):
 
         acct = enter_account_name(1, "verbose")
-        steemax.axdb.x_verify_account(acct, "", "")
+        xdb.x_verify_account(acct, "", "")
 
 
     def do_pool(self, args):
 
-        steemax.axverify.x_get_steemit_balances("verbose")
+        xverify.x_get_steemit_balances("verbose")
 
 
     # Quit
