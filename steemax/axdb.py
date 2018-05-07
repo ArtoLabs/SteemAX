@@ -29,13 +29,13 @@ class AXdb:
     def x_get_results(self):
         try:
             self.cursor.execute(self.sql)
-            self.results = self.cursor.fetchall()
+            self.dbresults = self.cursor.fetchall()
         except pymysql.InternalError as e:
-            self.results = False
+            self.dbresults = False
             self.db.rollback()
             logger.error(e)
             return False
-        return True
+        return len(self.dbresults)
 
 
     def x_commit(self):
@@ -76,8 +76,8 @@ class AXdb:
             self.x_message("Created and initialized axglobal table in the steemax database.")
 
 
-    def x_check_reward_fund_renewal(self, time):
-        delta = datetime.now() - time
+    def x_check_reward_fund_renewal(self):
+        delta = datetime.now() - self.dbresults[0][3]
         if delta.seconds > 120:
             return True
         else:
@@ -93,7 +93,6 @@ class AXdb:
         self.sql = "SELECT RewardBalance, RecentClaims, Base, Time FROM axglobal WHERE ID = '1';"
         if not self.x_get_results():
             self.x_message("Could not fetch reward fund.")
-        return self.results[0]
 
 
     def x_verify_memoid(self, acct, memoid):
@@ -107,7 +106,7 @@ class AXdb:
         if not self.x_get_results():
             self.x_message("Could not find Memo ID.")
         else:
-            for row in self.results:
+            for row in self.dbresults:
                 acct1 = row[0]
                 acct2 = row[1]
         # Does the account name match the Memo ID?
@@ -152,8 +151,8 @@ class AXdb:
         else:
             self.sql = self.sql + ";"
         if self.x_get_results():
-            self.x_message(acct + " is the inviter of " + str(len(self.results)) + " exchange(s)")
-            asinviter = len(self.results)
+            self.x_message(acct + " is the inviter of " + str(len(self.dbresults)) + " exchange(s)")
+            asinviter = len(self.dbresults)
             invitee = self.results1[0][0]
         self.sql = "SELECT Account1 FROM axlist WHERE Account2 = '" + acct + "'" # The ; gets added next steps
         if memoid:
@@ -161,9 +160,9 @@ class AXdb:
         else:
             self.sql = self.sql + ";"
         if self.x_get_results():
-            self.x_message(acct + " is the invitee of " + str(len(self.results)) + " exchange(s)")
-            asinvitee = len(self.results)
-            inviter = self.results[0][0]
+            self.x_message(acct + " is the invitee of " + str(len(self.dbresults)) + " exchange(s)")
+            asinvitee = len(self.dbresults)
+            inviter = self.dbresults[0][0]
         if not asinviter and not asinvitee:
             self.x_message(acct + " is not in the database. Please start an invite.")
             return False
