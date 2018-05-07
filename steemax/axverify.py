@@ -188,9 +188,9 @@ class AXverify:
     def x_eligible_posts (self, account1, account2, mode):
         ''' Verify the posts of both accounts
         '''
-        if not verify_post(account1, account2, mode):
+        if not self.verify_post(account1, account2, mode):
             return False
-        if not verify_post(account2, account1, mode):
+        if not self.verify_post(account2, account1, mode):
             return False
         return True
 

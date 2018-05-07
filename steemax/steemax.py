@@ -39,7 +39,7 @@ def enter_memo_id(acct):
         if not re.match( r'^[0-9]+$', memoid) or len(memoid) == 0 or len(memoid) > 32:
             print ("The Memo ID you entered is blank or contains invalid characters.")
         else:
-            if xdb.x_verify_memoid(acct, memoid, ""):
+            if xdb.x_verify_memoid(acct, memoid):
                 break
 
     return memoid
@@ -121,7 +121,7 @@ class MyPrompt(Cmd):
 
 
     def do_run(self, args):
-        steemax.axe.x_run_exchanges("")
+        axe.x_run_exchanges("")
 
 
     # Start an auto-upvote exchange between two Steemit accounts 
@@ -135,7 +135,7 @@ class MyPrompt(Cmd):
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
 
-        memoid = xdb.x_add_invite (acct1, acct2, key, per, ratio, dur, "")
+        memoid = xdb.x_add_invite (acct1, acct2, key, per, ratio, dur)
 
         if memoid:
             print ("An invite has been created. Here is your unique Memo ID for this exchange:\n\n   " + memoid + "\n")
@@ -149,10 +149,10 @@ class MyPrompt(Cmd):
 
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        if not xdb.x_verify_invitee(acct, memoid, ""):
+        if not xdb.x_verify_invitee(acct, memoid):
             return
         key = enter_key(acct)
-        if xdb.x_accept_invite(acct, memoid, key, ""):
+        if xdb.x_accept_invite(acct, memoid, key):
             print ("The exchange invite has been accepted and the auto-upvote exchanges will begin.")
         else:
             print ("Could not accept the invite.")
@@ -175,14 +175,15 @@ class MyPrompt(Cmd):
             acct2 = acct
         else:
             print(acct + " is neither inviter or invitee. I know, it's weird.")
+        print (acct1 + " is the inviter and " + acct2 + " is the invitee.")
         per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
 
-        if not xdb.x_verify_memoid(acct, memoid, ""):
+        if not xdb.x_verify_memoid(acct, memoid):
             print ("Memo ID does not match the account provided.")
         else:
-            if xdb.x_update_invite(per, ratio, dur, memoid, ""):
+            if xdb.x_update_invite(per, ratio, dur, memoid):
                 print ("Invite for Memo ID " + memoid + " has been updated.")
             else:
                 print ("Could not update Memo ID " + memoid)
@@ -196,7 +197,7 @@ class MyPrompt(Cmd):
         memoid = enter_memo_id(acct)
         if not xdb.x_verify_account(acct, memoid):
             return
-        if xdb.x_cancel(acct, memoid, ""):
+        if xdb.x_cancel(acct, memoid):
             print ("The exchange has been canceled")
         else:
             print ("Could not cancel the exchange")
@@ -222,7 +223,7 @@ class MyPrompt(Cmd):
 
     def do_pool(self, args):
 
-        xverify.x_get_steemit_balances("verbose")
+        xverify.x_get_steemit_balances()
 
 
     # Quit

@@ -218,7 +218,8 @@ class AXdb:
 
     def get_axlist (self, mode):
         self.sql = """SELECT * FROM axlist WHERE 1;"""
-        return self.x_get_results()
+        self.x_get_results()
+        return self.dbresults
 
 
     def generate_nonce(self, length=32):
