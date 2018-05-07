@@ -49,13 +49,16 @@ class AXdb:
         '''
         self.sql = "SELECT * FROM axlist WHERE 1;"
         if not self.x_get_results():
-            self.sql = "CREATE TABLE IF NOT EXISTS axlist (ID int(10), Account1 varchar(50), Account2 varchar(50), Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+            self.sql = ("CREATE TABLE IF NOT EXISTS axlist (ID int(10), Account1 varchar(50), Account2 varchar(50), " +
+                "Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), " +
+                "MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
             self.x_commit()
             if mode != "quiet":
                 print ("Created and initialized axlist table in the steemax database.")
         self.sql = "SELECT * FROM axglobal WHERE 1;"
         if not self.x_get_results():
-            self.sql = "CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), Base varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+            self.sql = ("CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), " +
+                "Base varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
             self.x_commit()
             self.sql = "INSERT INTO axglobal (ID, RewardBalance, RecentClaims, Base) VALUES ('1', '0', '0', '0');" 
             self.x_commit()
@@ -122,7 +125,8 @@ class AXdb:
         Update the percentage, ratio and duration based on the Memo ID which is verified using
         the x_verify_memoid function.
         '''
-        self.sql = "UPDATE axlist SET Percentage = '" + percent + "', Ratio = '" + ratio + "', Duration = '" + duration + "', Status = '2' WHERE MemoID = '" + memoid + "';"
+        self.sql = ("UPDATE axlist SET Percentage = '" + percent + "', Ratio = '" + ratio + "', Duration = '" + 
+            duration + "', Status = '2' WHERE MemoID = '" + memoid + "';")
         return self.x_commit()
 
 
@@ -197,12 +201,14 @@ class AXdb:
             if mode != "quiet":
                 print ("The same account name was entered for both accounts.")
             return False
-        self.sql = "SELECT * FROM axlist WHERE (Account1 = '" + acct1 + "' OR (Account1 = '" + acct2 + "')) AND (Account2 = '" + acct1 + "' OR (Account2 = '" + acct2 + "'));"
+        self.sql = ("SELECT * FROM axlist WHERE (Account1 = '" + acct1 + "' OR (Account1 = '" + acct2 + "')) AND (Account2 = '" + 
+            acct1 + "' OR (Account2 = '" + acct2 + "'));")
         if self.x_get_results():
             if mode != "quiet":
                 print ("An exchange has already been made between these accounts.")
             return False
-        self.sql = "INSERT INTO axlist (Account1, Account2, Key1, Percentage, Ratio, Duration, MemoID, Status) VALUES ('" + acct1 + "', '" + acct2 + "', '" + key1 + "', '" + percent + "', '" + ratio + "', '" + duration + "', '" + memoid + "', '0');"
+        self.sql = ("INSERT INTO axlist (Account1, Account2, Key1, Percentage, Ratio, Duration, MemoID, Status) VALUES ('" + acct1 + 
+            "', '" + acct2 + "', '" + key1 + "', '" + percent + "', '" + ratio + "', '" + duration + "', '" + memoid + "', '0');")
         if self.x_commit():
             return memoid
         else :
