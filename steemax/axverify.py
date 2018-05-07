@@ -30,6 +30,7 @@ class AXverify:
         print ("   Steem = $" + str(self.base))
         print ("------------------------------------------------\n")
  
+
     def x_get_steemit_balances(self):
         '''Get and the current Steemit reward fund steem-python object used to retreive the following values
                 The current Steemit reward balance (reward pool)
@@ -47,7 +48,6 @@ class AXverify:
             self.reward_balance = adb.results[0]
             self.recent_claims = adb.results[1]
             self.base = adb.results[2]
-
         self.x_print_steemit_balances()
 
 
@@ -252,10 +252,8 @@ class AXverify:
                 print ("Perhaps try a new ratio of " + str(newratio) + " to 1")
             return False
         else:
-
             if mode != "quiet":
                 print (account1 + " will upvote $" + str(v1s) + " and " + account2 + " will upvote $" + str(v4s));
-            
             return True
 
 

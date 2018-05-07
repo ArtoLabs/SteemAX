@@ -50,7 +50,7 @@ class AXdb:
 
 
     def x_message(self, msg):
-        if mode != "quiet":
+        if self.mode != "quiet":
             print (msg)
         logger.info(msg)
 
