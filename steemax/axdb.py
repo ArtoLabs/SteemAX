@@ -5,6 +5,7 @@ from datetime import datetime
 import pymysql
 import random
 import axmsg
+import sys
 
 xmsg = axmsg.AXmsg()
 
@@ -18,8 +19,8 @@ class AXdb:
         self.dbname = dbname
 
 
-    def __del__(self):
-        self.db.close()
+    #def __del__(self):
+    #    self.db.close()
 
 
     def x_open_db(self):
@@ -31,10 +32,11 @@ class AXdb:
         try:
             self.cursor.execute(self.sql)
             self.dbresults = self.cursor.fetchall()
-        except pymysql.InternalError as e:
+        except:
+            e = sys.exc_info()[0]
+            xmsg.x_error_message(e)
             self.dbresults = False
             self.db.rollback()
-            xmsg.x_error_message(e)
             return False
         return len(self.dbresults)
 
@@ -43,9 +45,10 @@ class AXdb:
         try:
             self.cursor.execute(self.sql)
             self.db.commit()
-        except pymysql.InternalError as e:
-            self.db.rollback()
+        except:
+            e = sys.exc_info()[0]
             xmsg.x_error_message(e)
+            self.db.rollback()
             return False
         return True
 
@@ -57,30 +60,26 @@ class AXdb:
         self.x_open_db()
         self.sql = "SELECT * FROM axlist WHERE 1;"
         if not self.x_get_results():
-            self.sql = ("CREATE TABLE IF NOT EXISTS axlist (ID int(10), Account1 varchar(50), Account2 varchar(50), " +
-                "Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), " +
-                "MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+            self.sql = ("CREATE TABLE IF NOT EXISTS axlist (ID int(10), Account1 varchar(50), Account2 varchar(50), Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
             self.x_commit()
             xmsg.x_message("Created axlist table in the steemax database.")
         self.sql = "SELECT * FROM axglobal WHERE 1;"
         if not self.x_get_results():
-            self.sql = ("CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), " +
-                "Base varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+            self.sql = ("CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), Base varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
             self.x_commit()
             self.sql = "INSERT INTO axglobal (ID, RewardBalance, RecentClaims, Base) VALUES ('1', '0', '0', '0');" 
             self.x_commit()
             xmsg.x_message("Created and initialized axglobal table in the steemax database.")
         self.sql = "SELECT * FROM axkey WHERE 1;"
         if not self.x_get_results():
-            self.sql = ("CREATE TABLE IF NOT EXISTS axkey (ID int(10), Key varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP " +
-                "ON UPDATE CURRENT_TIMESTAMP);")
+            self.sql = ("CREATE TABLE IF NOT EXISTS axkey (ID int(10), OwnerKey varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);")
             self.x_commit()
-            self.sql = "INSERT INTO axkey (ID) VALUES ('1');" 
+            self.sql = "INSERT INTO axkey (ID, OwnerKey) VALUES ('1', '0');" 
             self.x_commit()
             xmsg.x_message("Created and initialized axkey table in the steemax database.")
         self.sql = "SELECT * FROM axtrans WHERE 1;"
         if not self.x_get_results():
-            self.sql = ("CREATE TABLE IF NOT EXISTS axtrans (IDKey INT NOT NULL AUTO_INCREMENT PRIMARY KEY, TXID varchar(50), From varchar(20), Amount varchar(20), MemoID, varchar(40), TxTime TIMESTAMP, DiscoveryTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP;")
+            self.sql = ("CREATE TABLE IF NOT EXISTS axtrans (ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, TXID varchar(50), MemoFrom varchar(20), Amount varchar(20), MemoID varchar(40), Action varchar(20), TxTime TIMESTAMP NULL, DiscoveryTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);")
             self.x_commit()
             xmsg.x_message("Created axtrans table in the steemax database.")
         self.db.close()
@@ -114,7 +113,7 @@ class AXdb:
             return True
 
 
-    def x_verify_memoid(self, acct, memoid):
+    def x_verify_memoid(self, acct0, memoid):
         self.x_open_db()
         '''Verify that the Memo ID entered matches the account name entered
         This is necessary so that each account can update the invite during the barter process
@@ -122,15 +121,14 @@ class AXdb:
         acct1 = ""
         acct2 = ""
         # Get both account names if the Memo ID exists
-        self.sql = "SELECT Account1, Account2 FROM axlist WHERE MemoID = '" + memoid + "';"
+        self.sql = "SELECT Account1, Account2, Status FROM axlist WHERE MemoID = '" + memoid + "';"
         if not self.x_get_results():
             xmsg.x_error_message("Could not find Memo ID.")
         else:
-            for row in self.dbresults:
-                acct1 = row[0]
-                acct2 = row[1]
+            acct1 = self.dbresults[0][0]
+            acct2 = self.dbresults[0][1]
         # Does the account name match the Memo ID?
-        if acct != acct1 and acct != acct2:
+        if acct0!= acct1 and acct0 != acct2:
             xmsg.x_error_message("Verify Memo ID: Account names do not match.")
             self.db.close()
             return False
