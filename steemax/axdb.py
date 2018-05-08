@@ -4,21 +4,19 @@ from dateutil.parser import parse
 from datetime import datetime
 import pymysql
 import random
-import logging
+import axmsg
 
-LOGFORMAT = "%(asctime)s %(levelname)s - %(message)s - %(pathname)s"
-logging.basicConfig(filename = "error.log", level = logging.DEBUG, format = LOGFORMAT)
-logger = logging.getLogger()
+xmsg = axmsg.AXmsg()
 
 class AXdb:
     '''Used to retrieve and store data in the steemax MySQL database'''
 
 
-    def __init__(self, dbuser, dbpass, dbname, mode):
+    def __init__(self, dbuser, dbpass, dbname):
+        xmsg.x_message("Starting steemax database")
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-        self.mode = mode
         self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
         self.cursor = self.db.cursor()
 
@@ -34,7 +32,7 @@ class AXdb:
         except pymysql.InternalError as e:
             self.dbresults = False
             self.db.rollback()
-            logger.error(e)
+            xmsg.x_error_message(e)
             return False
         return len(self.dbresults)
 
@@ -45,15 +43,9 @@ class AXdb:
             self.db.commit()
         except pymysql.InternalError as e:
             self.db.rollback()
-            logger.error(e)
+            xmsg.x_error_message(e)
             return False
         return True
-
-
-    def x_message(self, msg):
-        if self.mode != "quiet":
-            print (msg)
-        logger.info(msg)
 
 
     def x_first_time_setup(self):
@@ -66,7 +58,7 @@ class AXdb:
                 "Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), " +
                 "MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
             self.x_commit()
-            self.x_message("Created and initialized axlist table in the steemax database.")
+            xmsg.x_message("Created and initialized axlist table in the steemax database.")
         self.sql = "SELECT * FROM axglobal WHERE 1;"
         if not self.x_get_results():
             self.sql = ("CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), " +
@@ -74,7 +66,7 @@ class AXdb:
             self.x_commit()
             self.sql = "INSERT INTO axglobal (ID, RewardBalance, RecentClaims, Base) VALUES ('1', '0', '0', '0');" 
             self.x_commit()
-            self.x_message("Created and initialized axglobal table in the steemax database.")
+            xmsg.x_message("Created and initialized axglobal table in the steemax database.")
 
 
     def x_check_reward_fund_renewal(self):
@@ -93,8 +85,10 @@ class AXdb:
     def x_fetch_reward_fund(self):
         self.sql = "SELECT RewardBalance, RecentClaims, Base, Time FROM axglobal WHERE ID = '1';"
         if not self.x_get_results():
-            self.x_message("Could not fetch reward fund.")
-
+            xmsg.x_error_message("Could not fetch reward fund.")
+            return False
+        else:
+            return True
 
     def x_verify_memoid(self, acct, memoid):
         '''Verify that the Memo ID entered matches the account name entered
@@ -105,14 +99,14 @@ class AXdb:
         # Get both account names if the Memo ID exists
         self.sql = "SELECT Account1, Account2 FROM axlist WHERE MemoID = '" + memoid + "';"
         if not self.x_get_results():
-            self.x_message("Could not find Memo ID.")
+            xmsg.x_error_message("Could not find Memo ID.")
         else:
             for row in self.dbresults:
                 acct1 = row[0]
                 acct2 = row[1]
         # Does the account name match the Memo ID?
         if acct != acct1 and acct != acct2:
-            self.x_message("Verify Memo ID: Account names do not match.")
+            xmsg.x_error_message("Verify Memo ID: Account names do not match.")
             return False
         else:
             return True
@@ -152,7 +146,7 @@ class AXdb:
         else:
             self.sql = self.sql + ";"
         if self.x_get_results():
-            self.x_message(acct + " is the inviter of " + str(len(self.dbresults)) + " exchange(s)")
+            xmsg.x_message(acct + " is the inviter of " + str(len(self.dbresults)) + " exchange(s)")
             asinviter = len(self.dbresults)
             invitee = self.dbresults[0][0]
         self.sql = "SELECT Account1 FROM axlist WHERE Account2 = '" + acct + "'" # The ; gets added next steps
@@ -161,11 +155,11 @@ class AXdb:
         else:
             self.sql = self.sql + ";"
         if self.x_get_results():
-            self.x_message(acct + " is the invitee of " + str(len(self.dbresults)) + " exchange(s)")
+            xmsg.x_message(acct + " is the invitee of " + str(len(self.dbresults)) + " exchange(s)")
             asinvitee = len(self.dbresults)
             inviter = self.dbresults[0][0]
         if not asinviter and not asinvitee:
-            self.x_message(acct + " is not in the database. Please start an invite.")
+            xmsg.x_message(acct + " is not in the database. Please start an invite.")
             return False
         return [asinviter, asinvitee, inviter, invitee]
 
@@ -175,7 +169,7 @@ class AXdb:
         '''
         self.sql = "SELECT * FROM axlist WHERE Account2 = '" + acct2 + "' AND (MemoID = '" + memoid + "');"
         if not self.x_get_results():
-            self.x_message(acct2 + " is not an invitee.")
+            xmsg.x_message(acct2 + " is not an invitee.")
             return False
         return True
 
@@ -201,18 +195,18 @@ class AXdb:
         '''
         memoid = self.generate_nonce()
         if acct1 == acct2:
-            self.x_message("The same account name was entered for both accounts.")
+            xmsg.x_message("The same account name was entered for both accounts.")
             return False
         self.sql = ("SELECT * FROM axlist WHERE (Account1 = '" + acct1 + "' OR (Account1 = '" + acct2 + "')) AND (Account2 = '" + 
             acct1 + "' OR (Account2 = '" + acct2 + "'));")
         if self.x_get_results():
-            self.x_message("An exchange has already been made between these accounts.")
+            xmsg.x_message("An exchange has already been made between these accounts.")
             return False
         self.sql = ("INSERT INTO axlist (Account1, Account2, Key1, Percentage, Ratio, Duration, MemoID, Status) VALUES ('" + acct1 + 
             "', '" + acct2 + "', '" + key1 + "', '" + percent + "', '" + ratio + "', '" + duration + "', '" + memoid + "', '0');")
         if self.x_commit():
             return memoid
-        else :
+        else:
             return False
 
 
@@ -233,8 +227,9 @@ class AXdb:
 if __name__ == "__main__":
 
     a = AXdb("steemax", "SteemAX_pass23", "steemax")
-    b = a.x_fetch_reward_fund()
-    print (b[0] + "\n" + b[1] + "\n" + b[2])
-
+    if a.x_fetch_reward_fund():
+        xmsg.x_message(a.dbresults[0][0] + "\n" + a.dbresults[0][1] + "\n" + a.dbresults[0][2])
+    else:
+        xmsg.x_message("No results from database while testing axdb.py")
 # EOF
 
