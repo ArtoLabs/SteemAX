@@ -57,7 +57,7 @@ class AXdb:
                 "Key1 varchar(100), Key2 varchar(100), Percentage varchar(5), Ratio varchar(5), Duration varchar(5), " +
                 "MemoID varchar(40), Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
             self.x_commit()
-            xmsg.x_message("Created and initialized axlist table in the steemax database.")
+            xmsg.x_message("Created axlist table in the steemax database.")
         self.sql = "SELECT * FROM axglobal WHERE 1;"
         if not self.x_get_results():
             self.sql = ("CREATE TABLE IF NOT EXISTS axglobal (ID int(10), RewardBalance varchar(50), RecentClaims varchar(50), " +
@@ -73,7 +73,12 @@ class AXdb:
             self.x_commit()
             self.sql = "INSERT INTO axkey (ID) VALUES ('1');" 
             self.x_commit()
-            xmsg.x_message("Created axkey table in the steemax database.")
+            xmsg.x_message("Created and initialized axkey table in the steemax database.")
+        self.sql = "SELECT * FROM axtrans WHERE 1;"
+        if not self.x_get_results():
+            self.sql = ("CREATE TABLE IF NOT EXISTS axtrans (IDKey INT NOT NULL AUTO_INCREMENT PRIMARY KEY, TXID varchar(50), From varchar(20), Amount varchar(20), MemoID, varchar(40), TxTime TIMESTAMP, DiscoveryTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP";)
+            self.x_commit()
+            xmsg.x_message("Created axtrans table in the steemax database.")
 
 
     def x_check_reward_fund_renewal(self):
