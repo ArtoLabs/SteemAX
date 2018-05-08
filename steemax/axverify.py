@@ -8,6 +8,7 @@ from steem.amount import Amount
 from steembase.account import PrivateKey
 from steembase.exceptions import InvalidWifError
 import axdb
+import axmsg
 
 nodes = [
     'https://steemd.minnowsupportproject.org',
@@ -19,17 +20,19 @@ nodes = [
 s = Steem(nodes)
 c = Converter()
 adb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+xmsg = axmsg.AXmsg()
+
 
 class AXverify:
 
  
     def x_print_steemit_balances(self):
-        print ("\n------------------------------------------------")
-        print ("   Reward balance: " + str(self.reward_balance))
-        print ("   Recent claims: " + str(self.recent_claims))
-        print ("   Steem = $" + str(self.base))
-        print ("------------------------------------------------\n")
- 
+        bal_banner = ("\n------------------------------------------------" +
+            "\n   Reward balance: " + str(self.reward_balance) +
+            "\n   Recent claims: " + str(self.recent_claims) +
+            "\n   Steem = $" + str(self.base) +
+            "\n------------------------------------------------\n")
+        xmsg.x_message(bal_banner)
 
     def x_get_steemit_balances(self):
         '''Get and the current Steemit reward fund steem-python object used to retreive the following values
@@ -63,30 +66,25 @@ class AXverify:
         try:
             steem = Steem(nodes, keys=[private_posting_key])
         except InvalidWifError as e:
-            if mode != "quiet":
-                print("Invalid key: " + str(e))
+            xmsg.x_error_message(e)
             return False
         try:
             pubkey = PrivateKey(private_posting_key).pubkey
         except:
-            if mode != "quiet":
-                print ("Bad private key")
+            xmsg.x_error_message("Bad private key")
             return False
         try:
             acct = steem.get_account(acctname)
         except:
-            if mode != "quiet":
-                print ("Could not connect to steemd")
+            xmsg.x_error_message("Could not connect to steemd")
             return False
         if acct:
             pubkey2 = acct['posting']['key_auths'][0][0]
         if str(pubkey) != str(pubkey2):
-            if mode != "quiet":
-                print ("The private key and account name provided do not match.")
+            xmsg.x_error_message("The private key and account name provided do not match.")
             return False
         else:
-            if mode != "quiet":
-                print ("Private key is valid.")
+            xmsg.x_message("Private key is valid.")
             return True
 
 
@@ -112,11 +110,10 @@ class AXverify:
         try:
             acct = s.get_account(acctname)
         except:
-            if mode != "quiet":
-                print ("Could not connect to steemd")
+            xmsg.x_error_message("Could not connect to steemd")
             return False
         if not acct:
-            print ("Could not find account: " + acctname)
+            xmsg.x_error_message("Could not find account: " + acctname)
             return False
         vp = acct['voting_power']
         lvt = acct['last_vote_time']
@@ -147,7 +144,7 @@ class AXverify:
             self.x_get_steemit_balances()
             votevalue = rshares * self.reward_balance / self.recent_claims * self.base
             votevalue = round(votevalue, 4)
-            print ("\n__" + acctname + "__\n   Vote Power: " + str(vpow) + 
+            xmsg.x_message("\n__" + acctname + "__\n   Vote Power: " + str(vpow) + 
                 "%\n   Steem Power: " + str(sp) + "\n   Vote Value at " + str(weight) + "%: $" + str(votevalue) + "\n");
         return rshares
 
@@ -161,26 +158,22 @@ class AXverify:
         try:
             p = s.get_blog(account1, 0, 1)
         except:
-            if mode != "quiet":
-                print ("Could not connect to steemd")
+            xmsg.x_error_message("Could not connect to steemd")
             return False
         if not p:
-            if mode != "quiet":
-                print ("Could not find a blog post for " + account1)
+            xmsg.x_error_message("Could not find a blog post for " + account1)
             return False
         created = p[0]['comment']['created']
         t = datetime.strptime(created,'%Y-%m-%dT%H:%M:%S')
         delta = now - t
         td = delta.days
         if td > 5:
-            if mode != "quiet":
-                print ("@" + account1 + "/" + p[0]['comment']['permlink'] + " is more than 5 days old.")
+            xmsg.x_message("@" + account1 + "/" + p[0]['comment']['permlink'] + " is more than 5 days old.")
             return False
         votes = s.get_active_votes(p[0]['comment']['author'], p[0]['comment']['permlink'])
         for v in votes:
             if v['voter'] == account2:
-                if mode != "quiet":
-                    print (account2 + " has aready voted on " + p[0]['comment']['permlink'])
+                xmsg.x_message(account2 + " has aready voted on " + p[0]['comment']['permlink'])
                 return False
         return True
 
@@ -229,8 +222,7 @@ class AXverify:
         if v3a > 100:
             v3 = 100
             exceeds = True
-        if mode != "quiet":
-            print (account2 + " needs to vote " + str(v3a) + "% in order to meet " + account1)
+        xmsg.x_message(account2 + " needs to vote " + str(v3a) + "% in order to meet " + account1)
         v4 = self.get_vote_value(account2, v3, vpow, mode)
         self.x_get_steemit_balances()
         v1s = v1 * self.reward_balance / self.recent_claims * self.base 
@@ -241,19 +233,15 @@ class AXverify:
             if v3 == 1:
                 v5 = v4 - v1
                 v5s = v5 * self.reward_balance / self.recent_claims * self.base
-                if mode != "quiet":
-                    print (account2 + "'s vote of " + str(v4s) + " will be larger than " + account1 + "'s vote by: " + str(v5s))
+                xmsg.x_message(account2 + "'s vote of " + str(v4s) + " will be larger than " + account1 + "'s vote by: " + str(v5s))
             if v3 == 100:
                 v5 = v1 - v4
                 v5s = v5 * self.reward_balance / self.recent_claims * self.base
-                if mode != "quiet":
-                    print (account1 + "'s vote of " + str(v1s) + " will be larger than " + account2 + "'s vote by: " + str(v5s))
-            if mode != "quiet":
-                print ("Perhaps try a new ratio of " + str(newratio) + " to 1")
+                xmsg.x_message(account1 + "'s vote of " + str(v1s) + " will be larger than " + account2 + "'s vote by: " + str(v5s))
+            xmsg.x_message("Perhaps try a new ratio of " + str(newratio) + " to 1")
             return False
         else:
-            if mode != "quiet":
-                print (account1 + " will upvote $" + str(v1s) + " and " + account2 + " will upvote $" + str(v4s));
+            xmsg.x_message(account1 + " will upvote $" + str(v1s) + " and " + account2 + " will upvote $" + str(v4s));
             return True
 
 
