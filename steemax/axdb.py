@@ -16,12 +16,15 @@ class AXdb:
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-        self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
-        self.cursor = self.db.cursor()
 
 
     def __del__(self):
         self.db.close()
+
+
+    def x_open_db(self):
+        self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
+        self.cursor = self.db.cursor()
 
 
     def x_get_results(self):
@@ -51,6 +54,7 @@ class AXdb:
         '''Check to see if the the table named "axlist" is present in the database "steemax". If not make it.
         Check to see if the the table named "axglobal" is present in the database "steemax". If not make it and initialize it.
         '''
+        self.x_open_db()
         self.sql = "SELECT * FROM axlist WHERE 1;"
         if not self.x_get_results():
             self.sql = ("CREATE TABLE IF NOT EXISTS axlist (ID int(10), Account1 varchar(50), Account2 varchar(50), " +
@@ -76,9 +80,10 @@ class AXdb:
             xmsg.x_message("Created and initialized axkey table in the steemax database.")
         self.sql = "SELECT * FROM axtrans WHERE 1;"
         if not self.x_get_results():
-            self.sql = ("CREATE TABLE IF NOT EXISTS axtrans (IDKey INT NOT NULL AUTO_INCREMENT PRIMARY KEY, TXID varchar(50), From varchar(20), Amount varchar(20), MemoID, varchar(40), TxTime TIMESTAMP, DiscoveryTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP";)
+            self.sql = ("CREATE TABLE IF NOT EXISTS axtrans (IDKey INT NOT NULL AUTO_INCREMENT PRIMARY KEY, TXID varchar(50), From varchar(20), Amount varchar(20), MemoID, varchar(40), TxTime TIMESTAMP, DiscoveryTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP;")
             self.x_commit()
             xmsg.x_message("Created axtrans table in the steemax database.")
+        self.db.close()
 
 
     def x_check_reward_fund_renewal(self):
@@ -90,19 +95,27 @@ class AXdb:
 
 
     def x_save_reward_fund(self, rb, rc, base):
+        self.x_open_db()
         self.sql = "UPDATE axglobal SET RewardBalance = '"+str(rb)+"', RecentClaims = '"+str(rc)+"', Base = '"+str(base)+"' WHERE ID = '1';"
-        return self.x_commit()
+        r = self.x_commit()
+        self.db.close()
+        return r
 
 
     def x_fetch_reward_fund(self):
+        self.x_open_db()
         self.sql = "SELECT RewardBalance, RecentClaims, Base, Time FROM axglobal WHERE ID = '1';"
         if not self.x_get_results():
             xmsg.x_error_message("Could not fetch reward fund.")
+            #self.db.close()
             return False
         else:
+            #self.db.close()
             return True
 
+
     def x_verify_memoid(self, acct, memoid):
+        self.x_open_db()
         '''Verify that the Memo ID entered matches the account name entered
         This is necessary so that each account can update the invite during the barter process
         '''
@@ -119,19 +132,25 @@ class AXdb:
         # Does the account name match the Memo ID?
         if acct != acct1 and acct != acct2:
             xmsg.x_error_message("Verify Memo ID: Account names do not match.")
+            self.db.close()
             return False
         else:
+            self.db.close()
             return True
 
 
     def x_cancel (self, acct, memoid):
+        self.x_open_db()
         '''Either account can cancel
         '''
         self.sql = "DELETE FROM axlist WHERE (Account1 = '"+acct+"' OR (Account2 = '"+acct+"')) AND (MemoID = '"+memoid+"');"
-        return self.x_commit()
+        r = self.x_commit()
+        self.db.close()
+        return r
 
 
     def x_update_invite(self, percent, ratio, duration, memoid):
+        self.x_open_db()
         '''This is used during the barter process. Both accounts can update the percentage,
         ratio and duration of the exchange until an agreement is made. This pauses the exchange
         and puts it into a status of "2" which indicates an agreement has not been made.
@@ -140,10 +159,13 @@ class AXdb:
         '''
         self.sql = ("UPDATE axlist SET Percentage = '" + percent + "', Ratio = '" + ratio + "', Duration = '" + 
             duration + "', Status = '2' WHERE MemoID = '" + memoid + "';")
-        return self.x_commit()
+        r = self.x_commit()
+        self.db.close()
+        return r
 
 
     def x_verify_account (self, acct, memoid):
+        self.x_open_db()
         ''' Check to see if this is the inviter (Account1). If the account is an inviter show a report.
         Then check to see if this is the invitee (Account2). If the account is an invitee show a report.
         Return false if there are no entries in the database
@@ -172,21 +194,27 @@ class AXdb:
             inviter = self.dbresults[0][0]
         if not asinviter and not asinvitee:
             xmsg.x_message(acct + " is not in the database. Please start an invite.")
+            self.db.close()
             return False
+        self.db.close()
         return [asinviter, asinvitee, inviter, invitee]
 
 
     def x_verify_invitee (self, acct2, memoid):
+        self.x_open_db()
         '''Check that account is truly an invitee (Account2) and not inviter (Account1)
         '''
         self.sql = "SELECT * FROM axlist WHERE Account2 = '" + acct2 + "' AND (MemoID = '" + memoid + "');"
         if not self.x_get_results():
             xmsg.x_message(acct2 + " is not an invitee.")
+            self.db.close()
             return False
+        self.db.close()
         return True
 
 
     def x_accept_invite(self, acct2, memoid, key):
+        self.x_open_db()
         '''The exchange is initiated when both accounts agree on the settings, and
         Account2 (invitee) has submitted the Memo ID along with their private
         posting key. If the invitee wishes to barter, this function is still invoked first
@@ -195,10 +223,13 @@ class AXdb:
         an agreement has been made and thus making the auto-upvote exchange active
         '''
         self.sql = "UPDATE axlist SET Key2 = '" + key + "', Status = '1' WHERE Account2 = '" + acct2 + "' AND (MemoID = '" + memoid + "');"
-        return self.x_commit()
+        r = self.x_commit()
+        self.db.close()
+        return r
 
 
     def x_add_invite (self, acct1, acct2, key1, percent, ratio, duration):
+        self.x_open_db()
         '''Adds the initial invite to the database and provides the unique Memo ID.
         Checks for duplicate accounts. Checks for duplicate invites.
         Adds both account names, the inviter's private posting key, the percentage, ratio and 
@@ -208,23 +239,29 @@ class AXdb:
         memoid = self.generate_nonce()
         if acct1 == acct2:
             xmsg.x_message("The same account name was entered for both accounts.")
+            self.db.close()
             return False
         self.sql = ("SELECT * FROM axlist WHERE (Account1 = '" + acct1 + "' OR (Account1 = '" + acct2 + "')) AND (Account2 = '" + 
             acct1 + "' OR (Account2 = '" + acct2 + "'));")
         if self.x_get_results():
             xmsg.x_message("An exchange has already been made between these accounts.")
+            self.db.close()
             return False
         self.sql = ("INSERT INTO axlist (Account1, Account2, Key1, Percentage, Ratio, Duration, MemoID, Status) VALUES ('" + acct1 + 
             "', '" + acct2 + "', '" + key1 + "', '" + percent + "', '" + ratio + "', '" + duration + "', '" + memoid + "', '0');")
         if self.x_commit():
+            self.db.close()
             return memoid
         else:
+            self.db.close()
             return False
 
 
     def get_axlist (self, mode):
+        self.x_open_db()
         self.sql = """SELECT * FROM axlist WHERE 1;"""
         self.x_get_results()
+        self.db.close()
         return self.dbresults
 
 
