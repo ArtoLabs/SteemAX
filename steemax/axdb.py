@@ -49,7 +49,7 @@ class AXdb:
 
     def x_first_time_setup(self):
         '''Check to see if the the table named "axlist" is present in the database "steemax". If not make it.
-            Check to see if the the table named "axglobal" is present in the database "steemax". If not make it and initialize it.
+        Check to see if the the table named "axglobal" is present in the database "steemax". If not make it and initialize it.
         '''
         self.sql = "SELECT * FROM axlist WHERE 1;"
         if not self.x_get_results():
@@ -66,6 +66,14 @@ class AXdb:
             self.sql = "INSERT INTO axglobal (ID, RewardBalance, RecentClaims, Base) VALUES ('1', '0', '0', '0');" 
             self.x_commit()
             xmsg.x_message("Created and initialized axglobal table in the steemax database.")
+        self.sql = "SELECT * FROM axkey WHERE 1;"
+        if not self.x_get_results():
+            self.sql = ("CREATE TABLE IF NOT EXISTS axkey (ID int(10), Key varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP " +
+                "ON UPDATE CURRENT_TIMESTAMP);")
+            self.x_commit()
+            self.sql = "INSERT INTO axkey (ID) VALUES ('1');" 
+            self.x_commit()
+            xmsg.x_message("Created axkey table in the steemax database.")
 
 
     def x_check_reward_fund_renewal(self):
