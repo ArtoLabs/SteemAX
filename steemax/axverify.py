@@ -18,7 +18,7 @@ nodes = [
 
 s = Steem(nodes)
 c = Converter()
-adb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax", "")
+adb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 
 class AXverify:
 

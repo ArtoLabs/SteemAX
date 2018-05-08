@@ -3,7 +3,7 @@
 import logging
 
 LOGFORMAT = "%(asctime)s %(levelname)s - %(message)s - %(pathname)s"
-logging.basicConfig(filename = "error.log", level = logging.DEBUG, format = LOGFORMAT)
+logging.basicConfig(filename = "error.log", level = logging.INFO, format = LOGFORMAT)
 logger = logging.getLogger()
 
 class AXmsg:

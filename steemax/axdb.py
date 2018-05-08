@@ -13,7 +13,6 @@ class AXdb:
 
 
     def __init__(self, dbuser, dbpass, dbname):
-        xmsg.x_message("Starting steemax database")
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
