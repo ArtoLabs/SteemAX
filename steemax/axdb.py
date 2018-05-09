@@ -85,6 +85,27 @@ class AXdb:
         self.db.close()
 
 
+    def x_get_most_recent_trans(self):
+        self.x_open_db()
+        self.sql = "SELECT TxTime FROM axtrans WHERE 1 ORDER BY TxTime DESC LIMIT 1;"
+        self.x_get_results()
+        self.db.close()
+
+
+    def x_check_trans_history(self, memoid):
+        self.x_open_db()
+        self.sql = "SELECT TxTime, DiscoveryTime, Action FROM axtrans WHERE TXID = '"+memoid+"';"
+        self.x_get_results()
+        self.db.close()
+
+
+    def x_add_trans(self, txid, memofrom, amt, memoid, action, txtime):
+        self.x_open_db()
+        self.sql = "INSERT INTO axtrans (TXID, MemmoFrom, Amount, MemoID, Action, TxTime) VALUES ('1', '0', '0', '0');" 
+        self.x_commit()
+        self.db.close()
+
+
     def x_check_reward_fund_renewal(self):
         delta = datetime.now() - self.dbresults[0][3]
         if delta.seconds > 120:
@@ -278,5 +299,5 @@ if __name__ == "__main__":
         xmsg.x_message(a.dbresults[0][0] + "\n" + a.dbresults[0][1] + "\n" + a.dbresults[0][2])
     else:
         xmsg.x_message("No results from database while testing axdb.py")
-# EOF
 
+# EOF
