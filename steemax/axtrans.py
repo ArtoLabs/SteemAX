@@ -17,6 +17,40 @@ xmsg = axmsg.AXmsg()
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 steemaxacct = "artturtle"
 
+
+class Reaction():
+
+
+    def accept(self, acct, memofrom):
+        if acct == memofrom:
+            self.reaction = "pass"
+            self.status = 1
+        else:
+            self.ignore("Please wait for the invitee to respond.")
+
+
+    def barter(self, acct1, acct2, mf, rstatus):
+        if acct1 == mf and rstatus == 3:
+            self.reaction = "pass"
+            self.status = 2
+        elif acct2 == mf and rstatus == 2:
+            self.reaction = "pass"
+            self.status = 3
+        else:
+            self.ignore("Invalid barter. Please wait for the other side to respond first.")
+
+
+    def cancel(self):
+        self.reaction = "pass"
+        self.status = 4
+
+
+    def ignore(self, reason):
+        self.reaction = "refund"
+        print (reason)
+
+
+
 class AXtrans:
     ''' Class for automatically handling transactions made to steemax for authentication
     '''
@@ -45,6 +79,8 @@ class AXtrans:
             print(w)
         '''
 
+        react = Reaction()
+
         h = s.get_account_history(steemaxacct, -1, 100)
         for a in h:
             if a[1]['op'][0] == 'transfer':
@@ -54,14 +90,13 @@ class AXtrans:
                 amt = a[1]['op'][1]['amount']
                 trxid = a[1]['trx_id']
                 txtime = a[1]['timestamp']
-                print (trxid + " " + txtime + " " + memofrom)
+
                 # This is dirty! Must be sanitized!
                 memo = memo.split(":")
                 memoid = memo[0]
                 if len(memo) > 1:
                     action = memo[1]
-                else:
-                    action = "accept"
+
                 if len(memo) == 5:
                     percentage = memo[2]
                     ratio = memo[3]
@@ -70,6 +105,7 @@ class AXtrans:
                     percentage = 0
                     ratio = 0
                     duration = 0
+                    action = ""
 
 
                 if a[1]['op'][1]['to'] == steemaxacct and re.match(r'^\s*[0-9]{32}$', memoid):
@@ -80,81 +116,21 @@ class AXtrans:
                         rstatus = xdb.dbresults[0][2]
 
                         if (action == "cancel"):
-                            reaction = "pass"
-                            status = 4
-                        # Invitee has not accepted or given posting key yet
+                            react.cancel()
+                        elif (action == "accept"):
+                            if rstatus == 3:
+                                react.accept(acct1, memofrom)
+                            else:
+                                react.accept(acct2, memofrom)
+                        elif (action == "barter"):
+                            react.barter(acct1, acct2, memofrom)
+                        else:
+                            react.ignore("Invalid action.")
                         
-                        elif rstatus == 0:
-
-                            if (action == "accept"):
-                                if acct2 == memofrom:
-                                    reaction = "pass"
-                                    status = 1
-                                else:
-                                    self.x_refund("Please wait for the invitee to accept this invite.")
-                            elif (action == "barter"):
-                                if acct2 == memofrom:
-                                    reaction = "pass"
-                                    status = 3
-                                else:
-                                    self.x_refund("Please wait for the invitee to accept this invite.")
-                            else:
-                                self.x_refund("Invalid action")
-
-                        elif rstatus == 1:
-                            
-                            if (action == "barter"):
-                                reaction = "pass"
-                                if acct2 == memofrom:
-                                    status = 3
-                                else:
-                                    status = 2
-                            else:
-                                self.x_refund("Invalid action")
-
-                        elif rstatus == 2:
-
-                            if (action == "accept") or (action == "barter"):
-                                if acct2 == memofrom:
-                                    reaction = "pass"
-                                else:
-                                    self.x_refund("Please wait for the invitee to accept this invite.")
-                            else:
-                                self.x_refund("Please wait for the invitee to accept this invite.")
-
-                        elif rstatus == 3:
-
-                            if (action == "accept") or (action == "barter"):
-                                if acct1 == memofrom:
-                                    reaction = "pass"
-                                else:
-                                    self.x_refund("Please wait for the invitee to accept this invite.")
-                            else:
-                                self.x_refund("Please wait for the invitee to accept this invite.")
-
-                        else:
-                            self.x_refund("Please wait for the invitee to accept this invite.")
-
-                        if xdb.x_check_trans_history(trxid):
-                            if xdb.results[3] == memoid:
-                                pass
-                            else:
-                                pass
-                        else:
-                            reaction = "ignore"
-                            reason = ""
-                    else:
-                        self.x_refund("Memo ID " + memoid + " could not be found.")
-
-                        print (amt + " from " + f + "   Memo: " + memoid)
-                        print ("Status: " + xdb.dbresults[0][2])
-
                     #x_add_trans(self, trxid, f, amt, memoid, reaction, txtime)
 
 
 
-    def x_refund(self, reason):
-        print (reason)
 
 # Run as main
 
