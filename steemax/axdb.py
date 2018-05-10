@@ -101,7 +101,7 @@ class AXdb:
 
     def x_add_trans(self, txid, memofrom, amt, memoid, action, txtime):
         self.x_open_db()
-        self.sql = "INSERT INTO axtrans (TXID, MemmoFrom, Amount, MemoID, Action, TxTime) VALUES ('1', '0', '0', '0');" 
+        self.sql = "INSERT INTO axtrans (TXID, MemoFrom, Amount, MemoID, Action, TxTime) VALUES ('"+txid+"', '"+memofrom+"', '"+amt+"', '"+memoid+"', '"+action+"', '"+txtime+"');" 
         self.x_commit()
         self.db.close()
 
