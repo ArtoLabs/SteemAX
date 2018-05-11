@@ -137,10 +137,10 @@ class AXdb:
         self.sql = "SELECT RewardBalance, RecentClaims, Base, Time FROM axglobal WHERE ID = '1';"
         if not self.x_get_results():
             xmsg.x_error_message("Could not fetch reward fund.")
-            #self.db.close()
+            self.db.close()
             return False
         else:
-            #self.db.close()
+            self.db.close()
             return True
 
 
@@ -151,13 +151,21 @@ class AXdb:
         '''
         acct1 = ""
         acct2 = ""
-        # Get both account names if the Memo ID exists
+        # Get both account names if the Memo ID exists and verify the account given to the method.give a sendto account for passing transactions
         self.sql = "SELECT Account1, Account2, Status FROM axlist WHERE MemoID = '" + memoid + "';"
         if not self.x_get_results():
             xmsg.x_error_message("Could not find Memo ID.")
         else:
             acct1 = self.dbresults[0][0]
             acct2 = self.dbresults[0][1]
+        if acct0 == acct1:
+            self.sendto = acct2
+        elif acct0 == acct2:
+            self.sendto = acct1
+        else:
+            xmsg.x_error_message("Account does not match Memo ID.")
+            self.db.close()
+            return False
         # Does the account name match the Memo ID?
         if acct0!= acct1 and acct0 != acct2:
             xmsg.x_error_message("Verify Memo ID: Account names do not match.")
@@ -229,10 +237,21 @@ class AXdb:
         return [asinviter, asinvitee, inviter, invitee]
 
 
-    def x_verify_invitee (self, acct2, memoid):
+    def x_check_status (self, memoid):
         self.x_open_db()
+        self.sql = "SELECT Status FROM axlist WHERE MemoID = '"+memoid+"';"
+        if self.x_get_results():
+            self.db.close()
+            return self.dbresults[0][0]
+        else:
+            self.db.close()
+            return False
+
+
+    def x_verify_invitee (self, acct2, memoid):
         '''Check that account is truly an invitee (Account2) and not inviter (Account1)
         '''
+        self.x_open_db()
         self.sql = "SELECT * FROM axlist WHERE Account2 = '" + acct2 + "' AND (MemoID = '" + memoid + "');"
         if not self.x_get_results():
             xmsg.x_message(acct2 + " is not an invitee.")
@@ -251,7 +270,7 @@ class AXdb:
         Update the private posting key and set the Status to "1" which indicates
         an agreement has been made and thus making the auto-upvote exchange active
         '''
-        self.sql = "UPDATE axlist SET Key2 = '" + key + "', Status = '1' WHERE Account2 = '" + acct2 + "' AND (MemoID = '" + memoid + "');"
+        self.sql = "UPDATE axlist SET Key2 = '" + key + "', Status = '0' WHERE Account2 = '" + acct2 + "' AND (MemoID = '" + memoid + "');"
         r = self.x_commit()
         self.db.close()
         return r
@@ -277,7 +296,7 @@ class AXdb:
             self.db.close()
             return False
         self.sql = ("INSERT INTO axlist (Account1, Account2, Key1, Percentage, Ratio, Duration, MemoID, Status) VALUES ('" + acct1 + 
-            "', '" + acct2 + "', '" + key1 + "', '" + percent + "', '" + ratio + "', '" + duration + "', '" + memoid + "', '0');")
+            "', '" + acct2 + "', '" + key1 + "', '" + percent + "', '" + ratio + "', '" + duration + "', '" + memoid + "', '-1');")
         if self.x_commit():
             self.db.close()
             return memoid

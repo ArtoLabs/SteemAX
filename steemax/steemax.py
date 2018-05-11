@@ -129,7 +129,7 @@ class MyPrompt(Cmd):
         dur = enter_duration()
         memoid = xdb.x_add_invite (acct1, acct2, key, per, ratio, dur)
         if memoid:
-            xmsg.x_message("An invite has been created. Here is your unique Memo ID for this exchange:\n\n   " + memoid + "\n")
+            xmsg.x_message("An invite has been created. To authorize this exchange and to send the invite please send any amount of SBD to @steem-ax along with the following memo message. Your SBD will be forwarded to the invitee:\n\n   " + memoid + ":start\n")
         else:
             xmsg.x_message("An invite could not be created.")
 
@@ -140,12 +140,18 @@ class MyPrompt(Cmd):
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
         if not xdb.x_verify_invitee(acct, memoid):
+            xmsg.x_error_message("The Memo ID could not be verified.")
             return
+        if int(xdb.x_check_status(memoid)) < 0:
+            xmsg.x_error_message("The inviter has not yet authorized the exchange.")
+            return            
         key = enter_key(acct)
         if xdb.x_accept_invite(acct, memoid, key):
-            xmsg.x_message("The exchange invite has been accepted and the auto-upvote exchanges will begin.")
+            xmsg.x_message("The exchange invite has been accepted. To authorize this change send any amount " + 
+                "of SBD to @steem-ax along with the following memo message. The SBD you send will be forwarded to the other party: \n\n    " + 
+                memoid + ":accept")
         else:
-            xmsg.x_message("Could not accept the invite.")
+            xmsg.x_error_message("Could not accept the invite.")
 
 
     def do_barter(self, args):

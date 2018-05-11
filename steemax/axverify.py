@@ -11,10 +11,14 @@ import axdb
 import axmsg
 
 nodes = [
+
+
+    'https://steemd.pevo.science',
     'https://steemd.minnowsupportproject.org',
+    'https://steemd.steemgigs.org',
     'https://steemd.privex.io',
-    'https://steemd.steemit.com',
-    'https://steemd.steemgigs.org'
+    'https://steemd.steemit.com'
+    
 ]
 
 s = Steem(nodes)
