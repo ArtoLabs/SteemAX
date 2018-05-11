@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from dateutil.parser import parse
-from datetime import datetime
+from datetime import datetime, timedelta
 import pymysql
 import random
 import axmsg
@@ -85,12 +85,22 @@ class AXdb:
         self.db.close()
 
 
+    def x_get_owner_key(self):
+        self.x_open_db()
+        self.sql = "SELECT OwnerKey FROM axkey WHERE ID = '1';"
+        self.x_get_results()
+        return self.dbresults[0][0]
+
+
     def x_get_most_recent_trans(self):
         self.x_open_db()
         self.sql = "SELECT TxTime FROM axtrans WHERE 1 ORDER BY TxTime DESC LIMIT 1;"
-        self.x_get_results()
-        self.db.close()
-
+        if not self.x_get_results():
+            self.db.close()
+            return datetime.utcnow() - timedelta(days=5)
+        else:
+            self.db.close()
+            return self.dbresults[0][0]
 
     def x_check_trans_history(self, memoid):
         self.x_open_db()

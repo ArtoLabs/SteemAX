@@ -6,17 +6,12 @@ from steem import Steem
 import re
 import axmsg
 import axdb
+import sys
 
-nodes = [
-    'https://steemd.minnowsupportproject.org',
-    'https://steemd.privex.io',
-    'https://steemd.steemit.com',
-    'https://steemd.steemgigs.org'
-]
-
-s = Steem(nodes)
-xmsg = axmsg.AXmsg()
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+xmsg = axmsg.AXmsg()
+s = Steem()
+
 steemaxacct = "artturtle"
 
 
@@ -25,7 +20,7 @@ class Reaction():
 
     def accept(self, acct, memofrom):
         if acct == memofrom:
-            self.reaction = "acceted"
+            self.reaction = "accepted"
             self.status = 1
         else:
             self.ignore("Please wait for the invitee to respond.")
@@ -66,11 +61,11 @@ class AXtrans:
 
 
     def x_parse_memo(self, memofrom=None, memo=None, amt=None, trxid=None, txtime=None):
-        # This is dirty! Must be sanitized!
         self.memofrom=memofrom
         self.amt=amt
         self.trxid=trxid
         self.txtime=txtime
+        # Ew this is dirty and came from strangers! Must be sanitized!
         memo = memo.split(":")
         self.memoid = memo[0]
         if len(memo) > 1:
@@ -79,6 +74,16 @@ class AXtrans:
             self.percentage = memo[2]
             self.ratio = memo[3]
             self.duration = memo[4]
+
+
+    def x_send(self, to="artopium", amt="0.001 SBD", msg="test"):
+        r = amt.split(" ")
+        try:
+            s.commit.transfer(to, float(r[0]), r[1], msg, steemaxacct)
+        except:
+            e = sys.exc_info()[0]
+            xmsg.x_error_message(e)
+        print ("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
 
 
     def x_fetch_history(self):
@@ -118,8 +123,9 @@ class AXtrans:
 if __name__ == "__main__":
 
     a = AXtrans()
-    a.x_fetch_history()
+    #a.x_fetch_history()
 
+    a.x_send()
 
 # EOF
 
