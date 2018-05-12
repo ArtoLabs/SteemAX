@@ -177,10 +177,9 @@ class MyPrompt(Cmd):
         if not xdb.x_verify_memoid(acct, memoid):
             xmsg.x_message("Memo ID does not match the account provided.")
         else:
-            if xdb.x_update_invite(per, ratio, dur, memoid):
-                xmsg.x_message("Invite for Memo ID " + memoid + " has been updated.")
-            else:
-                xmsg.x_error_message("Could not update Memo ID " + memoid)
+            xmsg.x_message("To initiate this barter send any amount SBD to @steem-ax with the following in the memo:\n\n    " +
+                memoid + ":barter:" + per + ":" + ratio + ":" + dur)
+
 
 
     def do_cancel(self, args):

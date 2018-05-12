@@ -177,8 +177,8 @@ class AXdb:
         Update the percentage, ratio and duration based on the Memo ID which is verified using
         the x_verify_memoid function.
         '''
-        self.sql = ("UPDATE axlist SET Percentage = '" + percent + "', Ratio = '" + ratio + "', Duration = '" + 
-            duration + "', Status = '" + status + "' WHERE MemoID = '" + memoid + "';")
+        self.sql = ("UPDATE axlist SET Percentage = '" + str(percent) + "', Ratio = '" + str(ratio) + "', Duration = '" + 
+            str(duration) + "', Status = '" + str(status) + "' WHERE MemoID = '" + str(memoid) + "';")
         r = self.x_commit()
         self.db.close()
         return r

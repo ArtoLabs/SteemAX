@@ -35,34 +35,46 @@ class Reaction():
             else:
                 self.ignore("The inviter has already authorized this exchange.")
         else:
-            self.ignore("Invalid action. The inviter has not yet authorized this exhange.")
+            self.ignore("Invalid action. The " + acct1 + " has not yet authorized this exhange.")
 
 
-    def accept(self, acct2, memofrom):
-        if acct2 == memofrom:
+    def accept(self, acct1, acct2, mf, rstatus):
+        if acct2 == mf and (int(rstatus) == 0 or int(rstatus) == 2):
             self.reaction = "accepted"
             xdb.x_update_status(1)
             self.returnmsg = acct2 + " has accepted the invite. The auto-upvote exchange will begin immediately."
+        if acct1 == mf and int(rstatus) == 3:
+            self.reaction = "accepted"
+            xdb.x_update_status(1)
+            self.returnmsg = acct1 + " has accepted the invite. The auto-upvote exchange will begin immediately."
         else:
-            self.ignore("Please wait for the invitee to respond.")
+            if acct1 == mf:
+                self.ignore("Please wait for " + acct2 + " to respond.")
+            elif acct2 == mf:
+                self.ignore("Please wait for " + acct1 + " to respond.")
 
 
-    def barter(self, acct1, acct2, mf, rstatus, per, ratio, dur):
-        if acct1 == mf and rstatus > 0:
+    def barter(self, acct1, acct2, memoid, mf, rstatus, per, ratio, dur):
+        if acct1 == mf and int(rstatus) > 0:
             self.reaction = "acct1 bartering"
             status = 2
             self.returnmsg = (acct1 + " has offered to barter. They offer " + per + 
                 "% of their upvote at a ratio of " + ratio + ":1 for " + dur + " days. " +
-                "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer.")
-        elif acct2 == mf and rstatus > 0:
+                "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer. " +
+                "To generate your own barter offer, please visit [link]")
+        elif acct2 == mf and int(rstatus) > 0:
             self.reaction = "acct2 bartering"
             status = 3
             self.returnmsg = (acct2 + " has offered to barter. They suggest a percentage of " + per + 
                 "% of your upvote at a ratio of " + ratio + "("+acct1+"):1("+acct2+") for " + dur + " days. " +
-                "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer.")
+                "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer. " + 
+                "To generate your own barter offer, please visit [link]")
         else:
             status = False
-            self.ignore("Invalid barter. Please wait for the other side to respond first.")
+            if acct2 == mf:
+                self.ignore("Invalid barter. Please wait for " + acct1 + " to respond first.")
+            elif acct1 == mf:
+                self.ignore("Invalid barter. Please wait for " + acct2 + " to respond first.")
         if status:
             if xdb.x_update_invite(per, ratio, dur, memoid, status):
                 xmsg.x_message("Invite for Memo ID " + memoid + " has been updated.")
@@ -122,7 +134,7 @@ class AXtrans:
             xmsg.x_error_message(e)
             return False
         else:
-            print ("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
+            xmsg.x_message("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
             return True
 
 
@@ -149,12 +161,9 @@ class AXtrans:
                         elif (self.action == "cancel"):
                             react.cancel()
                         elif (self.action == "accept"):
-                            if rstatus == 3:
-                                react.accept(acct1, self.memofrom)
-                            else:
-                                react.accept(acct2, self.memofrom)
+                            react.accept(acct1, acct2, self.memofrom)
                         elif (self.action == "barter"):
-                            react.barter(acct1, acct2, self.memofrom, self.percentage, self.ratio, self.duration, self.memoid)
+                            react.barter(acct1, acct2, self.memoid, self.memofrom, rstatus, self.percentage, self.ratio, self.duration)
                         else:
                             react.ignore("Invalid action.")
 
