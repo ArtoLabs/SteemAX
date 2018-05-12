@@ -201,6 +201,14 @@ class AXdb:
         return r
 
 
+    def x_update_status(self, status):
+        self.x_open_db()
+        self.sql = ("UPDATE axlist SET Status = '"+status+"';")
+        r = self.x_commit()
+        self.db.close()
+        return r
+
+
     def x_verify_account (self, acct, memoid):
         self.x_open_db()
         ''' Check to see if this is the inviter (Account1). If the account is an inviter show a report.
