@@ -7,6 +7,7 @@ import re
 import axmsg
 import axdb
 import sys
+import os
 
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 xmsg = axmsg.AXmsg()
@@ -25,6 +26,8 @@ class Reaction():
                 self.status = 0
                 self.returnmsg = ("Hello " + acct2 + ", " + acct1 + " has invited you to an auto-upvote exchange. To respond to this " +
                     "invite please visit [link]")
+            else:
+                self.ignore("The inviter has already authorized this exchange.")
         else:
             self.ignore("Invalid action. The inviter has not yet authorized this exhange.")
 
