@@ -10,16 +10,11 @@ from steembase.exceptions import InvalidWifError
 import axdb
 import axmsg
 
-nodes = [
-
-
-    'https://steemd.pevo.science',
+nodes = ['https://steemd.pevo.science',
     'https://steemd.minnowsupportproject.org',
     'https://steemd.steemgigs.org',
     'https://steemd.privex.io',
-    'https://steemd.steemit.com'
-    
-]
+    'https://steemd.steemit.com']
 
 s = Steem(nodes)
 c = Converter()
@@ -37,6 +32,7 @@ class AXverify:
             "\n   Steem = $" + str(self.base) +
             "\n------------------------------------------------\n")
         xmsg.x_message(bal_banner)
+
 
     def x_get_steemit_balances(self):
         '''Get and the current Steemit reward fund steem-python object used to retreive the following values
@@ -59,7 +55,6 @@ class AXverify:
 
 
     def x_verify_key (self, acctname, private_posting_key, mode):
-
         ''' Get a new instance of the Steemd node and verify a Steemit Private Posting Key
             by first converting the Private Posting Key into the Public Posting Key
             then get the account for which the key is to be tested against then
@@ -106,6 +101,7 @@ class AXverify:
         if voteweight > 10000:
             voteweight = 10000
         votepower = power * 100
+        # is a votepower supplied? Make sure it's within bounds
         if votepower > 0:
             if votepower < 150:
                 votepower = 150
@@ -126,6 +122,8 @@ class AXverify:
         rvests = Amount(acct['received_vesting_shares']).amount
         vests = (float(vs) - float(dvests)) + float(rvests) 
         sp = c.vests_to_sp(vests)
+        # If votepower is zero we use the vote power supplied by steem. Supplied votepower is used to 
+        # compare two vote values at 100% rather than their current values.
         if votepower > 0:
             vpow_scaled = votepower
             vpow = power
@@ -156,7 +154,6 @@ class AXverify:
     def verify_post (self, account1, account2, mode):
         ''' Gets only the most recent post, gets the timestamp and finds the age of the post in days.
         Is the post too old? Did account2 vote on the post already?
-
         '''
         now = datetime.now()
         try:

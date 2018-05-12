@@ -8,18 +8,12 @@ import re
 import axmsg
 import axdb
 import sys
-import os
 
-nodes = [
-
-
-    'https://steemd.pevo.science',
+nodes = ['https://steemd.pevo.science',
     'https://steemd.minnowsupportproject.org',
     'https://steemd.steemgigs.org',
     'https://steemd.privex.io',
-    'https://steemd.steemit.com'
-    
-]
+    'https://steemd.steemit.com']
 
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 xmsg = axmsg.AXmsg()
@@ -54,26 +48,33 @@ class Reaction():
 
 
     def barter(self, acct1, acct2, mf, rstatus, per, ratio, dur):
-        if acct1 == mf and rstatus == 3:
+        if acct1 == mf and rstatus > 0:
             self.reaction = "acct1 bartering"
-            xdb.x_update_status(2)
+            status = 2
             self.returnmsg = (acct1 + " has offered to barter. They offer " + per + 
                 "% of their upvote at a ratio of " + ratio + ":1 for " + dur + " days. " +
                 "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer.")
-        elif acct2 == mf and rstatus == 2:
+        elif acct2 == mf and rstatus > 0:
             self.reaction = "acct2 bartering"
-            xdb.x_update_status(3)
+            status = 3
             self.returnmsg = (acct2 + " has offered to barter. They suggest a percentage of " + per + 
                 "% of your upvote at a ratio of " + ratio + "("+acct1+"):1("+acct2+") for " + dur + " days. " +
                 "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer.")
         else:
+            status = False
             self.ignore("Invalid barter. Please wait for the other side to respond first.")
+        if status:
+            if xdb.x_update_invite(per, ratio, dur, memoid, status):
+                xmsg.x_message("Invite for Memo ID " + memoid + " has been updated.")
+            else:
+                xmsg.x_error_message("Could not update Memo ID " + memoid)
 
 
     def cancel(self, canceller):
         self.reaction = "cancelled"
         xdb.x_update_status(4)
         self.returnmsg = canceller + " has cancelled the exchange."
+
 
     def ignore(self, reason):
         self.reaction = "refund"

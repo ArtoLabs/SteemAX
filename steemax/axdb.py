@@ -169,16 +169,16 @@ class AXdb:
         return r
 
 
-    def x_update_invite(self, percent, ratio, duration, memoid):
+    def x_update_invite(self, percent, ratio, duration, memoid, status):
         self.x_open_db()
         '''This is used during the barter process. Both accounts can update the percentage,
         ratio and duration of the exchange until an agreement is made. This pauses the exchange
-        and puts it into a status of "2" which indicates an agreement has not been made.
+        and puts it into a status which indicates an agreement has not been made.
         Update the percentage, ratio and duration based on the Memo ID which is verified using
         the x_verify_memoid function.
         '''
         self.sql = ("UPDATE axlist SET Percentage = '" + percent + "', Ratio = '" + ratio + "', Duration = '" + 
-            duration + "', Status = '2' WHERE MemoID = '" + memoid + "';")
+            duration + "', Status = '" + status + "' WHERE MemoID = '" + memoid + "';")
         r = self.x_commit()
         self.db.close()
         return r
