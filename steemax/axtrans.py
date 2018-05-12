@@ -3,15 +3,27 @@
 from dateutil.parser import parse
 from datetime import datetime
 from steem import Steem
+from steembase import exceptions
 import re
 import axmsg
 import axdb
 import sys
 import os
 
+nodes = [
+
+
+    'https://steemd.pevo.science',
+    'https://steemd.minnowsupportproject.org',
+    'https://steemd.steemgigs.org',
+    'https://steemd.privex.io',
+    'https://steemd.steemit.com'
+    
+]
+
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 xmsg = axmsg.AXmsg()
-s = Steem()
+s = Steem(nodes)
 
 steemaxacct = "artturtle"
 
@@ -101,10 +113,16 @@ class AXtrans:
         r = amt.split(" ")
         try:
             s.commit.transfer(to, float(r[0]), r[1], msg, steemaxacct)
+        except exceptions.RPCError as e:
+            xmsg.x_error_message(exceptions.decodeRPCErrorMsg(e))
+            return False
         except:
             e = sys.exc_info()[0]
             xmsg.x_error_message(e)
-        print ("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
+            return False
+        else:
+            print ("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
+            return True
 
 
     def x_fetch_history(self):
@@ -122,8 +140,12 @@ class AXtrans:
                     if xdb.x_verify_memoid(self.memofrom, self.memoid):
                         acct1 = xdb.dbresults[0][0]
                         acct2 = xdb.dbresults[0][1]
-                        rstatus = xdb.dbresults[0][2]
-                        if (self.action == "cancel"):
+                        rstatus = int(xdb.dbresults[0][2])
+
+
+                        if (self.action == "start"):
+                             react.start(acct1, acct2, self.memofrom, rstatus)
+                        elif (self.action == "cancel"):
                             react.cancel()
                         elif (self.action == "accept"):
                             if rstatus == 3:
@@ -135,14 +157,16 @@ class AXtrans:
                         else:
                             react.ignore("Invalid action.")
 
+
                         if react.reaction == "refund":
                             sendto = self.memofrom
                         else:
                             sendto = xdb.sendto
-
-                        self.x_send(sendto, self.amt, react.returnmsg)
-
-                    xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, react.reaction, self.txtime)
+                        if self.x_send(sendto, self.amt, react.returnmsg):
+                            xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, react.reaction, self.txtime)
+                    else:
+                        xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, "Invalid Memo ID. Ignored", self.txtime)
+                    
 
 
 # Run as main
