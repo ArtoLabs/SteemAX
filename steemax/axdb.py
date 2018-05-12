@@ -19,10 +19,6 @@ class AXdb:
         self.dbname = dbname
 
 
-    #def __del__(self):
-    #    self.db.close()
-
-
     def x_open_db(self):
         self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
         self.cursor = self.db.cursor()
@@ -70,26 +66,12 @@ class AXdb:
             self.sql = "INSERT INTO axglobal (ID, RewardBalance, RecentClaims, Base) VALUES ('1', '0', '0', '0');" 
             self.x_commit()
             xmsg.x_message("Created and initialized axglobal table in the steemax database.")
-        self.sql = "SELECT * FROM axkey WHERE 1;"
-        if not self.x_get_results():
-            self.sql = ("CREATE TABLE IF NOT EXISTS axkey (ID int(10), OwnerKey varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);")
-            self.x_commit()
-            self.sql = "INSERT INTO axkey (ID, OwnerKey) VALUES ('1', '0');" 
-            self.x_commit()
-            xmsg.x_message("Created and initialized axkey table in the steemax database.")
         self.sql = "SELECT * FROM axtrans WHERE 1;"
         if not self.x_get_results():
             self.sql = ("CREATE TABLE IF NOT EXISTS axtrans (ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, TXID varchar(50), MemoFrom varchar(20), Amount varchar(20), MemoID varchar(40), Action varchar(20), TxTime TIMESTAMP NULL, DiscoveryTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);")
             self.x_commit()
             xmsg.x_message("Created axtrans table in the steemax database.")
         self.db.close()
-
-
-    def x_get_owner_key(self):
-        self.x_open_db()
-        self.sql = "SELECT OwnerKey FROM axkey WHERE ID = '1';"
-        self.x_get_results()
-        return self.dbresults[0][0]
 
 
     def x_get_most_recent_trans(self):
@@ -101,6 +83,7 @@ class AXdb:
         else:
             self.db.close()
             return self.dbresults[0][0]
+
 
     def x_check_trans_history(self, memoid):
         self.x_open_db()
@@ -203,7 +186,7 @@ class AXdb:
 
     def x_update_status(self, status):
         self.x_open_db()
-        self.sql = ("UPDATE axlist SET Status = '"+status+"';")
+        self.sql = ("UPDATE axlist SET Status = '"+str(status)+"';")
         r = self.x_commit()
         self.db.close()
         return r
