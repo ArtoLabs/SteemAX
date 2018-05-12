@@ -35,7 +35,7 @@ class Reaction():
         if acct1 == memofrom:
             if rstatus < 0:
                 self.reaction = "started"
-                self.status = 0
+                xbd.x_update_status(0)
                 self.returnmsg = ("Hello " + acct2 + ", " + acct1 + " has invited you to an auto-upvote exchange. To respond to this " +
                     "invite please visit [link]")
             else:
@@ -47,7 +47,7 @@ class Reaction():
     def accept(self, acct2, memofrom):
         if acct2 == memofrom:
             self.reaction = "accepted"
-            self.status = 1
+            xbd.x_update_status(1)
             self.returnmsg = acct2 + " has accepted the invite. The auto-upvote exchange will begin immediately."
         else:
             self.ignore("Please wait for the invitee to respond.")
@@ -56,13 +56,13 @@ class Reaction():
     def barter(self, acct1, acct2, mf, rstatus, per, ratio, dur):
         if acct1 == mf and rstatus == 3:
             self.reaction = "acct1 bartering"
-            self.status = 2
+            xbd.x_update_status(2)
             self.returnmsg = (acct1 + " has offered to barter. They offer " + per + 
                 "% of their upvote at a ratio of " + ratio + ":1 for " + dur + " days. " +
                 "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer.")
         elif acct2 == mf and rstatus == 2:
             self.reaction = "acct2 bartering"
-            self.status = 3
+            xbd.x_update_status(3)
             self.returnmsg = (acct2 + " has offered to barter. They suggest a percentage of " + per + 
                 "% of your upvote at a ratio of " + ratio + "("+acct1+"):1("+acct2+") for " + dur + " days. " +
                 "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer.")
@@ -72,7 +72,7 @@ class Reaction():
 
     def cancel(self, canceller):
         self.reaction = "cancelled"
-        self.status = 4
+        xbd.x_update_status(4)
         self.returnmsg = canceller + " has cancelled the exchange."
 
     def ignore(self, reason):
