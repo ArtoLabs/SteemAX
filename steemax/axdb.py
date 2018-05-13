@@ -2,10 +2,11 @@
 
 from dateutil.parser import parse
 from datetime import datetime, timedelta
+from steemax import axmsg
 import pymysql
 import random
-import axmsg
 import sys
+import re
 
 xmsg = axmsg.AXmsg()
 

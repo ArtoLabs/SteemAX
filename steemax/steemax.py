@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 
 from cmd import Cmd
-import axe
-import axdb
-import axverify
+from steemax import axe
+from steemax import axdb
+from steemax import axverify
+from steemax import axmsg
+from steemax import axtrans
 import re
 import sys
-import axmsg
+
 
 xmsg = axmsg.AXmsg()
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
@@ -110,12 +112,16 @@ def run(args=None):
 
 class MyPrompt(Cmd):
     ''' Command line interface for SteemAX
-        
     '''
 
 
     def do_run(self, args):
         axe.x_run_exchanges("")
+
+
+    def do_process(self, args):
+        xtrans = axtrans.AXtrans()
+        xtrans.x_fetch_history()
 
 
     def do_invite(self, args):
@@ -179,7 +185,6 @@ class MyPrompt(Cmd):
         else:
             xmsg.x_message("To initiate this barter send any amount SBD to @steem-ax with the following in the memo:\n\n    " +
                 memoid + ":barter:" + per + ":" + ratio + ":" + dur)
-
 
 
     def do_cancel(self, args):

@@ -5,8 +5,8 @@ from datetime import datetime
 from steem import Steem
 from steembase import exceptions
 import re
-import axmsg
-import axdb
+from steemax import axmsg
+from steemax import axdb
 import sys
 
 nodes = ['https://steemd.pevo.science',
@@ -43,14 +43,15 @@ class Reaction():
             self.reaction = "accepted"
             xdb.x_update_status(1)
             self.returnmsg = acct2 + " has accepted the invite. The auto-upvote exchange will begin immediately."
-        else:
-            self.ignore("Please wait for " + acct1 + " to respond.")
-        if acct1 == mf and int(rstatus) == 1 or int(rstatus) == 3:
+        elif acct1 == mf and int(rstatus) == 1 or int(rstatus) == 3:
             self.reaction = "accepted"
             xdb.x_update_status(1)
             self.returnmsg = acct1 + " has accepted the invite. The auto-upvote exchange will begin immediately."
         else:
-            self.ignore("Please wait for " + acct2 + " to respond.")
+            if acct2 == mf:
+                self.ignore("Please wait for " + acct1 + " to respond.")
+            else:
+                self.ignore("Please wait for " + acct2 + " to respond.")
 
 
     def barter(self, acct1, acct2, memoid, mf, rstatus, per, ratio, dur):
@@ -173,6 +174,8 @@ class AXtrans:
                             sendto = xdb.sendto
                         if self.x_send(sendto, self.amt, react.returnmsg):
                             xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, react.reaction, self.txtime)
+                        else:
+                            xmsg.x_error_message("Could not send transaction.")
                     else:
                         xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, "Invalid Memo ID. Ignored", self.txtime)
                     

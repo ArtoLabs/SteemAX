@@ -7,8 +7,8 @@ from steem.converter import Converter
 from steem.amount import Amount
 from steembase.account import PrivateKey
 from steembase.exceptions import InvalidWifError
-import axdb
-import axmsg
+from steemax import axdb
+from steemax import axmsg
 
 nodes = ['https://steemd.pevo.science',
     'https://steemd.minnowsupportproject.org',

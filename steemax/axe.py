@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import axdb
-import axverify
+from steemax import axdb
+from steemax import axverify
 
 xdb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 xverify = axverify.AXverify()
