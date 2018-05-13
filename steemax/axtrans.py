@@ -39,19 +39,18 @@ class Reaction():
 
 
     def accept(self, acct1, acct2, mf, rstatus):
-        if acct2 == mf and (int(rstatus) == 0 or int(rstatus) == 2):
+        if acct2 == mf and (int(rstatus) in range(0,2)):
             self.reaction = "accepted"
             xdb.x_update_status(1)
             self.returnmsg = acct2 + " has accepted the invite. The auto-upvote exchange will begin immediately."
-        if acct1 == mf and int(rstatus) == 3:
+        else:
+            self.ignore("Please wait for " + acct1 + " to respond.")
+        if acct1 == mf and int(rstatus) == 1 or int(rstatus) == 3:
             self.reaction = "accepted"
             xdb.x_update_status(1)
             self.returnmsg = acct1 + " has accepted the invite. The auto-upvote exchange will begin immediately."
         else:
-            if acct1 == mf:
-                self.ignore("Please wait for " + acct2 + " to respond.")
-            elif acct2 == mf:
-                self.ignore("Please wait for " + acct1 + " to respond.")
+            self.ignore("Please wait for " + acct2 + " to respond.")
 
 
     def barter(self, acct1, acct2, memoid, mf, rstatus, per, ratio, dur):
@@ -161,7 +160,7 @@ class AXtrans:
                         elif (self.action == "cancel"):
                             react.cancel()
                         elif (self.action == "accept"):
-                            react.accept(acct1, acct2, self.memofrom)
+                            react.accept(acct1, acct2, self.memofrom, rstatus)
                         elif (self.action == "barter"):
                             react.barter(acct1, acct2, self.memoid, self.memofrom, rstatus, self.percentage, self.ratio, self.duration)
                         else:
