@@ -46,4 +46,8 @@ GRANT ALL PRIVILEGES ON steemax.* to 'steemax'@'localhost';
 
 exit
 
+steempy importaccount
+
+export UNLOCK=''
+
 

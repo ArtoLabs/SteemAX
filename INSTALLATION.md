@@ -40,5 +40,7 @@ Be sure to write down the root password that you will create when installing MyS
 
 `exit`
 
+`steempy importaccount`
 
+`export UNLOCK=''`
 
