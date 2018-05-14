@@ -4,10 +4,10 @@ from dateutil.parser import parse
 from datetime import datetime
 from steem import Steem
 from steembase import exceptions
-import re
 from steemax import axmsg
 from steemax import axdb
 import sys
+import re
 
 nodes = ['https://steemd.pevo.science',
     'https://steemd.minnowsupportproject.org',
@@ -23,9 +23,16 @@ steemaxacct = "artturtle"
 
 
 class Reaction():
+    ''' The reaction class defines the behavior of steemax as it processes SBD transactions and their related
+    memo messages.
+    '''
 
 
-    def start(self, acct1, acct2, memofrom, rstatus):    
+    def start(self, acct1, acct2, memofrom, rstatus):
+        ''' The start method grants the authority to the exchange from the inviter. Once an invite has been 
+        created at the steemax website, the inviter must authorize sending the invite by using the memo id
+        and the start command.
+        '''  
         if acct1 == memofrom:
             if rstatus < 0:
                 self.reaction = "started"
@@ -39,6 +46,11 @@ class Reaction():
 
 
     def accept(self, acct1, acct2, mf, rstatus):
+        ''' The accept method is used to authorize a change whenever an invite or a barter is sent. When an invite is sent the 
+        invitee can respond with the accept command to authorize the exchange. The invitee must first go to the steemax website
+        and submit either their private posting key or (soon to come) steemconnect token. Similarly, a barter is authorized when the receiving
+        party responds with the accept command in the memo
+        '''
         if acct2 == mf and (int(rstatus) in range(0,2)):
             self.reaction = "accepted"
             xdb.x_update_status(1)
@@ -55,6 +67,9 @@ class Reaction():
 
 
     def barter(self, acct1, acct2, memoid, mf, rstatus, per, ratio, dur):
+        ''' A barter command can be used any time after both parties have authorized the exchange and both posting keys (steemconnect tokens)
+        are present.
+        '''
         if acct1 == mf and int(rstatus) > 0:
             self.reaction = "acct1 bartering"
             status = 2
@@ -82,13 +97,17 @@ class Reaction():
                 xmsg.x_error_message("Could not update Memo ID " + memoid)
 
 
-    def cancel(self, canceller):
+    def cancel(self, canceller)
+        ''' The cancel command can be given at any time by either party
+        '''
         self.reaction = "cancelled"
         xdb.x_update_status(4)
         self.returnmsg = canceller + " has cancelled the exchange."
 
 
     def ignore(self, reason):
+        ''' If a command or action is invalid a refund is sent with a reason.
+        '''
         self.reaction = "refund"
         self.returnmsg = reason
 
@@ -107,6 +126,9 @@ class AXtrans:
 
 
     def x_parse_memo(self, memofrom=None, memo=None, amt=None, trxid=None, txtime=None):
+        ''' Takes the memo message received from an inviter or invitee and separates it into
+        it's various parts.
+        '''
         self.memofrom=memofrom
         self.amt=amt
         self.trxid=trxid
@@ -123,6 +145,8 @@ class AXtrans:
 
 
     def x_send(self, to="artopium", amt="0.001 SBD", msg="test"):
+        ''' Actually sends the transaction to the steem blockchain
+        '''
         r = amt.split(" ")
         try:
             s.commit.transfer(to, float(r[0]), r[1], msg, steemaxacct)
@@ -139,8 +163,11 @@ class AXtrans:
 
 
     def x_fetch_history(self):
-        ''' Grabs the transaction history to see what's been sent to steemax.
-        Currently using @artturtle account for testing. Replace with the account of choice
+        ''' Grabs the transaction history to see what's been sent to steemax. using the methods above, the memo message
+        is parsed, and according to the command contained in the message and the memo id the steemax account wither forwards
+        the money sent and performs the directed action, or if an action is invalid refunds the money to the sender. Uses
+        steempy cli wallet for authorization.
+        Currently using @artturtle account for testing. 
         '''
         last_trans_time = xdb.x_get_most_recent_trans()
         react = Reaction()
@@ -154,8 +181,7 @@ class AXtrans:
                         acct1 = xdb.dbresults[0][0]
                         acct2 = xdb.dbresults[0][1]
                         rstatus = int(xdb.dbresults[0][2])
-
-
+                        # Parse the commands and react accordingly
                         if (self.action == "start"):
                              react.start(acct1, acct2, self.memofrom, rstatus)
                         elif (self.action == "cancel"):
@@ -166,8 +192,7 @@ class AXtrans:
                             react.barter(acct1, acct2, self.memoid, self.memofrom, rstatus, self.percentage, self.ratio, self.duration)
                         else:
                             react.ignore("Invalid action.")
-
-
+                        # If the command was invalid send the money back
                         if react.reaction == "refund":
                             sendto = self.memofrom
                         else:

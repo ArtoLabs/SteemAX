@@ -21,11 +21,15 @@ class AXdb:
 
 
     def x_open_db(self):
+        ''' opens a database connection
+        '''
         self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
         self.cursor = self.db.cursor()
 
 
     def x_get_results(self):
+        ''' Gets the results of an SQL statement
+        '''
         try:
             self.cursor.execute(self.sql)
             self.dbresults = self.cursor.fetchall()
@@ -39,6 +43,8 @@ class AXdb:
 
 
     def x_commit(self):
+        ''' Commits the actions of an SQL statement to the database
+        '''
         try:
             self.cursor.execute(self.sql)
             self.db.commit()
@@ -76,6 +82,8 @@ class AXdb:
 
 
     def x_get_most_recent_trans(self):
+        ''' Returns the timestamp from the most recent memo id message. 
+        '''
         self.x_open_db()
         self.sql = "SELECT TxTime FROM axtrans WHERE 1 ORDER BY TxTime DESC LIMIT 1;"
         if not self.x_get_results():
@@ -86,14 +94,9 @@ class AXdb:
             return self.dbresults[0][0]
 
 
-    def x_check_trans_history(self, memoid):
-        self.x_open_db()
-        self.sql = "SELECT TxTime, DiscoveryTime, Action FROM axtrans WHERE TXID = '"+memoid+"';"
-        self.x_get_results()
-        self.db.close()
-
-
     def x_add_trans(self, txid, memofrom, amt, memoid, action, txtime):
+        ''' Adds a processed transaction to the axtrans database table which is a history of all processed transactions
+        '''
         self.x_open_db()
         self.sql = "INSERT INTO axtrans (TXID, MemoFrom, Amount, MemoID, Action, TxTime) VALUES ('"+txid+"', '"+memofrom+"', '"+amt+"', '"+memoid+"', '"+action+"', '"+txtime+"');" 
         self.x_commit()
@@ -101,6 +104,8 @@ class AXdb:
 
 
     def x_check_reward_fund_renewal(self):
+        ''' Checks the timestamp from the database to see if the stored info is stale (older than 120 seconds)
+        '''
         delta = datetime.now() - self.dbresults[0][3]
         if delta.seconds > 120:
             return True
@@ -109,6 +114,9 @@ class AXdb:
 
 
     def x_save_reward_fund(self, rb, rc, base):
+        ''' Saves the current Reward Balance, Recent Claims and the price of STEEM in the database for quicker 
+        retreival and less taxation on steem nodes.
+        '''
         self.x_open_db()
         self.sql = "UPDATE axglobal SET RewardBalance = '"+str(rb)+"', RecentClaims = '"+str(rc)+"', Base = '"+str(base)+"' WHERE ID = '1';"
         r = self.x_commit()
@@ -117,6 +125,9 @@ class AXdb:
 
 
     def x_fetch_reward_fund(self):
+        ''' Retrives the Reward Balance, Recent Claims and the price of STEEM from the database instead of from
+        the steem node
+        '''
         self.x_open_db()
         self.sql = "SELECT RewardBalance, RecentClaims, Base, Time FROM axglobal WHERE ID = '1';"
         if not self.x_get_results():
@@ -162,7 +173,7 @@ class AXdb:
 
     def x_cancel (self, acct, memoid):
         self.x_open_db()
-        '''Either account can cancel
+        ''' Either account can cancel
         '''
         self.sql = "DELETE FROM axlist WHERE (Account1 = '"+acct+"' OR (Account2 = '"+acct+"')) AND (MemoID = '"+memoid+"');"
         r = self.x_commit()
@@ -186,6 +197,14 @@ class AXdb:
 
 
     def x_update_status(self, status):
+        ''' Updates the status of an exchange, specifically used if a barter has been started. The status numbers represent:
+                -1 = waiting for inviter to authorize
+                 0 = invite has beed sent. waiting for invitee to authorize
+                 1 = exchange authorized by both parties, exchange is underway
+                 2 = inviter (account1) has offered to barter
+                 3 = invitee (account2) has offered to barter
+                 4 = exchange has been cancelled
+        '''
         self.x_open_db()
         self.sql = ("UPDATE axlist SET Status = '"+str(status)+"';")
         r = self.x_commit()
@@ -230,6 +249,8 @@ class AXdb:
 
 
     def x_check_status (self, memoid):
+        ''' The check status method is used to determine if authorization requests are valid
+        '''
         self.x_open_db()
         self.sql = "SELECT Status FROM axlist WHERE MemoID = '"+memoid+"';"
         if self.x_get_results():
@@ -298,6 +319,8 @@ class AXdb:
 
 
     def get_axlist (self, mode):
+        ''' Gets all auto-upvote exchanges
+        '''
         self.x_open_db()
         self.sql = """SELECT * FROM axlist WHERE 1;"""
         self.x_get_results()
