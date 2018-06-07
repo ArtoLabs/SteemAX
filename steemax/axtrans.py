@@ -36,7 +36,7 @@ class Reaction():
         if acct1 == memofrom:
             if rstatus < 0:
                 self.reaction = "started"
-                xdb.x_update_status(0)
+                xdb.update_status(0)
                 self.returnmsg = ("Hello " + acct2 + ", " + acct1 + " has invited you to an auto-upvote exchange. To respond to this " +
                     "invite please visit [link]")
             else:
@@ -53,11 +53,11 @@ class Reaction():
         '''
         if acct2 == mf and (int(rstatus) in range(0,2)):
             self.reaction = "accepted"
-            xdb.x_update_status(1)
+            xdb.update_status(1)
             self.returnmsg = acct2 + " has accepted the invite. The auto-upvote exchange will begin immediately."
         elif acct1 == mf and int(rstatus) == 1 or int(rstatus) == 3:
             self.reaction = "accepted"
-            xdb.x_update_status(1)
+            xdb.update_status(1)
             self.returnmsg = acct1 + " has accepted the invite. The auto-upvote exchange will begin immediately."
         else:
             if acct2 == mf:
@@ -91,17 +91,17 @@ class Reaction():
             elif acct1 == mf:
                 self.ignore("Invalid barter. Please wait for " + acct2 + " to respond first.")
         if status:
-            if xdb.x_update_invite(per, ratio, dur, memoid, status):
-                xmsg.x_message("Invite for Memo ID " + memoid + " has been updated.")
+            if xdb.update_invite(per, ratio, dur, memoid, status):
+                xmsg.message("Invite for Memo ID " + memoid + " has been updated.")
             else:
-                xmsg.x_error_message("Could not update Memo ID " + memoid)
+                xmsg.error_message("Could not update Memo ID " + memoid)
 
 
     def cancel(self, canceller)
         ''' The cancel command can be given at any time by either party
         '''
         self.reaction = "cancelled"
-        xdb.x_update_status(4)
+        xdb.update_status(4)
         self.returnmsg = canceller + " has cancelled the exchange."
 
 
@@ -125,7 +125,7 @@ class AXtrans:
         self.duration=None
 
 
-    def x_parse_memo(self, memofrom=None, memo=None, amt=None, trxid=None, txtime=None):
+    def parse_memo(self, memofrom=None, memo=None, amt=None, trxid=None, txtime=None):
         ''' Takes the memo message received from an inviter or invitee and separates it into
         it's various parts.
         '''
@@ -144,40 +144,40 @@ class AXtrans:
             self.duration = memo[4]
 
 
-    def x_send(self, to="artopium", amt="0.001 SBD", msg="test"):
+    def send(self, to="artopium", amt="0.001 SBD", msg="test"):
         ''' Actually sends the transaction to the steem blockchain
         '''
         r = amt.split(" ")
         try:
             s.commit.transfer(to, float(r[0]), r[1], msg, steemaxacct)
         except exceptions.RPCError as e:
-            xmsg.x_error_message(exceptions.decodeRPCErrorMsg(e))
+            xmsg.error_message(exceptions.decodeRPCErrorMsg(e))
             return False
         except:
             e = sys.exc_info()[0]
-            xmsg.x_error_message(e)
+            xmsg.error_message(e)
             return False
         else:
-            xmsg.x_message("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
+            xmsg.message("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
             return True
 
 
-    def x_fetch_history(self):
+    def fetch_history(self):
         ''' Grabs the transaction history to see what's been sent to steemax. using the methods above, the memo message
         is parsed, and according to the command contained in the message and the memo id the steemax account wither forwards
         the money sent and performs the directed action, or if an action is invalid refunds the money to the sender. Uses
         steempy cli wallet for authorization.
         Currently using @artturtle account for testing. 
         '''
-        last_trans_time = xdb.x_get_most_recent_trans()
+        last_trans_time = xdb.get_most_recent_trans()
         react = Reaction()
         h = s.get_account_history(steemaxacct, -1, 100)
         for a in h:
             this_trans_time = datetime.strptime(a[1]['timestamp'], '%Y-%m-%dT%H:%M:%S')
             if a[1]['op'][0] == 'transfer' and this_trans_time > last_trans_time:
-                self.x_parse_memo(a[1]['op'][1]['from'], a[1]['op'][1]['memo'], a[1]['op'][1]['amount'], a[1]['trx_id'], a[1]['timestamp'])
+                self.parse_memo(a[1]['op'][1]['from'], a[1]['op'][1]['memo'], a[1]['op'][1]['amount'], a[1]['trid'], a[1]['timestamp'])
                 if a[1]['op'][1]['to'] == steemaxacct and re.match(r'^\s*[0-9]{32}$', self.memoid):
-                    if xdb.x_verify_memoid(self.memofrom, self.memoid):
+                    if xdb.verify_memoid(self.memofrom, self.memoid):
                         acct1 = xdb.dbresults[0][0]
                         acct2 = xdb.dbresults[0][1]
                         rstatus = int(xdb.dbresults[0][2])
@@ -197,12 +197,12 @@ class AXtrans:
                             sendto = self.memofrom
                         else:
                             sendto = xdb.sendto
-                        if self.x_send(sendto, self.amt, react.returnmsg):
-                            xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, react.reaction, self.txtime)
+                        if self.send(sendto, self.amt, react.returnmsg):
+                            xdb.add_trans(self.trxid, self.memofrom, self.amt, self.memoid, react.reaction, self.txtime)
                         else:
-                            xmsg.x_error_message("Could not send transaction.")
+                            xmsg.error_message("Could not send transaction.")
                     else:
-                        xdb.x_add_trans(self.trxid, self.memofrom, self.amt, self.memoid, "Invalid Memo ID. Ignored", self.txtime)
+                        xdb.add_trans(self.trxid, self.memofrom, self.amt, self.memoid, "Invalid Memo ID. Ignored", self.txtime)
                     
 
 
@@ -211,9 +211,9 @@ class AXtrans:
 if __name__ == "__main__":
 
     a = AXtrans()
-    a.x_fetch_history()
+    a.fetch_history()
 
-    #a.x_send()
+    #a.send()
 
 # EOF
 

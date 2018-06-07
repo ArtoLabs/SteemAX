@@ -26,7 +26,7 @@ def enter_account_name(flag, mode):
     while True:
         acct = input(msg)
         if not re.match( r'^[a-z0-9\-]+$', acct) or len(acct) == 0 or len(acct) > 32:
-            xmsg.x_message("The account name you entered is blank or contains invalid characters.")
+            xmsg.message("The account name you entered is blank or contains invalid characters.")
         else:
             if xverify.get_vote_value(acct, 100, 0, mode):
                 break
@@ -39,9 +39,9 @@ def enter_memo_id(acct):
     while True:
         memoid = input('Memo ID: ')
         if not re.match( r'^[0-9]+$', memoid) or len(memoid) == 0 or len(memoid) > 32:
-            xmsg.x_message("The Memo ID you entered is blank or contains invalid characters.")
+            xmsg.message("The Memo ID you entered is blank or contains invalid characters.")
         else:
-            if xdb.x_verify_memoid(acct, memoid):
+            if xdb.verify_memoid(acct, memoid):
                 break
     return memoid
 
@@ -53,7 +53,7 @@ def enter_percentage(acct):
     while True:
         per = input("Percentage of " + acct + "'s upvote (1 to 100): ")
         if not re.match( r'^[0-9]+$', per) or len(per) == 0 or len(per) > 3 or int(per) < 1 or int(per) > 100:
-            xmsg.x_message("Please only enter a number between 1 and 100.")
+            xmsg.message("Please only enter a number between 1 and 100.")
         else:
             break
     return per
@@ -67,9 +67,9 @@ def enter_ratio(acct1, acct2, per, flag):
     while True:
         ratio = input('Ratio between upvotes. Enter as X ('+acct1+') to 1 ('+acct2+'). X is: ')
         if not re.match( r'^[0-9\.]+$', ratio) or len(ratio) == 0 or len(ratio) > 5 or float(ratio) < 0.01 or float(ratio) > 99:
-            xmsg.x_message("Please enter a one or two digit number to represent a ratio in the format x to 1 where x is your input. Enter a decimal to two places to represent a ratio less than one. e.g. 0.05 to 1")
+            xmsg.message("Please enter a one or two digit number to represent a ratio in the format x to 1 where x is your input. Enter a decimal to two places to represent a ratio less than one. e.g. 0.05 to 1")
         else:
-            if xverify.x_eligible_votes(acct1, acct2, per, ratio, "", flag):
+            if xverify.eligible_votes(acct1, acct2, per, ratio, "", flag):
                 break
     return ratio
 
@@ -80,7 +80,7 @@ def enter_duration():
     while True:
         dur = input('Duration of exchange in days: ')
         if not re.match( r'[0-9]', dur) or len(dur) == 0 or len(dur) > 3:
-            xmsg.x_message("Please only enter a number up to three digits.")
+            xmsg.message("Please only enter a number up to three digits.")
         else:
             break
     return dur
@@ -92,9 +92,9 @@ def enter_key(acct):
     while True:
         key = input('Your Private Posting Key: ')
         if not re.match( r'^[A-Za-z0-9]+$', key) or len(key) == 0 or len(key) > 64:
-            xmsg.x_message("The private posting key you entered is blank or contains invalid characters.")
+            xmsg.message("The private posting key you entered is blank or contains invalid characters.")
         else:
-            if xverify.x_verify_key(acct, key, ""):
+            if xverify.verify_key(acct, key, ""):
                 break
     return key
 
@@ -104,7 +104,7 @@ def enter_key(acct):
 
 def run(args=None):
 
-    xdb.x_first_time_setup()
+    xdb.first_time_setup()
     prompt = MyPrompt()
     prompt.prompt = '[steemax]# '
     prompt.cmdloop('\n   ** Welcome to SteemAX ** \n')
@@ -116,12 +116,12 @@ class MyPrompt(Cmd):
 
 
     def do_run(self, args):
-        axe.x_run_exchanges("")
+        axe.run_exchanges("")
 
 
     def do_process(self, args):
         xtrans = axtrans.AXtrans()
-        xtrans.x_fetch_history()
+        xtrans.fetch_history()
 
 
     def do_invite(self, args):
@@ -133,11 +133,11 @@ class MyPrompt(Cmd):
         per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
-        memoid = xdb.x_add_invite (acct1, acct2, key, per, ratio, dur)
+        memoid = xdb.add_invite (acct1, acct2, key, per, ratio, dur)
         if memoid:
-            xmsg.x_message("An invite has been created. To authorize this exchange and to send the invite please send any amount of SBD to @steem-ax along with the following memo message. Your SBD will be forwarded to the invitee:\n\n   " + memoid + ":start\n")
+            xmsg.message("An invite has been created. To authorize this exchange and to send the invite please send any amount of SBD to @steem-ax along with the following memo message. Your SBD will be forwarded to the invitee:\n\n   " + memoid + ":start\n")
         else:
-            xmsg.x_message("An invite could not be created.")
+            xmsg.message("An invite could not be created.")
 
 
     def do_accept(self, args):
@@ -145,19 +145,19 @@ class MyPrompt(Cmd):
         '''
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        if not xdb.x_verify_invitee(acct, memoid):
-            xmsg.x_error_message("The Memo ID could not be verified.")
+        if not xdb.verify_invitee(acct, memoid):
+            xmsg.error_message("The Memo ID could not be verified.")
             return
-        if int(xdb.x_check_status(memoid)) < 0:
-            xmsg.x_error_message("The inviter has not yet authorized the exchange.")
+        if int(xdb.check_status(memoid)) < 0:
+            xmsg.error_message("The inviter has not yet authorized the exchange.")
             return            
         key = enter_key(acct)
-        if xdb.x_accept_invite(acct, memoid, key):
-            xmsg.x_message("The exchange invite has been accepted. To authorize this change send any amount " + 
+        if xdb.accept_invite(acct, memoid, key):
+            xmsg.message("The exchange invite has been accepted. To authorize this change send any amount " + 
                 "of SBD to @steem-ax along with the following memo message. The SBD you send will be forwarded to the other party: \n\n    " + 
                 memoid + ":accept")
         else:
-            xmsg.x_error_message("Could not accept the invite.")
+            xmsg.error_message("Could not accept the invite.")
 
 
     def do_barter(self, args):
@@ -165,7 +165,7 @@ class MyPrompt(Cmd):
         '''
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        asin = xdb.x_verify_account(acct, memoid)
+        asin = xdb.verify_account(acct, memoid)
         if not asin:
             return
         if asin[0] == 1 and asin[1] == 0:
@@ -175,15 +175,15 @@ class MyPrompt(Cmd):
             acct1 = asin[2]
             acct2 = acct
         else:
-            xmsg.x_error_message(acct + " is neither inviter or invitee. I know, it's weird.")
+            xmsg.error_message(acct + " is neither inviter or invitee. I know, it's weird.")
         print (acct1 + " is the inviter and " + acct2 + " is the invitee.")
         per = enter_percentage(acct1)
         ratio = enter_ratio(acct1, acct2, per, 1)
         dur = enter_duration()
-        if not xdb.x_verify_memoid(acct, memoid):
-            xmsg.x_message("Memo ID does not match the account provided.")
+        if not xdb.verify_memoid(acct, memoid):
+            xmsg.message("Memo ID does not match the account provided.")
         else:
-            xmsg.x_message("To initiate this barter send any amount SBD to @steem-ax with the following in the memo:\n\n    " +
+            xmsg.message("To initiate this barter send any amount SBD to @steem-ax with the following in the memo:\n\n    " +
                 memoid + ":barter:" + per + ":" + ratio + ":" + dur)
 
 
@@ -192,12 +192,12 @@ class MyPrompt(Cmd):
         '''
         acct = enter_account_name(1, "")
         memoid = enter_memo_id(acct)
-        if not xdb.x_verify_account(acct, memoid):
+        if not xdb.verify_account(acct, memoid):
             return
-        if xdb.x_cancel(acct, memoid):
-            xmsg.x_message("The exchange has been canceled")
+        if xdb.cancel(acct, memoid):
+            xmsg.message("The exchange has been canceled")
         else:
-            xmsg.x_error_message("Could not cancel the exchange")
+            xmsg.error_message("Could not cancel the exchange")
 
 
     def do_eligible(self, args):
@@ -213,13 +213,13 @@ class MyPrompt(Cmd):
         ''' Find and verify a Steemit account and see if it has started an exchange
         '''
         acct = enter_account_name(1, "verbose")
-        xdb.x_verify_account(acct, "")
+        xdb.verify_account(acct, "")
 
 
     def do_pool(self, args):
         ''' Display current Steemit Reward Balance, Recent Claims and price of STEEM
         '''
-        xverify.x_get_steemit_balances()
+        xverify.get_steemit_balances()
 
 
     # Quit

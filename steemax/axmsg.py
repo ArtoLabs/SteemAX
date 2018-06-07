@@ -11,12 +11,12 @@ class AXmsg:
     def __init__(self):
         self.mode = ""
 
-    def x_message(self, msg):
+    def message(self, msg):
         if self.mode != "quiet":
             print (msg)
         logger.info(msg)
 
-    def x_error_message(self, msg):
+    def error_message(self, msg):
         if self.mode != "quiet":
             print (msg)
         logger.error(msg)
@@ -27,7 +27,7 @@ class AXmsg:
 if __name__ == "__main__":
 
     a = AXmsg()
-    a.x_message("AXmsg class is up and running.")
+    a.message("AXmsg class is up and running.")
 
 
 # EOF
