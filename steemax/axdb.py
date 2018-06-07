@@ -4,7 +4,6 @@ from dateutil.parser import parse
 from datetime import datetime, timedelta
 from steemax import axmsg
 from steemax.db import DB
-import pymysql
 import random
 import sys
 import re

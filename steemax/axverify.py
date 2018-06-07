@@ -1,90 +1,32 @@
 #!/usr/bin/python3
 
-from dateutil.parser import parse
-from datetime import datetime
-from steem import Steem
-from steem.converter import Converter
-from steem.amount import Amount
-from steembase.account import PrivateKey
-from steembase.exceptions import InvalidWifError
-from steemax import axdb
 from steemax import axmsg
-
-nodes = ['https://steemd.pevo.science',
-    'https://steemd.minnowsupportproject.org',
-    'https://steemd.steemgigs.org',
-    'https://steemd.privex.io',
-    'https://steemd.steemit.com']
-
-s = Steem(nodes)
-c = Converter()
-adb = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
-xmsg = axmsg.AXmsg()
+from steemax import steemutil
 
 
 class AXverify:
 
+
+    def __init__(self):
+
+        self.msg = axmsg.AXmsg()
+
+        self.util = steemutil.Utilities()
+
  
+
     def print_steemit_balances(self):
+
+        self.util.reward_pool_balances()
+
         bal_banner = ("\n------------------------------------------------" +
-            "\n   Reward balance: " + str(self.reward_balance) +
-            "\n   Recent claims: " + str(self.recent_claims) +
-            "\n   Steem = $" + str(self.base) +
+            "\n   Reward balance: " + str(self.util.reward_balance) +
+            "\n   Recent claims: " + str(self.util.recent_claims) +
+            "\n   Steem = $" + str(self.util.base) +
             "\n------------------------------------------------\n")
-        xmsg.message(bal_banner)
 
+        self.msg.message(bal_banner)
 
-    def get_steemit_balances(self):
-        '''Get and the current Steemit reward fund steem-python object used to retreive the following values
-                The current Steemit reward balance (reward pool)
-                The recent claims made on the reward balance (upvotes for the day subtracting from the reward pool)
-                The price of Steem in USD
-        '''
-        adb.fetch_reward_fund()
-        if adb.check_reward_fund_renewal():    
-            reward_fund = s.get_reward_fund()
-            self.reward_balance = Amount(reward_fund["reward_balance"]).amount
-            self.recent_claims = float(reward_fund["recent_claims"])
-            self.base = Amount(s.get_current_median_history_price()["base"]).amount
-            adb.save_reward_fund(self.reward_balance, self.recent_claims, self.base)
-        else:
-            self.reward_balance = adb.results[0]
-            self.recent_claims = adb.results[1]
-            self.base = adb.results[2]
-        self.print_steemit_balances()
-
-
-    def verify_key (self, acctname, private_posting_key, mode):
-        ''' Get a new instance of the Steemd node and verify a Steemit Private Posting Key
-            by first converting the Private Posting Key into the Public Posting Key
-            then get the account for which the key is to be tested against then
-            compare the Public Posting Keys with each other.
-        '''
-        pubkey = 0
-        acct = ""
-        try:
-            steem = Steem(nodes, keys=[private_posting_key])
-        except InvalidWifError as e:
-            xmsg.error_message(e)
-            return False
-        try:
-            pubkey = PrivateKey(private_posting_key).pubkey
-        except:
-            xmsg.error_message("Bad private key")
-            return False
-        try:
-            acct = steem.get_account(acctname)
-        except:
-            xmsg.error_message("Could not connect to steemd")
-            return False
-        if acct:
-            pubkey2 = acct['posting']['key_auths'][0][0]
-        if str(pubkey) != str(pubkey2):
-            xmsg.error_message("The private key and account name provided do not match.")
-            return False
-        else:
-            xmsg.message("Private key is valid.")
-            return True
 
 
     def get_vote_value (self, acctname, weight, power, mode):
@@ -95,98 +37,60 @@ class AXverify:
         Calculate true voting power since last vote in range of 150 to 10000.
         Convert to rshares and STEEEM.
         '''
-        voteweight = int(weight) * 100
-        if voteweight < 150:
-            voteweight = 150
-        if voteweight > 10000:
-            voteweight = 10000
-        votepower = power * 100
-        # is a votepower supplied? Make sure it's within bounds
-        if votepower > 0:
-            if votepower < 150:
-                votepower = 150
-            elif votepower > 10000:
-                votepower = 10000
-        try:
-            acct = s.get_account(acctname)
-        except:
-            xmsg.error_message("Could not connect to steemd")
-            return False
-        if not acct:
-            xmsg.error_message("Could not find account: " + acctname)
-            return False
-        vp = acct['voting_power']
-        lvt = acct['last_vote_time']
-        vs = Amount(acct['vesting_shares']).amount
-        dvests = Amount(acct['delegated_vesting_shares']).amount
-        rvests = Amount(acct['received_vesting_shares']).amount
-        vests = (float(vs) - float(dvests)) + float(rvests) 
-        sp = c.vests_to_sp(vests)
-        # If votepower is zero we use the vote power supplied by steem. Supplied votepower is used to 
-        # compare two vote values at 100% rather than their current values.
-        if votepower > 0:
-            vpow_scaled = votepower
-            vpow = power
-        else:
-            delta = datetime.utcnow() - datetime.strptime(lvt,'%Y-%m-%dT%H:%M:%S')
-            td = delta.days
-            ts = delta.seconds
-            tt = (td * 86400) + ts
-            # time since last vote * sp_to_rshares range * seconds in a day * days it takes to regenerate
-            regenerated_vp = tt * 10000 / 86400 / 5
-            vpow_scaled = vp + regenerated_vp
-            # If more time has passed then is needed to reach 100% then we are just at 100%
-            if vpow_scaled > 10000:
-                vpow_scaled = 10000
-            # We hand vpow_scaled to sp_to_rshares and vpow to the screen
-            vpow = vpow_scaled / 100
-            vpow = round(vpow, 2)
-        rshares = c.sp_to_rshares(sp, vpow_scaled, voteweight)
+
+        self.util.check_balances(acctname)
+
+        votevalue = self.util.current_vote_value(weight, power, self.util.lastvotetime, self.util.steempower)
+
         if mode == "verbose":
-            self.get_steemit_balances()
-            votevalue = rshares * self.reward_balance / self.recent_claims * self.base
-            votevalue = round(votevalue, 4)
-            xmsg.message("\n__" + acctname + "__\n   Vote Power: " + str(vpow) + 
-                "%\n   Steem Power: " + str(sp) + "\n   Vote Value at " + str(weight) + "%: $" + str(votevalue) + "\n");
-        return rshares
+
+            self.msg.message("\n__" + acctname + "__\n   Vote Power: " + str(self.util.votepower) + 
+                "%\n   Steem Power: " + str(self.util.steempower) + "\n   Vote Value at " + str(weight) + "%: $" + str(votevalue) + "\n")
+
+        return self.util.rshares
+
 
 
     def verify_post (self, account1, account2, mode):
         ''' Gets only the most recent post, gets the timestamp and finds the age of the post in days.
         Is the post too old? Did account2 vote on the post already?
         '''
-        now = datetime.now()
-        try:
-            p = s.get_blog(account1, 0, 1)
-        except:
-            xmsg.error_message("Could not connect to steemd")
+
+        permlink =  self.util.get_post_info(account1)
+
+        if not permlink:
+
+            self.msg.error_message("No post for " + account1 + " made in the last " + self.util.post_max_days_old + " days.")
+
             return False
-        if not p:
-            xmsg.error_message("Could not find a blog post for " + account1)
-            return False
-        created = p[0]['comment']['created']
-        t = datetime.strptime(created,'%Y-%m-%dT%H:%M:%S')
-        delta = now - t
-        td = delta.days
-        if td > 5:
-            xmsg.message("@" + account1 + "/" + p[0]['comment']['permlink'] + " is more than 5 days old.")
-            return False
-        votes = s.get_active_votes(p[0]['comment']['author'], p[0]['comment']['permlink'])
-        for v in votes:
-            if v['voter'] == account2:
-                xmsg.message(account2 + " has aready voted on " + p[0]['comment']['permlink'])
-                return False
+
+        else:
+
+            votes = self.util.get_vote_history(account1, permlink)
+
+            for v in votes:
+                if v['voter'] == account2:
+                    self.msg.message(account2 + " has aready voted on " + permlink)
+                    return False
+
         return True
+
 
 
     def eligible_posts (self, account1, account2, mode):
         ''' Verify the posts of both accounts
         '''
+
         if not self.verify_post(account1, account2, mode):
+
             return False
+
         if not self.verify_post(account2, account1, mode):
+
             return False
+
         return True
+
 
 
     def eligible_votes (self, account1, account2, percentage, ratio, mode, flag):
@@ -200,50 +104,71 @@ class AXverify:
         If ratio was not acheived return false and suggest a new ratio. Otherwise display approximate 
         upvote matches and return true.
         '''
+
         if flag == 1:
             vpow = 100
         else:
             vpow = 0
-        exceeds = False
-        # If vpow is zero get_vote_value uses the value returned from steemd instead
+
+        # v1        Account 1 vote value
         v1 = self.get_vote_value(account1, percentage, vpow, mode)
+
         if not v1:
             return False
+
+        # v2        Account 2 vote value at 100% weight
         v2 = self.get_vote_value(account2, 100, vpow, mode)
+
         if not v2:
             return False
+
+        # v3        Percentage of Account2's vote needed to match Account1
         v3 = ((v1 / v2) * 100) / float(ratio)
         v3a = round(v3, 2)
-        r = float(ratio) / (1 / v3)
-        newratio = float(ratio) * r
-        newratio = round(newratio, 2)
+
+        exceeds = False
+
         if v3a < 1:
             v3 = 1
             exceeds = True
         if v3a > 100:
             v3 = 100
             exceeds = True
-        xmsg.message(account2 + " needs to vote " + str(v3a) + "% in order to meet " + account1)
+
+        self.msg.message(account2 + " needs to vote " + str(v3a) + "% in order to meet " + account1)
+
+        # v4        Account 2 vote value at percentage from v3
         v4 = self.get_vote_value(account2, v3, vpow, mode)
-        self.get_steemit_balances()
-        v1s = v1 * self.reward_balance / self.recent_claims * self.base 
-        v4s = v4 * self.reward_balance / self.recent_claims * self.base
-        v1s = round(v1s, 4)
-        v4s = round(v4s, 4)
+
+
+        # convert votes to steem value
+        v1s = self.util.rshares_to_steem(v1)
+        v4s = self.util.rshares_to_steem(v4)
+
+
+        # Do the values entered cause the value of Account2's vote to be larger than 100% or smaller than 1% ?
         if exceeds:
+
             if v3 == 1:
+
                 v5 = v4 - v1
-                v5s = v5 * self.reward_balance / self.recent_claims * self.base
-                xmsg.message(account2 + "'s vote of " + str(v4s) + " will be larger than " + account1 + "'s vote by: " + str(v5s))
+                v5s = self.util.rshares_to_steem(v5)
+                self.msg.message(account2 + "'s vote of " + str(v4s) + " will be larger than " + account1 + "'s vote by: " + str(v5s))
+
             if v3 == 100:
+
                 v5 = v1 - v4
-                v5s = v5 * self.reward_balance / self.recent_claims * self.base
-                xmsg.message(account1 + "'s vote of " + str(v1s) + " will be larger than " + account2 + "'s vote by: " + str(v5s))
-            xmsg.message("Perhaps try a new ratio of " + str(newratio) + " to 1")
+                v5s = self.util.rshares_to_steem(v5)
+                self.msg.message(account1 + "'s vote of " + str(v1s) + " will be larger than " + account2 + "'s vote by: " + str(v5s))
+
             return False
+
         else:
-            xmsg.message(account1 + " will upvote $" + str(v1s) + " and " + account2 + " will upvote $" + str(v4s));
+
+            self.msg.message(account1 + " will upvote $" + str(v1s) + " and " + account2 + " will upvote $" + str(v4s))
+
             return True
+
 
 
 # Run as main
