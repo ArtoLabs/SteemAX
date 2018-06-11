@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from steemax import axmsg
-from steemax import steemutil
+from screenlogger.screenlogger import Msg
+from simplesteem.simplesteem import SimpleSteem
 
 
 class AXverify:
@@ -9,20 +9,20 @@ class AXverify:
 
     def __init__(self):
 
-        self.msg = axmsg.AXmsg()
+        self.msg = Msg()
 
-        self.util = steemutil.Utilities()
+        self.steem = SimpleSteem()
 
  
 
     def print_steemit_balances(self):
 
-        self.util.reward_pool_balances()
+        self.steem.reward_pool_balances()
 
         bal_banner = ("\n------------------------------------------------" +
-            "\n   Reward balance: " + str(self.util.reward_balance) +
-            "\n   Recent claims: " + str(self.util.recent_claims) +
-            "\n   Steem = $" + str(self.util.base) +
+            "\n   Reward balance: " + str(self.steem.reward_balance) +
+            "\n   Recent claims: " + str(self.steem.recent_claims) +
+            "\n   Steem = $" + str(self.steem.base) +
             "\n------------------------------------------------\n")
 
         self.msg.message(bal_banner)
@@ -38,35 +38,39 @@ class AXverify:
         Convert to rshares and STEEEM.
         '''
 
-        self.util.check_balances(acctname)
+        self.steem.check_balances(acctname)
 
-        votevalue = self.util.current_vote_value(weight, power, self.util.lastvotetime, self.util.steempower)
+        votevalue = self.steem.current_vote_value(self.steem.lastvotetime, 
+                                                    self.steem.steempower, weight, power)
 
         if mode == "verbose":
 
-            self.msg.message("\n__" + acctname + "__\n   Vote Power: " + str(self.util.votepower) + 
-                "%\n   Steem Power: " + str(self.util.steempower) + "\n   Vote Value at " + str(weight) + "%: $" + str(votevalue) + "\n")
+            self.msg.message("\n__" + acctname + "__\n   Vote Power: " 
+                            + str(self.steem.votepower) + "%\n   Steem Power: " 
+                            + str(self.steem.steempower) + "\n   Vote Value at " + str(weight) 
+                            + "%: $" + str(votevalue) + "\n")
 
-        return self.util.rshares
+        return self.steem.rshares
 
 
 
     def verify_post (self, account1, account2, mode):
-        ''' Gets only the most recent post, gets the timestamp and finds the age of the post in days.
+        ''' Gets only the most recent post, gets the 
+        timestamp and finds the age of the post in days.
         Is the post too old? Did account2 vote on the post already?
         '''
 
-        permlink =  self.util.get_post_info(account1)
+        permlink = self.steem.get_post_info(account1)
 
         if not permlink:
 
-            self.msg.error_message("No post for " + account1 + " made in the last " + self.util.post_max_days_old + " days.")
+            self.msg.error_message("No post for " + account1)
 
             return False
 
         else:
 
-            votes = self.util.get_vote_history(account1, permlink)
+            votes = self.steem.vote_history(account1, permlink)
 
             for v in votes:
                 if v['voter'] == account2:
@@ -94,14 +98,22 @@ class AXverify:
 
 
     def eligible_votes (self, account1, account2, percentage, ratio, mode, flag):
-        ''' If the flag is raised use the full voting power to make the comparison rather
-        than the current voting power. Full voting power is used to make the ratio comparison
-        at the time the invite is created and during the barter process. Current voting power
-        is used at the time of the actual exchange. Verify that the upvote exchange will be equal.
-        Determine how much (percentage) of account2's upvote is needed to match account1.
-        Calculate better ratio if there is one. If the ratio cannot be acheived then 'exceeds' is true.
-        Get the new vote value from account2 at the adjusted percentage. Convert rshares to steem.
-        If ratio was not acheived return false and suggest a new ratio. Otherwise display approximate 
+        ''' If the flag is raised use the full voting 
+        power to make the comparison rather
+        than the current voting power. Full voting 
+        power is used to make the ratio comparison
+        at the time the invite is created and during 
+        the barter process. Current voting power
+        is used at the time of the actual exchange. 
+        Verify that the upvote exchange will be equal.
+        Determine how much (percentage) of account2's 
+        upvote is needed to match account1.
+        Calculate better ratio if there is one. If the 
+        ratio cannot be acheived then 'exceeds' is true.
+        Get the new vote value from account2 at the 
+        adjusted percentage. Convert rshares to steem.
+        If ratio was not acheived return false and suggest 
+        a new ratio. Otherwise display approximate 
         upvote matches and return true.
         '''
 
@@ -135,37 +147,44 @@ class AXverify:
             v3 = 100
             exceeds = True
 
-        self.msg.message(account2 + " needs to vote " + str(v3a) + "% in order to meet " + account1)
+        self.msg.message(account2 + " needs to vote " 
+                        + str(v3a) + "% in order to meet " + account1)
 
         # v4        Account 2 vote value at percentage from v3
         v4 = self.get_vote_value(account2, v3, vpow, mode)
 
 
         # convert votes to steem value
-        v1s = self.util.rshares_to_steem(v1)
-        v4s = self.util.rshares_to_steem(v4)
+        v1s = self.steem.rshares_to_steem(v1)
+        v4s = self.steem.rshares_to_steem(v4)
 
 
-        # Do the values entered cause the value of Account2's vote to be larger than 100% or smaller than 1% ?
+        # Do the values entered cause the value of Account2's 
+        # vote to be larger than 100% or smaller than 1% ?
         if exceeds:
 
             if v3 == 1:
 
                 v5 = v4 - v1
-                v5s = self.util.rshares_to_steem(v5)
-                self.msg.message(account2 + "'s vote of " + str(v4s) + " will be larger than " + account1 + "'s vote by: " + str(v5s))
+                v5s = self.steem.rshares_to_steem(v5)
+                self.msg.message(account2 + "'s vote of " + str(v4s) 
+                                + " will be larger than " + account1 
+                                + "'s vote by: " + str(v5s))
 
             if v3 == 100:
 
                 v5 = v1 - v4
-                v5s = self.util.rshares_to_steem(v5)
-                self.msg.message(account1 + "'s vote of " + str(v1s) + " will be larger than " + account2 + "'s vote by: " + str(v5s))
+                v5s = self.steem.rshares_to_steem(v5)
+                self.msg.message(account1 + "'s vote of " + str(v1s) 
+                                + " will be larger than " + account2 
+                                + "'s vote by: " + str(v5s))
 
             return False
 
         else:
 
-            self.msg.message(account1 + " will upvote $" + str(v1s) + " and " + account2 + " will upvote $" + str(v4s))
+            self.msg.message(account1 + " will upvote $" + str(v1s) 
+                            + " and " + account2 + " will upvote $" + str(v4s))
 
             return True
 

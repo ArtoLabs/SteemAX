@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 
-from dateutil.parser import parse
-from datetime import datetime
-from steemax import axmsg
-from steemax import axdb
-from steemax import steemutil
-from steemax import axconfig
 import sys
 import re
 
+from dateutil.parser import parse
+from datetime import datetime
+
+from steemax import axdb
+from steemax import axconfig
+
+from screenlogger.screenlogger import Msg
+from simplesteem.simplesteem import SimpleSteem
 
 
 class Reaction():
-    ''' The reaction class defines the behavior of steemax as it processes SBD transactions and their related
+    ''' The reaction class defines the behavior of steemax 
+    as it processes SBD transactions and their related
     memo messages.
     '''
 
@@ -21,26 +24,28 @@ class Reaction():
 
         self.cfg = axconfig.Config()
 
-        self.msg = axmsg.AXmsg()
+        self.msg = Msg()
 
-        self.db = axdb.AXdb(self.cfg.dbusername, self.cfg.dbpass, self.cfg.dbname)
+        self.db = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
 
 
 
     def start(self, acct1, acct2, memofrom, rstatus):
-        ''' The start method grants the authority to the exchange from the inviter. Once an invite has been 
-        created at the steemax website, the inviter must authorize sending the invite by using the memo id
+        ''' The start method grants the authority to the 
+        exchange from the inviter. Once an invite has been 
+        created at the steemax website, the inviter must 
+        authorize sending the invite by using the memo id
         and the start command.
         ''' 
- 
         if acct1 == memofrom:
 
             if rstatus < 0:
 
                 self.reaction = "started"
                 self.db.update_status(0)
-                self.returnmsg = ("Hello " + acct2 + ", " + acct1 + " has invited you to an auto-upvote exchange. To respond to this " +
-                    "invite please visit [link]")
+                self.returnmsg = ("Hello " + acct2 + ", " + acct1 
+                    + " has invited you to an auto-upvote exchange. To respond to this " 
+                    + "invite please visit [link]")
 
             else:
 
@@ -52,9 +57,12 @@ class Reaction():
 
 
     def accept(self, acct1, acct2, mf, rstatus):
-        ''' The accept method is used to authorize a change whenever an invite or a barter is sent. When an invite is sent the 
-        invitee can respond with the accept command to authorize the exchange. The invitee must first go to the steemax website
-        and submit either their private posting key or (soon to come) steemconnect token. Similarly, a barter is authorized when the receiving
+        ''' The accept method is used to authorize a change whenever 
+        an invite or a barter is sent. When an invite is sent the 
+        invitee can respond with the accept command to authorize 
+        the exchange. The invitee must first go to the steemax website
+        and submit either their private posting key or (soon to come) 
+        steemconnect token. Similarly, a barter is authorized when the receiving
         party responds with the accept command in the memo
         '''
 
@@ -82,7 +90,8 @@ class Reaction():
 
 
     def barter(self, acct1, acct2, memoid, mf, rstatus, per, ratio, dur):
-        ''' A barter command can be used any time after both parties have authorized the exchange and both posting keys (steemconnect tokens)
+        ''' A barter command can be used any time after both parties 
+        have authorized the exchange and both posting keys (steemconnect tokens)
         are present.
         '''
 
@@ -162,7 +171,7 @@ class AXtrans:
 
         self.db = axdb.AXdb(self.cfg.dbusername, self.cfg.dbpass, self.cfg.dbname)
 
-        self.util = steemutil.Utilities()
+        self.steem = SimpleSteem()
 
         self.memoid=None
         self.action=None
@@ -194,13 +203,15 @@ class AXtrans:
             self.duration = memo[4]
 
 
+
     def send(self, to="artopium", amt="0.001 SBD", msg="test"):
         ''' Actually sends the transaction to the steem blockchain
         '''
         r = amt.split(" ")
 
-        if transfer_funds(self, to, float(r[0]), r[1], msg):
-            self.msg.message("Transaction committed. Sent " + r[0] + " " + r[1] + " to " + to + " with the memo: " + msg)
+        if self.steem.transfer_funds(self, to, float(r[0]), r[1], msg):
+            self.msg.message("Transaction committed. Sent " + r[0] 
+                            + " " + r[1] + " to " + to + " with the memo: " + msg)
             return True
         else:
             return False
@@ -208,9 +219,12 @@ class AXtrans:
 
 
     def fetch_history(self):
-        ''' Grabs the transaction history to see what's been sent to steemax. using the methods above, the memo message
-        is parsed, and according to the command contained in the message and the memo id the steemax account wither forwards
-        the money sent and performs the directed action, or if an action is invalid refunds the money to the sender. Uses
+        ''' Grabs the transaction history to see what's been sent 
+        to steemax. using the methods above, the memo message
+        is parsed, and according to the command contained in the 
+        message and the memo id the steemax account wither forwards
+        the money sent and performs the directed action, or if an 
+        action is invalid refunds the money to the sender. Uses
         steempy cli wallet for authorization.
         Currently using @artturtle account for testing. 
         '''
@@ -219,14 +233,15 @@ class AXtrans:
 
         react = Reaction()
 
-        h = self.util.get_my_history(self.cfg.mainaccount, 100)
+        h = self.steem.get_my_history(self.cfg.mainaccount, 100)
 
         for a in h:
             this_trans_time = datetime.strptime(a[1]['timestamp'], '%Y-%m-%dT%H:%M:%S')
 
             if a[1]['op'][0] == 'transfer' and this_trans_time > last_trans_time:
 
-                self.parse_memo(a[1]['op'][1]['from'], a[1]['op'][1]['memo'], a[1]['op'][1]['amount'], a[1]['trid'], a[1]['timestamp'])
+                self.parse_memo(a[1]['op'][1]['from'], a[1]['op'][1]['memo'], 
+                    a[1]['op'][1]['amount'], a[1]['trid'], a[1]['timestamp'])
 
                 if a[1]['op'][1]['to'] == self.cfg.mainaccount and re.match(r'^\s*[0-9]{32}$', self.memoid):
 
@@ -248,7 +263,8 @@ class AXtrans:
                             react.accept(acct1, acct2, self.memofrom, rstatus)
 
                         elif (self.action == "barter"):
-                            react.barter(acct1, acct2, self.memoid, self.memofrom, rstatus, self.percentage, self.ratio, self.duration)
+                            react.barter(acct1, acct2, self.memoid, self.memofrom, 
+                                        rstatus, self.percentage, self.ratio, self.duration)
 
                         else:
                             react.ignore("Invalid action.")
@@ -262,13 +278,15 @@ class AXtrans:
                             sendto = self.db.sendto
 
                         if self.send(sendto, self.amt, react.returnmsg):
-                            self.db.add_trans(self.trxid, self.memofrom, self.amt, self.memoid, react.reaction, self.txtime)
+                            self.db.add_trans(self.trxid, self.memofrom, self.amt, 
+                                                self.memoid, react.reaction, self.txtime)
 
                         else:
                             self.msg.error_message("Could not send transaction.")
 
                     else:
-                        self.db.add_trans(self.trxid, self.memofrom, self.amt, self.memoid, "Invalid Memo ID. Ignored", self.txtime)
+                        self.db.add_trans(self.trxid, self.memofrom, self.amt, 
+                                            self.memoid, "Invalid Memo ID. Ignored", self.txtime)
 
                 else:
                     self.msg.message("No incoming transactions.")
