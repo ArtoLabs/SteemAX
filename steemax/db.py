@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import pymysql
-from steemax import axmsg
+from screenlogger.screenlogger import Msg
 
 class DB:
 
@@ -10,22 +10,36 @@ class DB:
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-        self.msg = AXmsg()
+        self.msg = Msg()
+
+
+
+    def sanitize(self, *args):
+        alist = []
+        for v in args:
+            if v:
+                alist.append(pymysql.escape_string(v))
+        return alist
+
 
 
     def open_db(self):
         ''' opens a database connection
         '''
-        self.db = pymysql.connect("localhost",self.dbuser,self.dbpass,self.dbname)
+        self.db = pymysql.connect("localhost",
+                                    self.dbuser,
+                                    self.dbpass,
+                                    self.dbname)
         self.cursor = self.db.cursor()
 
 
-    def get_results(self, sql):
+    def get_results(self, sql, *args):
         ''' Gets the results of an SQL statement
         '''
         self.open_db()
+        cleanargs = self.sanitize(args) or None
         try:
-            self.cursor.execute(sql)
+            self.cursor.execute(sql, cleanargs)
             self.dbresults = self.cursor.fetchall()
         except Exception as e:
             self.msg.error_message(e)
@@ -38,12 +52,15 @@ class DB:
             self.db.close()
 
 
-    def commit(self, sql):
-        ''' Commits the actions of an SQL statement to the database
+
+    def commit(self, sql, *args):
+        ''' Commits the actions of an SQL 
+        statement to the database
         '''
         self.open_db()
+        cleanargs = self.sanitize(args) or None
         try:
-            self.cursor.execute(sql)
+            self.cursor.execute(sql, cleanargs)
             self.db.commit()
         except Exception as e:
             self.msg.error_message(e)
