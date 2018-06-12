@@ -29,7 +29,7 @@ class AXverify:
 
 
 
-    def get_vote_value (self, acctname, weight, power, mode):
+    def get_vote_value (self, acctname, voteweight=100, votepower=0, mode="quiet"):
         ''' Voteweight and votepower are entered as a percentage value (1 to 100)
         but the steem python library needs these values to be in the range of 150 to 10000.
         The value returned by 'voting_power' is set by the system at the time
@@ -40,14 +40,17 @@ class AXverify:
 
         self.steem.check_balances(acctname)
 
+        if votepower == 0:
+            votepower = self.steem.votepower
+
         votevalue = self.steem.current_vote_value(self.steem.lastvotetime, 
-                                                    self.steem.steempower, weight, power)
+                                                    self.steem.steempower, voteweight, votepower)
 
         if mode == "verbose":
 
             self.msg.message("\n__" + acctname + "__\n   Vote Power: " 
                             + str(self.steem.votepower) + "%\n   Steem Power: " 
-                            + str(self.steem.steempower) + "\n   Vote Value at " + str(weight) 
+                            + str(self.steem.steempower) + "\n   Vote Value at " + str(voteweight) 
                             + "%: $" + str(votevalue) + "\n")
 
         return self.steem.rshares

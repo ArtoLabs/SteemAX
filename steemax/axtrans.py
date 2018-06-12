@@ -7,7 +7,6 @@ from dateutil.parser import parse
 from datetime import datetime
 
 from steemax import axdb
-from steemax import axconfig
 
 from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
@@ -44,15 +43,16 @@ class Reaction():
                 self.reaction = "started"
                 self.db.update_status(0)
                 self.returnmsg = ("Hello " + acct2 + ", " + acct1 
-                    + " has invited you to an auto-upvote exchange. To respond to this " 
-                    + "invite please visit [link]")
+                    + " has invited you to an auto-upvote exchange. " 
+                    + "To respond to this invite please visit [link]")
 
             else:
 
                 self.ignore("The inviter has already authorized this exchange.")
         else:
 
-            self.ignore("Invalid action. The " + acct1 + " has not yet authorized this exhange.")
+            self.ignore("Invalid action. The " + acct1 
+                        + " has not yet authorized this exhange.")
 
 
 
@@ -70,13 +70,15 @@ class Reaction():
 
             self.reaction = "accepted"
             self.db.update_status(1)
-            self.returnmsg = acct2 + " has accepted the invite. The auto-upvote exchange will begin immediately."
+            self.returnmsg = (acct2 + " has accepted the invite. The auto-upvote "
+                            + "exchange will begin immediately.")
 
         elif acct1 == mf and int(rstatus) == 1 or int(rstatus) == 3:
 
             self.reaction = "accepted"
             self.db.update_status(1)
-            self.returnmsg = acct1 + " has accepted the invite. The auto-upvote exchange will begin immediately."
+            self.returnmsg = (acct1 + " has accepted the invite. The auto-upvote "
+                            + "exchange will begin immediately.")
 
         else:
             if acct2 == mf:
@@ -99,19 +101,23 @@ class Reaction():
 
             self.reaction = "acct1 bartering"
             status = 2
-            self.returnmsg = (acct1 + " has offered to barter. They offer " + per + 
-                "% of their upvote at a ratio of " + ratio + ":1 for " + dur + " days. " +
-                "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer. " +
-                "To generate your own barter offer, please visit [link]")
+            self.returnmsg = (acct1 + " has offered to barter. They offer " 
+                                + per + "% of their upvote at a ratio of " 
+                                + ratio + ":1 for " + dur + " days. " 
+                                + "Send any amount along with the memo code '" 
+                                + memoid + ":accept' to accept this offer. " 
+                                + "To generate your own barter offer, please visit [link]")
 
         elif acct2 == mf and int(rstatus) > 0:
 
             self.reaction = "acct2 bartering"
             status = 3
-            self.returnmsg = (acct2 + " has offered to barter. They suggest a percentage of " + per + 
-                "% of your upvote at a ratio of " + ratio + "("+acct1+"):1("+acct2+") for " + dur + " days. " +
-                "Send any amount along with the memo code '" + memoid + ":accept' to accept this offer. " + 
-                "To generate your own barter offer, please visit [link]")
+            self.returnmsg = (acct2 + " has offered to barter. They suggest a percentage of " 
+                                + per + "% of your upvote at a ratio of " + ratio 
+                                + "("+acct1+"):1("+acct2+") for " + dur + " days. " 
+                                + "Send any amount along with the memo code '" + memoid 
+                                + ":accept' to accept this offer. " 
+                                + "To generate your own barter offer, please visit [link]")
 
         else:
 
@@ -119,11 +125,13 @@ class Reaction():
 
             if acct2 == mf:
 
-                self.ignore("Invalid barter. Please wait for " + acct1 + " to respond first.")
+                self.ignore("Invalid barter. Please wait for " 
+                            + acct1 + " to respond first.")
 
             elif acct1 == mf:
 
-                self.ignore("Invalid barter. Please wait for " + acct2 + " to respond first.")
+                self.ignore("Invalid barter. Please wait for " 
+                            + acct2 + " to respond first.")
 
         if status:
 
@@ -159,7 +167,8 @@ class Reaction():
 
 
 class AXtrans:
-    ''' Class for automatically handling transactions made to steemax for authentication
+    ''' Class for automatically handling transactions 
+    made to steemax for authentication
     '''
 
 
@@ -181,7 +190,8 @@ class AXtrans:
 
 
     def parse_memo(self, memofrom=None, memo=None, amt=None, trxid=None, txtime=None):
-        ''' Takes the memo message received from an inviter or invitee and separates it into
+        ''' Takes the memo message received from an 
+        inviter or invitee and separates it into
         it's various parts.
         '''
         self.memofrom = memofrom
