@@ -3,17 +3,16 @@
 import random
 import sys
 import re
-
 from dateutil.parser import parse
 from datetime import datetime, timedelta
-
 from steemax.db import DB
-
 from screenlogger.screenlogger import Msg
 
 
 class AXdb(DB):
-    '''Used to retrieve and store data in the steemax MySQL database'''
+    '''Used to retrieve and store data 
+    in the steemax MySQL database
+    '''
 
 
 
@@ -21,68 +20,51 @@ class AXdb(DB):
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-
         self.msg = Msg()
 
 
 
     def first_time_setup(self):
-        '''Check to see if the the table named "axlist" is present 
-        in the database "steemax". If not make it.
-        Check to see if the the table named "axglobal" is present 
-        in the database "steemax". If not make it and initialize it.
+        '''Check to see if the the table named 
+        "axlist" is present in the database "steemax". 
+        If not make it.
+        Check to see if the the table named "axglobal" 
+        is present in the database "steemax". If not make 
+        it and initialize it.
         '''
         if not self.get_results("SELECT * FROM axlist WHERE 1;"):
-
-            self.commit('''CREATE TABLE IF NOT EXISTS axlist (ID int(10), 
-                        Account1 varchar(50),
-                        Account2 varchar(50), 
-                        Key1 varchar(100), 
-                        Key2 varchar(100),
-                        Percentage varchar(5), 
-                        Ratio varchar(5), 
-                        Duration varchar(5),
-                        MemoID varchar(40), 
-                        Status varchar(10), 
-                        Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);''')
-
+            self.commit('CREATE TABLE IF NOT EXISTS axlist '
+                + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
+                + 'Account1 varchar(50), Account2 varchar(50), '
+                + 'Key1 varchar(100), Key2 varchar(100), Token1 varchar(200), '
+                + 'Token2 varchar(200), Percentage varchar(5), '
+                + 'Ratio varchar(5), Duration varchar(5),MemoID varchar(40), '
+                + 'Status varchar(10), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);')
         if not self.get_results("SELECT * FROM axglobal WHERE 1;"):
-
-            self.commit('''CREATE TABLE IF NOT EXISTS axglobal (ID int(10), 
-                        RewardBalance varchar(50),
-                        RecentClaims varchar(50),
-                        Base varchar(50),
-                        Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);''')
-
-            self.commit('''INSERT INTO axglobal (ID, 
-                                                RewardBalance, 
-                                                RecentClaims, 
-                                                Base) VALUES ('1', 
-                                                            '0', 
-                                                            '0',
-                                                            '0');''')
-
+            self.commit('CREATE TABLE IF NOT EXISTS axglobal '
+                + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
+                + 'RewardBalance varchar(50), RecentClaims varchar(50), '
+                + 'Base varchar(50), Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);')
+            self.commit('INSERT INTO axglobal (ID, RewardBalance, '
+                + 'RecentClaims, Base) VALUES ("1", "0", "0", "0");')
         if not self.get_results("SELECT * FROM axtrans WHERE 1;"):
-
-            self.commit('''CREATE TABLE IF NOT EXISTS 
-                            axtrans (ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                    TXID varchar(50), 
-                                    MemoFrom varchar(20), 
-                                    Amount varchar(20), 
-                                    MemoID varchar(40),
-                                    Action varchar(20), 
-                                    TxTime TIMESTAMP NULL,
-                                    DiscoveryTime TIMESTAMP NOT NULL 
-                                    DEFAULT CURRENT_TIMESTAMP 
-                                    ON UPDATE CURRENT_TIMESTAMP);''')
+            self.commit('CREATE TABLE IF NOT EXISTS axtrans '
+                + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
+                + 'TXID varchar(50), MemoFrom varchar(20), '
+                + 'Amount varchar(20), MemoID varchar(40), '
+                + 'Action varchar(20), TxTime TIMESTAMP NULL, '
+                + 'DiscoveryTime TIMESTAMP NOT NULL '
+                + 'DEFAULT CURRENT_TIMESTAMP '
+                + 'ON UPDATE CURRENT_TIMESTAMP);')
 
 
 
     def get_most_recent_trans(self):
-        ''' Returns the timestamp from the most recent memo id message. 
+        ''' Returns the timestamp from 
+        the most recent memo id message. 
         '''
-        if not self.get_results('''SELECT TxTime FROM axtrans 
-                                    WHERE 1 ORDER BY TxTime DESC LIMIT 1;'''):
+        if not self.get_results('SELECT TxTime FROM axtrans '
+                            + 'WHERE 1 ORDER BY TxTime DESC LIMIT 1;'):
             return datetime.utcnow() - timedelta(days=5)
         else:
             return self.dbresults[0][0]
@@ -96,17 +78,11 @@ class AXdb(DB):
         table which is a history of 
         all processed transactions
         '''
-        self.commit('''INSERT INTO axtrans 
-                    (TXID, 
-                    MemoFrom, 
-                    Amount, 
-                    MemoID, 
-                    Action, 
-                    TxTime) 
-                    VALUES (%s, %s, %s, %s, %s, %s);''',
-                    (txid, memofrom, amt, 
-                    memoid, action, txtime))
-
+        return self.commit('INSERT INTO axtrans (TXID, MemoFrom, '
+            + 'Amount, MemoID, Action, TxTime) '
+            + 'VALUES (%s, %s, %s, %s, %s, %s);',
+            txid, memofrom, amt,  memoid, action, txtime)
+        
 
 
     def check_reward_fund_renewal(self):
@@ -128,12 +104,9 @@ class AXdb(DB):
         database for quicker retreival and 
         less taxation on steem nodes.
         '''
-        return self.commit('''UPDATE axglobal SET 
-                            RewardBalance = %s, 
-                            RecentClaims = %s, 
-                            Base = %s
-                            WHERE ID = '1';''',
-                            (rb, rc, base))
+        return self.commit('UPDATE axglobal SET RewardBalance = %s, '
+            + 'RecentClaims = %s, Base = %s, WHERE ID = "1";',
+            rb, rc, base)
 
 
 
@@ -144,11 +117,8 @@ class AXdb(DB):
         database instead of from
         the steem node
         '''
-        return self.get_results('''SELECT RewardBalance, 
-                                RecentClaims,
-                                Base, 
-                                Time 
-                                FROM axglobal WHERE ID = '1';''')
+        return self.get_results('SELECT RewardBalance, RecentClaims, '
+            + 'Base, Time FROM axglobal WHERE ID = "1";')
 
 
 
@@ -158,11 +128,9 @@ class AXdb(DB):
         This is necessary so that each account 
         can update the invite during the barter process
         '''
-        if not self.get_results('''SELECT Account1, 
-                                            Account2, 
-                                            Status 
-                                            FROM axlist WHERE MemoID = %s;''',
-                                (memoid)):
+        if not self.get_results('SELECT Account1, Account2, '
+                                + 'Status FROM axlist WHERE MemoID = %s;',
+                                memoid):
             self.msg.error_message("Memo ID not in database.")
             return False
         if acct0 == self.dbresults[0][0]:
@@ -183,10 +151,9 @@ class AXdb(DB):
     def cancel (self, acct, memoid):
         ''' Either account can cancel
         '''
-        return self.commit('''DELETE FROM axlist 
-                            WHERE %s IN (Account1, Account2) 
-                            AND (MemoID = %s);''',
-                            (acct, memoid))
+        return self.commit('DELETE FROM axlist WHERE %s IN '
+            + '(Account1, Account2) AND (MemoID = %s);',
+            acct, memoid)
 
 
 
@@ -201,13 +168,9 @@ class AXdb(DB):
         on the Memo ID which is verified using
         the verify_memoid function.
         '''
-        return self.commit('''UPDATE axlist SET 
-                            Percentage = %s,
-                            Ratio = %s, 
-                            Duration = %s, 
-                            Status = %s 
-                            WHERE MemoID = %s;''',
-                            (percent, ratio, duration, status, memoid))
+        return self.commit('UPDATE axlist SET Percentage = %s, '
+            + 'Ratio = %s, Duration = %s, Status = %s WHERE MemoID = %s;',
+            percent, ratio, duration, status, memoid)
 
 
 
@@ -222,7 +185,7 @@ class AXdb(DB):
          3 = invitee (account2) has offered to barter
          4 = exchange has been cancelled
         '''
-        return self.commit("UPDATE axlist SET Status = %s;", (status))
+        return self.commit("UPDATE axlist SET Status = %s;", status)
 
 
 
@@ -230,14 +193,15 @@ class AXdb(DB):
         ''' The check status method is used to determine 
         if authorization requests are valid
         '''
-        if self.get_results("SELECT Status FROM axlist WHERE MemoID = %s;", (memoid)):
+        if self.get_results("SELECT Status FROM axlist WHERE MemoID = %s;", 
+                memoid):
             return self.dbresults[0][0]
         else:
             return False
 
 
 
-    def accept_invite(self, acct2, memoid, key):
+    def accept_invite(self, acct2, memoid, key2, refreshtoken2):
         '''The exchange is initiated when both 
         accounts agree. If the invitee wishes to barter, 
         this function is still invoked first.
@@ -248,15 +212,14 @@ class AXdb(DB):
         an agreement has been made and thus making 
         the auto-upvote exchange active
         '''
-        return self.commit('''UPDATE axlist SET Key2 = %s, 
-                            Status = '0' 
-                            WHERE Account2 = %s 
-                            AND (MemoID = %s);''',
-                            (key, acct2, memoid))
+        return self.commit('UPDATE axlist SET Key2 = %s, RefreshToken2 = %s, '
+            + 'Status = "0" WHERE Account2 = %s AND (MemoID = %s);',
+            key2, refreshtoken2, acct2, memoid)
 
 
 
-    def add_invite (self, acct1, acct2, key1, percent, ratio, duration):
+    def add_invite (self, acct1, acct2, key1, refreshtoken1, 
+            accesstoken1, percent, ratio, duration):
         '''Adds the initial invite to the database 
         and provides the unique Memo ID.
         This sets the Status to "0" indicating that the invitation
@@ -265,30 +228,22 @@ class AXdb(DB):
         '''
         memoid = self.generate_nonce()
         if acct1 == acct2:
-            self.msg.message('''The same account name was 
-                            entered for both accounts.''')
+            self.msg.message('The same account name was '
+                        + 'entered for both accounts.')
             return False
-
-        if self.get_results('''SELECT * FROM axlist 
-                            WHERE %s IN (Account1, Account2) 
-                            OR %s IN (Account1, Account2);''',
-                            (acct1, acct2)):
-            self.msg.message('''An exchange has already been 
-                            made between these accounts.''')
+        if self.get_results('SELECT * FROM axlist '
+                        + 'WHERE %s IN (Account1, Account2) '
+                        + 'AND (%s IN (Account1, Account2));',
+                        acct1, acct2):
+            self.msg.message('An exchange has already been '
+                        + 'made between these accounts.')
             return False
-
-        if self.commit('''INSERT INTO axlist (
-                        Account1, 
-                        Account2, 
-                        Key1, 
-                        Percentage,
-                        Ratio, 
-                        Duration, 
-                        MemoID, 
-                        Status) VALUES (%s, %s, %s, %s, 
-                                        %s, %s, %s, %s);''',
-                        (acct1, acct2, key1, percent, 
-                        ratio, duration, memoid, -1)):
+        if self.commit('INSERT INTO axlist (Account1, Account2, '
+                        + 'Key1, RefreshToken1, Token1, Percentage, '
+                        + 'Ratio, Duration, MemoID, Status) '
+                        + 'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);',
+                        acct1, acct2, key1, refreshtoken1, accesstoken1,
+                        percent, ratio, duration, memoid, -1):
             return memoid
         else:
             return False

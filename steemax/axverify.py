@@ -4,55 +4,64 @@ from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 
 
+
 class AXverify:
 
 
+
     def __init__(self):
-
         self.msg = Msg()
-
         self.steem = SimpleSteem()
 
  
 
     def print_steemit_balances(self):
-
         self.steem.reward_pool_balances()
-
-        bal_banner = ("\n------------------------------------------------" +
-            "\n   Reward balance: " + str(self.steem.reward_balance) +
-            "\n   Recent claims: " + str(self.steem.recent_claims) +
-            "\n   Steem = $" + str(self.steem.base) +
-            "\n------------------------------------------------\n")
-
+        bal_banner = ('''
+            ------------------------------------------------
+            Reward balance: {}
+            Recent claims: {}
+            Steem = ${}
+            ------------------------------------------------
+            '''.format(self.steem.reward_balance, 
+            self.steem.recent_claims,
+            self.steem.base))
         self.msg.message(bal_banner)
 
 
 
-    def get_vote_value (self, acctname, voteweight=100, votepower=0, mode="quiet"):
-        ''' Voteweight and votepower are entered as a percentage value (1 to 100)
-        but the steem python library needs these values to be in the range of 150 to 10000.
-        The value returned by 'voting_power' is set by the system at the time
-        the account last voted. How long it's been since the last vote?
-        Calculate true voting power since last vote in range of 150 to 10000.
+    def get_vote_value (self, acctname, voteweight=100, 
+                        votepower=0, mode="quiet"):
+        ''' Voteweight and votepower are entered 
+        as a percentage value (1 to 100)
+        but the steem python library needs these 
+        values to be in the range of 150 to 10000.
+        The value returned by 'voting_power' is 
+        set by the system at the time
+        the account last voted. How long 
+        it's been since the last vote?
+        Calculate true voting power since last 
+        vote in range of 150 to 10000.
         Convert to rshares and STEEEM.
         '''
-
         self.steem.check_balances(acctname)
-
         if votepower == 0:
             votepower = self.steem.votepower
-
-        votevalue = self.steem.current_vote_value(self.steem.lastvotetime, 
-                                                    self.steem.steempower, voteweight, votepower)
-
+        votevalue = self.steem.current_vote_value(
+                    self.steem.lastvotetime, 
+                    self.steem.steempower, 
+                    voteweight, 
+                    votepower)
         if mode == "verbose":
-
-            self.msg.message("\n__" + acctname + "__\n   Vote Power: " 
-                            + str(self.steem.votepower) + "%\n   Steem Power: " 
-                            + str(self.steem.steempower) + "\n   Vote Value at " + str(voteweight) 
-                            + "%: $" + str(votevalue) + "\n")
-
+            self.msg.message('''
+                __{}__
+                Vote Power: {}
+                Steem Power: {}   
+                Vote Value at {}%: ${}
+                '''.format(acctname, 
+                self.steem.votepower, 
+                self.steem.steempower, 
+                voteweight, votevalue))
         return self.steem.rshares
 
 
@@ -60,26 +69,20 @@ class AXverify:
     def verify_post (self, account1, account2, mode):
         ''' Gets only the most recent post, gets the 
         timestamp and finds the age of the post in days.
-        Is the post too old? Did account2 vote on the post already?
+        Is the post too old? Did account2 
+        vote on the post already?
         '''
-
         permlink = self.steem.get_post_info(account1)
-
         if not permlink:
-
             self.msg.error_message("No post for " + account1)
-
             return False
-
         else:
-
             votes = self.steem.vote_history(account1, permlink)
-
             for v in votes:
                 if v['voter'] == account2:
-                    self.msg.message(account2 + " has aready voted on " + permlink)
+                    self.msg.message(account2 + 
+                        " has aready voted on " + permlink)
                     return False
-
         return True
 
 
@@ -87,15 +90,10 @@ class AXverify:
     def eligible_posts (self, account1, account2, mode):
         ''' Verify the posts of both accounts
         '''
-
         if not self.verify_post(account1, account2, mode):
-
             return False
-
         if not self.verify_post(account2, account1, mode):
-
             return False
-
         return True
 
 

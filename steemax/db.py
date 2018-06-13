@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
 import pymysql
+import re
 from screenlogger.screenlogger import Msg
 
-class DB:
+class DB():
 
 
     def __init__(self, dbuser, dbpass, dbname):
@@ -11,15 +12,6 @@ class DB:
         self.dbpass = dbpass
         self.dbname = dbname
         self.msg = Msg()
-
-
-
-    def sanitize(self, *args):
-        alist = []
-        for v in args:
-            if v:
-                alist.append(pymysql.escape_string(v))
-        return alist
 
 
 
@@ -33,13 +25,13 @@ class DB:
         self.cursor = self.db.cursor()
 
 
+
     def get_results(self, sql, *args):
         ''' Gets the results of an SQL statement
         '''
         self.open_db()
-        cleanargs = self.sanitize(args) or None
         try:
-            self.cursor.execute(sql, cleanargs)
+            self.cursor.execute(pymysql.escape_string(sql), args)
             self.dbresults = self.cursor.fetchall()
         except Exception as e:
             self.msg.error_message(e)
@@ -58,9 +50,8 @@ class DB:
         statement to the database
         '''
         self.open_db()
-        cleanargs = self.sanitize(args) or None
         try:
-            self.cursor.execute(sql, cleanargs)
+            self.cursor.execute(pymysql.escape_string(sql), args)
             self.db.commit()
         except Exception as e:
             self.msg.error_message(e)

@@ -26,7 +26,7 @@ class Enter():
 
 
 
-    def account_name(flag, mode):
+    def account_name(self, flag, mode):
         ''' Prompt user for their Steemit account name. 
         'flag' indicates entering the account name 
         for an invitee or inviter
@@ -37,11 +37,11 @@ class Enter():
             question = 'Their account name @'
         while True:
             acct = input(question)
-            if not re.match( r'^[a-z0-9\-]+$', acct) 
+            if (not re.match(r'^[a-z0-9\-]+$', acct)
                             or len(acct) == 0 
-                            or len(acct) > 32:
-                msg.message('''The account name you entered is 
-                            blank or contains invalid characters.''')
+                            or len(acct) > 32):
+                msg.message('The account name you entered is '
+                            + 'blank or contains invalid characters.')
             else:
                 if xverify.get_vote_value(acct, 100, 0, mode):
                     break
@@ -49,17 +49,17 @@ class Enter():
 
 
 
-    def memo_id(acct):
+    def memo_id(self, acct):
         ''' Prompt user for the unique Memo ID that 
         was generated during the creation of an invite
         '''
         while True:
             memoid = input('Memo ID: ')
-            if not re.match( r'^[0-9]+$', memoid) 
+            if (not re.match( r'^[0-9]+$', memoid) 
                             or len(memoid) == 0 
-                            or len(memoid) > 32:
-                msg.message('''The Memo ID you entered is 
-                            blank or contains invalid characters.''')
+                            or len(memoid) > 32):
+                msg.message('The Memo ID you entered is '
+                            + 'blank or contains invalid characters.')
             else:
                 if db.verify_memoid(acct, memoid):
                     break
@@ -69,29 +69,29 @@ class Enter():
 
 
 
-    def percentage(acct):
+    def percentage(self, acct):
         ''' Prompt user for the percentage of their 
         upvote they wish to exchange. 
         This is always a percentage of the inviter's 
         (Account1) upvote, not the invitee (Account2)
         '''
         while True:
-            per = input('''Percentage of {}'s upvote (1 to 100): 
-                        '''.format(acct))
-            if not re.match( r'^[0-9]+$', per) 
+            per = input(
+                '''Percentage of {}'s upvote (1 to 100):'''.format(acct))
+            if (not re.match( r'^[0-9]+$', per) 
                             or len(per) == 0 
                             or len(per) > 3 
                             or int(per) < 1 
-                            or int(per) > 100:
-                msg.message('''Please only enter a number 
-                            between 1 and 100.''')
+                            or int(per) > 100):
+                msg.message('Please only enter a number '
+                            + 'between 1 and 100.')
             else:
                 break
         return per
 
 
 
-    def ratio(acct1, acct2, per, flag):
+    def ratio(self, acct1, acct2, per, flag):
         ''' Prompt user for the ratio between 
         accounts for the exchanges. This ratios 
         is expressed as a two digit decimal number
@@ -103,20 +103,19 @@ class Enter():
         invitee's (Account2) upvote
         '''
         while True:
-            ratio = input('''Enter ratio 
-                        as X ({}) to 1 ({}). X is: 
-                        '''.format(acct1, acct2))
-            if not re.match( r'^[0-9\.]+$', ratio) 
+            ratio = input('Enter ratio '
+                    + 'as X ({}) to 1 ({}). X is: '.format(acct1, acct2))
+            if (not re.match( r'^[0-9\.]+$', ratio) 
                             or len(ratio) == 0 
                             or len(ratio) > 5 
                             or float(ratio) < 0.01 
-                            or float(ratio) > 99:
-                msg.message('''Please enter a one or two 
-                            digit number to represent a ratio in 
-                            the format x to 1 where x is your 
-                            input. Enter a decimal to two places 
-                            to represent a ratio less than one. 
-                            e.g. 0.05 to 1''')
+                            or float(ratio) > 99):
+                msg.message('Please enter a one or two '
+                            + 'digit number to represent a ratio in '
+                            + 'the format x to 1 where x is your '
+                            + 'input. Enter a decimal to two places '
+                            + 'to represent a ratio less than one. '
+                            + 'e.g. 0.05 to 1')
             else:
                 if xverify.eligible_votes(acct1, acct2, 
                                         per, ratio, "", flag):
@@ -125,41 +124,45 @@ class Enter():
 
 
 
-    def duration():
+    def duration(self):
         ''' Promt user to enter the 
         duration of the auto exchange 
         in the number of days
         '''
         while True:
             dur = input('Duration of exchange in days: ')
-            if not re.match( r'[0-9]', dur) 
+            if (not re.match( r'[0-9]', dur) 
                             or len(dur) == 0 
-                            or len(dur) > 3:
-                msg.message('''Please only enter a number 
-                            up to three digits.''')
+                            or len(dur) > 3):
+                msg.message('Please only enter a number '
+                            + 'up to three digits.')
             else:
                 break
         return dur
 
 
 
-    def key(acct):
+    def key(self, acct):
         ''' Prompt user for their private 
         posting key as found in their 
-        steemit.com wallet
+        steemit.com wallet or for their
+        SteemConnect Refresh Token as 
+        given by the auth_url login
         '''
+        msg.message(xverify.steem.connect.auth_url())
         while True:
-            key = input('Your Private Posting Key: ')
-            if not re.match( r'^[A-Za-z0-9]+$', key) 
-                            or len(key) == 0 
-                            or len(key) > 64:
-                msg.message('''The private posting key you 
-                            entered is blank or contains 
-                            invalid characters.''')
-            else:
-                if xverify.verify_key(acct, key, ""):
-                    break
-        return key
+            
+            key = input('Your Private Posting Key or'
+                        + ' SteemConnect Refresh Token: ')
+            if len(key) < 16:
+                msg.error_message('The private posting key you '
+                                    + 'entered is too small.')
+            elif xverify.steem.verify_key(acct, key):
+                self.privatekey = xverify.steem.privatekey
+                self.refreshtoken = xverify.steem.refreshtoken
+                self.accesstoken = xverify.steem.accesstoken
+                break
+
 
 
 
@@ -184,22 +187,25 @@ class MyPrompt(Cmd):
         ''' Start an auto-upvote exchange 
         between two Steemit accounts 
         '''
-        acct1 = Enter().account_name(1, "verbose")
-        acct2 = Enter().account_name(0, "verbose")
-        key = Enter().key(acct1)
-        per = Enter().percentage(acct1)
-        ratio = Enter().ratio(acct1, acct2, per, 1)
-        dur = Enter().duration()
-        memoid = db.add_invite (acct1, acct2, key, per, ratio, dur)
+        enter = Enter()
+
+        acct1 = enter.account_name(1, "verbose")
+        acct2 = enter.account_name(0, "verbose")
+        enter.key(acct1)
+        per = enter.percentage(acct1)
+        ratio = enter.ratio(acct1, acct2, per, 1)
+        dur = enter.duration()
+        memoid = db.add_invite(acct1, acct2, enter.privatekey, 
+                                enter.refreshtoken, enter.accesstoken, 
+                                per, ratio, dur)
         if memoid:
-            msg.message('''An invite has been created. To 
-                        authorize this exchange and to send 
-                        the invite please send any amount of 
-                        SBD to @steem-ax along with the following 
-                        memo message. Your SBD will be forwarded 
-                        to the invitee:\n\n   
-                        {}:start
-                        \n'''.format(memoid))
+            msg.message('An invite has been created. To '
+                        + 'authorize this exchange and to send '
+                        + 'the invite please send any amount of '
+                        + 'SBD to @steem-ax along with the following '
+                        + 'memo message. Your SBD will be forwarded '
+                        + 'to the invitee:\n\n   '
+                        + '{}:start'.format(memoid))
         else:
             msg.message("An invite could not be created.")
 
@@ -216,13 +222,12 @@ class MyPrompt(Cmd):
             return False
         key = Enter().key(acct)
         if db.accept_invite(acct, memoid, key):
-            msg.message('''The exchange invite has been accepted. 
-                        To authorize this change send any amount
-                        of SBD to @steem-ax along with the following 
-                        memo message. The SBD you send will be forwarded 
-                        to the other party: \n\n    
-                        {}:accept
-                        '''.format(memoid))
+            msg.message('The exchange invite has been accepted. '
+                        + 'To authorize this change send any amount '
+                        + 'of SBD to @steem-ax along with the following '
+                        + 'memo message. The SBD you send will be forwarded '
+                        + 'to the other party: \n\n  '
+                        + '{}:accept'.format(memoid))
         else:
             msg.error_message("Could not accept the invite.")
 
@@ -237,16 +242,16 @@ class MyPrompt(Cmd):
         memoid = Enter().memo_id(acct)
         if not db.verify_memoid(acct, memoid):
             return False
-        msg.message('''{} is the inviter and {} is the invitee.
-                    '''.format(db.inviter, db.invitee))
+        msg.message('{} is the inviter and {} is the invitee.'.format(
+                    db.inviter, db.invitee))
         per = Enter().percentage(acct1)
         ratio = Enter().ratio(acct1, acct2, per, 1)
         dur = Enter().duration()
-        msg.message('''To initiate this barter send 
-                    any amount SBD to @steem-ax with the following 
-                    in the memo:\n\n
-                    {}:barter:{}:{}:{}
-                    '''.format(memoid, per, ratio, dur))
+        msg.message('To initiate this barter send '
+                    + 'any amount SBD to @steem-ax with '
+                    + 'the following in the memo:\n\n  '
+                    + '{}:barter:{}:{}:{}'.format(
+                    memoid, per, ratio, dur))
 
 
 
