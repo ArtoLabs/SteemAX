@@ -17,7 +17,7 @@ class AXverify:
 
     def print_steemit_balances(self):
         self.steem.reward_pool_balances()
-        bal_banner = ('''
+        self.msg.message('''
             ------------------------------------------------
             Reward balance: {}
             Recent claims: {}
@@ -26,7 +26,6 @@ class AXverify:
             '''.format(self.steem.reward_balance, 
             self.steem.recent_claims,
             self.steem.base))
-        self.msg.message(bal_banner)
 
 
 
@@ -98,7 +97,8 @@ class AXverify:
 
 
 
-    def eligible_votes (self, account1, account2, percentage, ratio, mode, flag):
+    def eligible_votes (self, account1, account2, 
+                        percentage, ratio, mode, flag):
         ''' If the flag is raised use the full voting 
         power to make the comparison rather
         than the current voting power. Full voting 
@@ -123,19 +123,19 @@ class AXverify:
         else:
             vpow = 0
 
-        # v1        Account 1 vote value
+        # v1 Account 1 vote value
         v1 = self.get_vote_value(account1, percentage, vpow, mode)
 
         if not v1:
             return False
 
-        # v2        Account 2 vote value at 100% weight
+        # v2 Account 2 vote value at 100% weight
         v2 = self.get_vote_value(account2, 100, vpow, mode)
 
         if not v2:
             return False
 
-        # v3        Percentage of Account2's vote needed to match Account1
+        # v3 Percentage of Account2's vote needed to match Account1
         v3 = ((v1 / v2) * 100) / float(ratio)
         v3a = round(v3, 2)
 
@@ -149,9 +149,9 @@ class AXverify:
             exceeds = True
 
         self.msg.message(account2 + " needs to vote " 
-                        + str(v3a) + "% in order to meet " + account1)
+                + str(v3a) + "% in order to meet " + account1)
 
-        # v4        Account 2 vote value at percentage from v3
+        # v4 Account 2 vote value at percentage from v3
         v4 = self.get_vote_value(account2, v3, vpow, mode)
 
 
@@ -185,7 +185,7 @@ class AXverify:
         else:
 
             self.msg.message(account1 + " will upvote $" + str(v1s) 
-                            + " and " + account2 + " will upvote $" + str(v4s))
+                    + " and " + account2 + " will upvote $" + str(v4s))
 
             return True
 
