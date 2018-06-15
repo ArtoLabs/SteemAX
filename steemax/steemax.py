@@ -22,7 +22,18 @@ def run(args=None):
 
 
 
-class Enter():
+class Enter:
+
+
+
+    def answer(self, acct):
+        answer = input(("User {} could not be found. "
+                    + "Would you like to add this "
+                    + "user [y/n]?").format(acct))
+        if answer == "y":
+            return True
+        else:
+            return False
 
 
 
@@ -151,7 +162,6 @@ class Enter():
         '''
         msg.message(xverify.steem.connect.auth_url())
         while True:
-            
             key = input('Your Private Posting Key or'
                         + ' SteemConnect Refresh Token: ')
             if len(key) < 16:
@@ -162,6 +172,8 @@ class Enter():
                 self.refreshtoken = xverify.steem.refreshtoken
                 self.accesstoken = xverify.steem.accesstoken
                 break
+            else:
+                msg.error_message('Could not verify key or token.')
 
 
 
@@ -183,20 +195,31 @@ class MyPrompt(Cmd):
 
 
 
-    def do_invite(self, args):
-        ''' Start an auto-upvote exchange 
-        between two Steemit accounts 
-        '''
-        enter = Enter()
+    def do_adduser(self, args):
+        acct = enter.account_name(0, "verbose")
+        enter.key(acct)
+        db.add_user(acct, enter.privatekey, 
+                                enter.refreshtoken, 
+                                enter.accesstoken)
 
+
+
+    def do_invite(self, args):
+        enter = Enter()
         acct1 = enter.account_name(1, "verbose")
+        if not db.get_user_token(acct1):
+            if enter.answer(acct1):
+                enter.key(acct1)
+                db.add_user(acct1, enter.privatekey, 
+                                        enter.refreshtoken, 
+                                        enter.accesstoken)
+            else:
+                return False
         acct2 = enter.account_name(0, "verbose")
-        enter.key(acct1)
         per = enter.percentage(acct1)
         ratio = enter.ratio(acct1, acct2, per, 1)
         dur = enter.duration()
-        memoid = db.add_invite(acct1, acct2, enter.privatekey, 
-                                enter.refreshtoken, enter.accesstoken, 
+        memoid = db.add_invite(acct1, acct2,  
                                 per, ratio, dur)
         if memoid:
             msg.message('An invite has been created. To '
@@ -208,28 +231,6 @@ class MyPrompt(Cmd):
                         + '{}:start'.format(memoid))
         else:
             msg.message("An invite could not be created.")
-
-
-
-    def do_accept(self, args):
-        ''' Accept an invite to an exchange
-        '''
-        acct = Enter().account_name(1, "")
-        memoid = Enter().memo_id(acct)
-        if int(db.check_status(memoid)) < 0:
-            msg.error_message('''The inviter has not yet 
-                                authorized the exchange.''')
-            return False
-        key = Enter().key(acct)
-        if db.accept_invite(acct, memoid, key):
-            msg.message('The exchange invite has been accepted. '
-                        + 'To authorize this change send any amount '
-                        + 'of SBD to @steem-ax along with the following '
-                        + 'memo message. The SBD you send will be forwarded '
-                        + 'to the other party: \n\n  '
-                        + '{}:accept'.format(memoid))
-        else:
-            msg.error_message("Could not accept the invite.")
 
 
 
