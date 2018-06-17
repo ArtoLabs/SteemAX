@@ -14,7 +14,7 @@ class AXdb(DB):
 
 
 
-    def __init__(self, dbuser, dbpass, dbname):
+    def __init__ (self, dbuser, dbpass, dbname):
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
@@ -22,7 +22,7 @@ class AXdb(DB):
 
 
 
-    def first_time_setup(self):
+    def first_time_setup (self):
         if not self.get_results("SELECT * FROM users WHERE 1;"):
             self.commit('CREATE TABLE IF NOT EXISTS users '
                 + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
@@ -49,7 +49,7 @@ class AXdb(DB):
 
 
 
-    def get_most_recent_trans(self):
+    def get_most_recent_trans (self):
         ''' Returns the timestamp from 
         the most recent memo id message. 
         '''
@@ -61,7 +61,7 @@ class AXdb(DB):
 
 
 
-    def add_trans(self, txid, memofrom, amt, 
+    def add_trans (self, txid, memofrom, amt, 
                     memoid, action, txtime):
         ''' Adds a processed transaction 
         to the axtrans database 
@@ -75,7 +75,7 @@ class AXdb(DB):
         
 
 
-    def verify_memoid(self, acct0, memoid):
+    def verify_memoid (self, acct0, memoid):
         '''Verify that the Memo ID entered 
         matches the account name entered. 
         Also determines who's who
@@ -87,12 +87,12 @@ class AXdb(DB):
             return False
         if acct0 == self.dbresults[0][0]:
             self.sendto = self.dbresults[0][1]
-            self.inviter = acct0
-            self.invitee = self.dbresults[0][0]
+            self.inviter = self.dbresults[0][0]
+            self.invitee = self.dbresults[0][1]
         elif acct0 == self.dbresults[0][1]:
             self.sendto = self.dbresults[0][0]
-            self.inviter = self.dbresults[0][0]
-            self.invitee = acct0
+            self.inviter = self.dbresults[0][1]
+            self.invitee = self.dbresults[0][0]
         else:
             self.msg.error_message("Account does not match Memo ID.")
             return False
@@ -109,14 +109,27 @@ class AXdb(DB):
 
 
 
-    def update_invite(self, percent, ratio, duration, memoid, status):
+    def get_invite (self, memoid):
+        if self.get_results("SELECT Percentage, Ratio, Duration, "
+                        + "Status FROM axlist WHERE MemoID = %s;", 
+                        memoid):
+            return [self.dbresults[0][0], 
+                    self.dbresults[0][1], 
+                    self.dbresults[0][2], 
+                    self.dbresults[0][3]]
+        else:
+            self.msg.error_message("No invite found for " + memoid)
+            return [0, 0, 0, 0]
+
+
+    def update_invite (self, percent, ratio, duration, memoid, status):
         return self.commit('UPDATE axlist SET Percentage = %s, '
             + 'Ratio = %s, Duration = %s, Status = %s WHERE MemoID = %s;',
             percent, ratio, duration, status, memoid)
 
 
 
-    def update_status(self, status, memoid):
+    def update_status (self, status, memoid):
         '''
         -1 = waiting for inviter to authorize
          0 = invite sent. waiting for invitee
@@ -178,7 +191,7 @@ class AXdb(DB):
 
 
     def add_user (self, acct, key, refreshtoken, accesstoken):
-        return self.commit('INSERT INTO user (Account, PrivateKey, '
+        return self.commit('INSERT INTO users (Account, PrivateKey, '
                         + 'RefreshToken, Token) '
                         + 'VALUES (%s, %s, %s, %s);',
                         acct, key, refreshtoken, accesstoken)
@@ -191,7 +204,7 @@ class AXdb(DB):
 
 
 
-    def generate_memoid(self, length=32):
+    def generate_memoid (self, length=32):
         return ''.join([str(random.randint(0, 9)) for i in range(length)])
 
 
