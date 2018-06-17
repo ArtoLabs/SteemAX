@@ -12,7 +12,7 @@ class AXverify:
     def __init__(self):
         self.msg = Msg()
         self.steem = SimpleSteem()
-
+        self.response = None
  
 
     def print_steemit_balances(self):
@@ -168,18 +168,18 @@ class AXverify:
 
                 v5 = v4 - v1
                 v5s = self.steem.rshares_to_steem(v5)
-                self.msg.message(account2 + "'s vote of " + str(v4s) 
+                self.response = (account2 + "'s vote of " + str(v4s) 
                                 + " will be larger than " + account1 
                                 + "'s vote by: " + str(v5s))
-
+                self.msg.message(self.response)
             if v3 == 100:
 
                 v5 = v1 - v4
                 v5s = self.steem.rshares_to_steem(v5)
-                self.msg.message(account1 + "'s vote of " + str(v1s) 
+                self.response = (account1 + "'s vote of " + str(v1s) 
                                 + " will be larger than " + account2 
                                 + "'s vote by: " + str(v5s))
-
+                self.msg.message(self.response)
             return False
 
         else:
