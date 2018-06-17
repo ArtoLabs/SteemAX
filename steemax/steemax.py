@@ -26,11 +26,18 @@ class Enter:
 
 
 
-    def answer(self, acct):
-        answer = input(("User {} could not be found. "
+    def new_account(self, acct):
+        '''Prompts user to create an account
+        when an account is not found
+        '''
+        answer = input(("{} has not joined SteemAX.\n"
                     + "Would you like to add this "
-                    + "user [y/n]?").format(acct))
+                    + "user [y/n]? ").format(acct))
         if answer == "y":
+            self.key()
+            db.add_user(self.username, self.privatekey, 
+                self.refreshtoken, 
+                self.accesstoken)
             return True
         else:
             return False
@@ -153,7 +160,7 @@ class Enter:
 
 
 
-    def key(self, acct):
+    def key(self):
         ''' Prompt user for their private 
         posting key as found in their 
         steemit.com wallet or for their
@@ -167,14 +174,16 @@ class Enter:
             if len(key) < 16:
                 msg.error_message('The private posting key you '
                                     + 'entered is too small.')
-            elif xverify.steem.verify_key(acct, key):
+            elif xverify.steem.verify_key(acctname="", tokenkey=key):
                 self.privatekey = xverify.steem.privatekey
                 self.refreshtoken = xverify.steem.refreshtoken
                 self.accesstoken = xverify.steem.accesstoken
+                self.username = xverify.steem.username
+                msg.message("Welcome " + self.username)
                 break
             else:
                 msg.error_message('Could not verify key or token.')
-
+        return self.username
 
 
 
@@ -196,8 +205,8 @@ class MyPrompt(Cmd):
 
 
     def do_adduser(self, args):
-        acct = enter.account_name(0, "verbose")
-        enter.key(acct)
+        enter = Enter()
+        acct = enter.key()
         db.add_user(acct, enter.privatekey, 
                                 enter.refreshtoken, 
                                 enter.accesstoken)
@@ -208,13 +217,7 @@ class MyPrompt(Cmd):
         enter = Enter()
         acct1 = enter.account_name(1, "verbose")
         if not db.get_user_token(acct1):
-            if enter.answer(acct1):
-                enter.key(acct1)
-                db.add_user(acct1, enter.privatekey, 
-                                        enter.refreshtoken, 
-                                        enter.accesstoken)
-            else:
-                return False
+            enter.new_account(acct1)
         acct2 = enter.account_name(0, "verbose")
         per = enter.percentage(acct1)
         ratio = enter.ratio(acct1, acct2, per, 1)
@@ -243,10 +246,10 @@ class MyPrompt(Cmd):
         memoid = Enter().memo_id(acct)
         if not db.verify_memoid(acct, memoid):
             return False
-        msg.message('{} is the inviter and {} is the invitee.'.format(
-                    db.inviter, db.invitee))
-        per = Enter().percentage(acct1)
-        ratio = Enter().ratio(acct1, acct2, per, 1)
+        msg.message(('{} is the inviter and {} is the invitee.'
+                    ).format(db.inviter, db.invitee))
+        per = Enter().percentage(db.inviter)
+        ratio = Enter().ratio(db.inviter, db.invitee, per, 1)
         dur = Enter().duration()
         msg.message('To initiate this barter send '
                     + 'any amount SBD to @steem-ax with '
