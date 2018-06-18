@@ -65,8 +65,6 @@ class AXdb(DB):
                     memoid, action, txtime):
         ''' Adds a processed transaction 
         to the axtrans database 
-        table which is a history of 
-        all processed transactions
         '''
         return self.commit('INSERT INTO axtrans (TXID, MemoFrom, '
             + 'Amount, MemoID, Action, TxTime) '
@@ -78,7 +76,6 @@ class AXdb(DB):
     def verify_memoid (self, acct0, memoid):
         '''Verify that the Memo ID entered 
         matches the account name entered. 
-        Also determines who's who
         '''
         if not self.get_results('SELECT Account1, Account2, '
                                 + 'Status FROM axlist WHERE MemoID = %s;',
@@ -209,10 +206,6 @@ class AXdb(DB):
 
 
 
-# Run as main
-
-if __name__ == "__main__":
-    pass
 
     
 
