@@ -13,8 +13,8 @@ setup(
     author_email='artopium@gmail.com',
     install_requires=[
         'python-dateutil',
-        'steem',
-        'pymysql',
+        'simplesteem',
+        'screenlogger',
     ],
     py_modules=['steemax'],
     entry_points = {
