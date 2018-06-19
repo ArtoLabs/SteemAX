@@ -6,7 +6,7 @@ import re
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 from steemax.db import DB
-from steemax import defaults
+from steemax import default
 from screenlogger.screenlogger import Msg
 
 
