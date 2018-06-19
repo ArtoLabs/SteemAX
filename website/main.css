@@ -1,0 +1,96 @@
+body, html {
+	border:0px; 
+	background-color: #ffffff;
+	text-align: left;
+	margin:0px; 
+	top:0;
+	left:0;
+	padding:0px;
+    
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#6c8acc+0,8ba2d6+99 */
+background: rgb(108,138,204); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(108,138,204,1) 0%, rgba(139,162,214,1) 99%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(108,138,204,1) 0%,rgba(139,162,214,1) 99%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(108,138,204,1) 0%,rgba(139,162,214,1) 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6c8acc', endColorstr='#8ba2d6',GradientType=0 ); /* IE6-9 */
+}
+div {
+    font-size: 22px;
+    font-family: "LatoWeb";
+    color: #ffffff;
+}
+h1 {
+    text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
+}
+.inputbox {
+    margin: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 380px;
+    text-align: left;
+}
+.inputholder {
+	position: relative;
+    float: right;
+	overflow: hidden;
+	border: 1px solid;
+	border-color: #999999; 
+	border-radius: 4px; 
+	-moz-border-radius: 4px; 
+	-webkit-border-radius: 4px;
+    height: 30px;
+    width: 150px;
+-webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+-moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+}
+.input {
+	position: relative;
+	top: -4px;
+	left: -2px;
+    height: 34px;
+    width: 154px;
+    
+    background-color: #ffffff;
+	font-family: "LatoWeb";
+	color: #666666;
+	font-size: 16px;
+	padding: 0px;
+	padding-left: 5px;
+}
+#captcha_holder {
+    margin: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+}
+    
+#button {
+	position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 230px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 20px;
+	color: #555555;
+	border: 1px solid #999999;
+	border-radius: 8px; 
+	-moz-border-radius: 8px; 
+	-webkit-border-radius: 8px; 
+    
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+background: rgb(238,238,238); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
+    
+    -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+-moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+}
