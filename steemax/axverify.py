@@ -19,7 +19,7 @@ class AXverify:
 
 
     def get_vote_value (self, acctname, voteweight=100, 
-                        votepower=0, mode="quiet"):
+                        votepower=0):
         ''' Voteweight and votepower are entered 
         as a percentage value (1 to 100)
         If the default is used for votepower (0) 
@@ -29,21 +29,13 @@ class AXverify:
         self.steem.check_balances(acctname)
         if votepower == 0:
             votepower = self.steem.votepower
-        votevalue = self.steem.current_vote_value(
+        self.votevalue = self.steem.current_vote_value(
                     self.steem.lastvotetime, 
                     self.steem.steempower, 
                     voteweight, 
                     votepower)
-        if mode == "verbose":
-            self.msg.message('''
-                    __{}__
-                    Vote Power: {}
-                    Steem Power: {}   
-                    Vote Value at {}%: ${}
-                    '''.format(acctname, 
-                    self.steem.votepower, 
-                    self.steem.steempower, 
-                    voteweight, votevalue))
+        self.voteweight = voteweight
+        self.votepower = votepower
         return self.steem.rshares
 
 

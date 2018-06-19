@@ -51,7 +51,7 @@ class Enter:
 
 
 
-    def account_name(self, flag, mode):
+    def account_name(self, flag):
         ''' Prompt user for their Steemit account name. 
         'flag' indicates entering the account name 
         for an invitee or inviter
@@ -68,8 +68,11 @@ class Enter:
                 msg.message('The account name you entered is '
                             + 'blank or contains invalid characters.')
             else:
-                if xverify.get_vote_value(acct, 100, 0, mode):
+                if xverify.steem.check_balances(acct):
                     break
+                else:
+                    msg.message('Steemit account ' + acct
+                                + ' could not be found.')
         return acct
 
 
@@ -194,6 +197,9 @@ class Enter:
 
 
 
+
+
+
 class MyPrompt(Cmd):
     ''' Command line interface for SteemAX
     '''
@@ -215,17 +221,17 @@ class MyPrompt(Cmd):
         enter = Enter()
         acct = enter.key()
         db.add_user(acct, enter.privatekey, 
-                                enter.refreshtoken, 
-                                enter.accesstoken)
+                        enter.refreshtoken, 
+                        enter.accesstoken)
 
 
 
     def do_invite(self, args):
         enter = Enter()
-        acct1 = enter.account_name(1, "verbose")
+        acct1 = enter.account_name(1)
         if not db.get_user_token(acct1):
             enter.new_account(acct1)
-        acct2 = enter.account_name(0, "verbose")
+        acct2 = enter.account_name(0)
         per = enter.percentage(acct1)
         ratio = enter.ratio(acct1, acct2, per, 1)
         dur = enter.duration()
@@ -249,7 +255,7 @@ class MyPrompt(Cmd):
         percentage, ratio and 
         duration of an exchange
         '''
-        acct = Enter().account_name(1, "")
+        acct = Enter().account_name(1)
         memoid = Enter().memo_id(acct)
         if not db.verify_memoid(acct, memoid):
             return False
@@ -269,7 +275,7 @@ class MyPrompt(Cmd):
     def do_cancel(self, args):
         ''' Cancel an invite to an exchange
         '''
-        acct = Enter().account_name(1, "")
+        acct = Enter().account_name(1)
         memoid = Enter().memo_id(acct)
         if not db.verify_memoid(acct, memoid):
             return
@@ -284,8 +290,8 @@ class MyPrompt(Cmd):
         two accounts will create an 
         eligible exchange
         '''
-        acct1 = Enter().account_name(1, "verbose")    
-        acct2 = Enter().account_name(0, "verbose")
+        acct1 = Enter().account_name(1)    
+        acct2 = Enter().account_name(0)
         per = Enter().percentage(acct1)
         ratio = Enter().ratio(acct1, acct2, per, 0)
 
@@ -296,7 +302,18 @@ class MyPrompt(Cmd):
         account and see if it has 
         started an exchange
         '''
-        acct = Enter().account_name(1, "verbose")
+        acct = Enter().account_name(1)
+        xverify.get_vote_value(acct)
+        msg.message('''
+    __{}__
+    Vote Power: {}
+    Steem Power: {}   
+    Vote Value at {}%: ${}
+            '''.format(acct, 
+            xverify.steem.votepower, 
+            xverify.steem.steempower, 
+            xverify.voteweight, 
+            xverify.votevalue))
 
 
 
@@ -304,16 +321,17 @@ class MyPrompt(Cmd):
         ''' Display current Steemit Reward Balance, 
         Recent Claims and price of STEEM
         '''
-        self.verify.steem.reward_pool_balances()
-        self.msg.message('''
-            ------------------------------------------------
-            Reward balance: {}
-            Recent claims: {}
-            Steem = ${}
-            ------------------------------------------------
-            '''.format(self.verify.steem.reward_balance, 
-            self.verify.steem.recent_claims,
-            self.verify.steem.base))
+        xverify.steem.reward_pool_balances()
+        msg.message('''
+    ------------------------------------------------
+    Reward balance: {}
+    Recent claims: {}
+    Steem = ${}
+    ------------------------------------------------
+            '''.format(xverify.steem.reward_balance, 
+            xverify.steem.recent_claims,
+            xverify.steem.base))
+
 
 
     def do_quit(self, args):
