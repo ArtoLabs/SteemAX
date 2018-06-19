@@ -304,8 +304,16 @@ class MyPrompt(Cmd):
         ''' Display current Steemit Reward Balance, 
         Recent Claims and price of STEEM
         '''
-        xverify.print_steemit_balances()
-
+        self.verify.steem.reward_pool_balances()
+        self.msg.message('''
+            ------------------------------------------------
+            Reward balance: {}
+            Recent claims: {}
+            Steem = ${}
+            ------------------------------------------------
+            '''.format(self.verify.steem.reward_balance, 
+            self.verify.steem.recent_claims,
+            self.verify.steem.base))
 
 
     def do_quit(self, args):

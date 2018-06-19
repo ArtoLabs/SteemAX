@@ -18,20 +18,6 @@ class AXverify:
  
 
 
-    def print_steemit_balances(self):
-        self.steem.reward_pool_balances()
-        self.msg.message('''
-            ------------------------------------------------
-            Reward balance: {}
-            Recent claims: {}
-            Steem = ${}
-            ------------------------------------------------
-            '''.format(self.steem.reward_balance, 
-            self.steem.recent_claims,
-            self.steem.base))
-
-
-
     def get_vote_value (self, acctname, voteweight=100, 
                         votepower=0, mode="quiet"):
         ''' Voteweight and votepower are entered 
