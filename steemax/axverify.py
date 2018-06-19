@@ -15,7 +15,7 @@ class AXverify:
                         default.msgmode)
         self.steem = SimpleSteem()
         self.response = None
- 
+
 
 
     def get_vote_value (self, acctname, voteweight=100, 
