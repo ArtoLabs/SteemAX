@@ -1,5 +1,7 @@
 steemax/config.py
 steemax/error.log
+website/fonts.css
+website/fonts
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
