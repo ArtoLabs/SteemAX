@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     python_requires='>=3.0',
     name='SteemAX',
-    version='0.3.2',
+    version='0.3.3',
     packages=['steemax'],
     license='MIT',
     long_description=open('README.txt').read(),
