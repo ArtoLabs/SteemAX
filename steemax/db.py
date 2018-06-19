@@ -3,7 +3,7 @@
 import pymysql
 import re
 from screenlogger.screenlogger import Msg
-from steemax import defaults
+from steemax import default
 
 class DB():
 
