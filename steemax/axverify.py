@@ -2,7 +2,7 @@
 
 from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
-
+from steemax import default
 
 
 class AXverify:
@@ -10,7 +10,9 @@ class AXverify:
 
 
     def __init__(self):
-        self.msg = Msg()
+        self.msg = Msg(default.logfilename, 
+                        default.logpath, 
+                        default.msgmode)
         self.steem = SimpleSteem()
         self.response = None
  

@@ -6,6 +6,7 @@ from dateutil.parser import parse
 from datetime import datetime
 from steemax import axdb
 from steemax import axverify
+from steemax import default
 from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 
@@ -16,9 +17,9 @@ class MemoMsg():
 
 
     def __init__(self):
-        self.db = axdb.AXdb("steemax", 
-                            "SteemAX_pass23", 
-                            "steemax")
+        self.db = axdb.AXdb(default.dbuser, 
+                            default.dbpass, 
+                            default.dbname)
 
 
 
@@ -178,10 +179,12 @@ class AXtrans:
 
 
     def __init__(self):
-        self.msg = Msg()
-        self.db = axdb.AXdb("steemax", 
-                            "SteemAX_pass23", 
-                            "steemax")
+        self.msg = Msg(default.logfilename, 
+                        default.logpath, 
+                        default.msgmode)
+        self.db = axdb.AXdb(default.dbuser, 
+                            default.dbpass, 
+                            default.dbname)
         self.steem = SimpleSteem()
         self.react = Reaction()
 

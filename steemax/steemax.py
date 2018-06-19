@@ -7,11 +7,18 @@ from steemax import axe
 from steemax import axdb
 from steemax import axverify
 from steemax import axtrans
+from steemax import default
 from screenlogger.screenlogger import Msg
 
-msg = Msg()
-db = axdb.AXdb("steemax", "SteemAX_pass23", "steemax")
+
+msg = Msg(default.logfilename, 
+                default.logpath, 
+                default.msgmode)
+db = axdb.AXdb(default.dbuser, 
+                default.dbpass, 
+                default.dbname)
 xverify = axverify.AXverify()
+
 
 # Entry point
 def run(args=None):
