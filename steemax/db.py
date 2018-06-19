@@ -3,6 +3,7 @@
 import pymysql
 import re
 from screenlogger.screenlogger import Msg
+from steemax import defaults
 
 class DB():
 
@@ -11,7 +12,9 @@ class DB():
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-        self.msg = Msg()
+        self.msg = Msg(default.logfilename, 
+                        default.logpath, 
+                        default.msgmode)
 
 
 

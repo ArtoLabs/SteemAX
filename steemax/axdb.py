@@ -6,6 +6,7 @@ import re
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 from steemax.db import DB
+from steemax import defaults
 from screenlogger.screenlogger import Msg
 
 
@@ -18,7 +19,9 @@ class AXdb(DB):
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-        self.msg = Msg()
+        self.msg = Msg(default.logfilename, 
+                        default.logpath, 
+                        default.msgmode)
 
 
 

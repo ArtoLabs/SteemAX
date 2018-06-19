@@ -17,6 +17,7 @@ class AXverify:
         self.response = None
  
 
+
     def print_steemit_balances(self):
         self.steem.reward_pool_balances()
         self.msg.message('''

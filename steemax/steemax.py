@@ -13,7 +13,7 @@ from screenlogger.screenlogger import Msg
 
 msg = Msg(default.logfilename, 
                 default.logpath, 
-                default.msgmode)
+                "")
 db = axdb.AXdb(default.dbuser, 
                 default.dbpass, 
                 default.dbname)
