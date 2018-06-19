@@ -162,6 +162,13 @@ class AXdb(DB):
 
 
 
+    def update_token (self, acct, accesstoken, refreshtoken):
+        return self.commit("UPDATE users SET Token = %s, "
+                            + "RefreshToken = %s WHERE Account = %s;",
+                            accesstoken, refreshtoken, acct)
+
+
+
     def add_invite (self, acct1, acct2, percent, ratio, duration):
         '''Adds the initial invite to the database 
         and provides the unique Memo ID.
