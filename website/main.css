@@ -22,16 +22,22 @@ div {
 h1 {
     text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
 }
+.textholder {
+	position: relative;
+    float: left;
+    width: 150px;
+}
 .inputbox {
+	position: relative;
     margin: 20px;
     margin-left: auto;
     margin-right: auto;
     width: 380px;
-    text-align: left;
+    height: 35px;
 }
 .inputholder {
 	position: relative;
-    float: right;
+    float: left;
 	overflow: hidden;
 	border: 1px solid;
 	border-color: #999999; 
@@ -39,7 +45,7 @@ h1 {
 	-moz-border-radius: 4px; 
 	-webkit-border-radius: 4px;
     height: 30px;
-    width: 150px;
+    width: 100px;
 -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
 -moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
 box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
@@ -49,8 +55,7 @@ box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
 	top: -4px;
 	left: -2px;
     height: 34px;
-    width: 154px;
-    
+    width: 104px;
     background-color: #ffffff;
 	font-family: "LatoWeb";
 	color: #666666;

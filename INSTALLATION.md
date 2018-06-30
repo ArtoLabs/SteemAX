@@ -2,6 +2,10 @@
 
 Be sure to write down the root password that you will create when installing MySQL as you will need it in the following steps. Instructions for setting up the SteemAX database and MySQL user are at the end.
 
+#### Note: 
+
+The first time you run SteemAX will cause SimpleSteem to run it's first-time-only configuration setup. Please read the [SimpleSteem installation instructions](https://github.com/ArtoLabs/SimpleSteem) for further information.
+
 ### INSTALL WITH PIP
 
 `sudo apt install python3 python3-pip libssl-dev python3-dev mysql-server`

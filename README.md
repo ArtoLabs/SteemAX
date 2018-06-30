@@ -1,10 +1,8 @@
-# SteemAX
+# SteemAX v0.3
 
-A Steem blockchain auto-upvote exchange system.
+SteemAX is a web application that allows a Steemian to barter with other Steemians for an automatic exchange of upvotes for an agreed duration.
 
-SteemAX uses Python 3.0, MySQL and the [Steem-Python](https://github.com/steemit/steem-python) library to utilize the [Steemit/Steem](https://github.com/steemit/steem) blockchain technology.
-
-# Concept
+SteemAX uses Python 3.5, MySQL and the [SimpleSteem](https://github.com/artolabs/simplesteem) library to utilize the [Steemit/Steem](https://github.com/steemit/steem) blockchain technology. SteemAX also uses [ScreenLogger](https://github.com/artolabs/screenlogger) to print to screen and log error messages 
 
 SteemAX provides a way for Steemians (users of [Steemit.com](https://www.steemit.com)) to barter and make agreements on exchanging upvotes with each other for a set period of time. They do this through a barter system, each taking turns bidding on the amount of their upvotes they would like to exchange with each other. The upvotes are placed automatically by SteemAX for the agreed upon time period.
 
@@ -22,17 +20,18 @@ SteemAX will periodically check the eligibility of the exchange participant's po
 
 3) If more than one post meets the criteria above, the most recent post will be used.
 
-# Reality
+# Development
 
-SteemAX is currently in the development phase with most of the core features already present in command line form. The current working version of SteemAX can be downloaded and installed using either git clone or pip. Functionality for creating an invite, bartering, canceling, determining post eligibility, as well as the process of determining vote exchange values based on the current state of the Steem blockchain, have already been created. What's left is to create the Memo ID authentication process, and the shiny front-end, which most likely will be written with help from the [steem-js](https://github.com/steemit/steem-js) library. In it's current form, SteemAX is "disarmed" and does not actually exchange upvotes when it's run, but instead prints the message "Auto upvote exchange occurred" when all eligibility requirements are met. SteemAX will be "armed" with the code necessary to exchange upvotes when most the bugs have been fixed and a stable version is running without problems.
+SteemAX is currently in the development phase with most of the core features already present in command line form. The current working version of SteemAX can be downloaded and installed using either git clone or pip. Functionality for creating an invite, bartering, canceling, determining post eligibility, as well as the process of determining vote exchange values based on the current state of the Steem blockchain, have already been created.
 
-# Future Tasks
+SteemAX can also be found online in beta/testing form at https://steemax.trade where further development on the web interface will take place.
 
-There's a lot that still needs to be done to bring SteemAX to fruition. The very next step is to complete the Memo ID authentication process. Next, will be to research the possible use of SteemConnect as an alternative to storing private posting keys. The front end of SteemAX will utilize Steem-JS to fetch account info and process eligiblity requirements before being submitted to the back-end, a task that is practically it's own development project.
 
 ### Instructions for installing SteemAX on Ubuntu 16.04
 
 [Please see INSTALLATION.md](https://github.com/ArtoLabs/SteemAX/blob/master/INSTALLATION.md)
+
+Please also reference the [installation instructions for SimpleSteem](https://github.com/ArtoLabs/SimpleSteem/blob/master/INSTALLATION.md)
 
 # Instructions for use
 
@@ -41,6 +40,11 @@ Once SteemAX has been installed and the database has been set up (using the inst
 #### `   ** Welcome to SteemAX **   `
 
 You will see this greeting when first running SteemAX.
+
+#### `[steemax]# adduser`
+
+Starts the process to generate a refresh token using SteemConnect via the command line. In the first step the authorization URL is presented and then the user is prompted from the refresh token. The user can then cut and paste this into a browser in which they will be asked to authenticate and grant steemax.app the appropriate permissions. When SteemConnect redirects to the callback URL the refresh token can be cut and paste from the browser address bar back to the command line. Once entered, the refresh token is authenticated and the user's account name is retrieved via SteemConnect along with an access token. Both tokens and the account name are compared to the database and if no user with that name exists a new account is created. 
+
 
 #### `[steemax]# invite`
 
@@ -76,15 +80,6 @@ Typing in the command "barter" at the steemax command prompt allows an Inviter o
 
 Once all information has been entered the one making the barter must send at least 0.001 SBD along with the Memo ID to SteemAX so that their account can be authenticated.
 
-#### `[steemax]# accept`
-
-Typing in the command "accept" at the steemax command prompt asks two questions then starts the auto-upvote exchange as was agreed upon.
-
-1) Account name of the one accepting. This will normally be the invitee unless a barter process has been started.
-
-2) Memo ID generated during the invite process.
-
-Once all information has been entered the one accepting must send at least 0.001 SBD along with the Memo ID to SteemAX so that their account can be authenticated.
 
 #### `[steemax]# cancel`
 
@@ -107,5 +102,14 @@ Typing in the command "eligible" at the steemax command prompt allows the user t
 #### `[steemax]# pool`
 
 Typing in the command "pool" at the steemax command prompt brings up the relevant information necessary for calculating the Steemit Reward Pool and the value of a Steemit account's upvote. SteemAX displays the current Reward Balance, the Recent Claims and the current price of Steem as delivered by the Witness Price Feed.
+
+#### `[steemax]# run`
+
+Runs the auto exchange eleigibilty algorithm for every completed and accepted transaction in the database then exchanges votes.
+
+
+#### `[steemax]# process`
+
+Fetches all the transaction history from @steem-ax and processes the action commands embedded in the memo messages based on Memo ID, then sends the appropriate reaction message to the appropriate account via forwarding (or refunding) the amount sent to commence the action.
 
 

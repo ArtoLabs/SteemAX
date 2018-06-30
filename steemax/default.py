@@ -3,5 +3,5 @@ dbuser = "steemax"
 dbpass = "SteemAX_pass23"
 dbname = "steemax"
 msgmode = "quiet"
-logpath = "~"
+logpath = None
 logfilename = "steemax.log"
