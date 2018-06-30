@@ -10,9 +10,7 @@ from steemax import default
 from screenlogger.screenlogger import Msg
 
 
-
 class AXdb(DB):
-
 
 
     def __init__ (self, dbuser, dbpass, dbname):
@@ -24,8 +22,10 @@ class AXdb(DB):
                         default.msgmode)
 
 
-
     def first_time_setup (self):
+        ''' Sets up all three needed tables if they do not
+        already exist
+        '''
         if not self.get_results("SELECT * FROM users WHERE 1;"):
             self.commit('CREATE TABLE IF NOT EXISTS users '
                 + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
@@ -51,7 +51,6 @@ class AXdb(DB):
                 + 'ON UPDATE CURRENT_TIMESTAMP);')
 
 
-
     def get_most_recent_trans (self):
         ''' Returns the timestamp from 
         the most recent memo id message. 
@@ -61,7 +60,6 @@ class AXdb(DB):
             return datetime.utcnow() - timedelta(days=5)
         else:
             return self.dbresults[0][0]
-
 
 
     def add_trans (self, txid, memofrom, amt, 
@@ -74,7 +72,6 @@ class AXdb(DB):
             + 'VALUES (%s, %s, %s, %s, %s, %s);',
             txid, memofrom, amt,  memoid, action, txtime)
         
-
 
     def verify_memoid (self, acct0, memoid):
         '''Verify that the Memo ID entered 
@@ -99,7 +96,6 @@ class AXdb(DB):
         return True
 
 
-
     def cancel (self, acct, memoid):
         ''' Either account can cancel
         '''
@@ -108,8 +104,10 @@ class AXdb(DB):
             acct, memoid)
 
 
-
     def get_invite (self, memoid):
+        ''' Gets an invite from the database
+        and returns it as a list
+        '''
         if self.get_results("SELECT Percentage, Ratio, Duration, "
                         + "Status FROM axlist WHERE MemoID = %s;", 
                         memoid):
@@ -123,10 +121,12 @@ class AXdb(DB):
 
 
     def update_invite (self, percent, ratio, duration, memoid, status):
+        ''' Updates and invite during
+        the barter process
+        '''
         return self.commit('UPDATE axlist SET Percentage = %s, '
             + 'Ratio = %s, Duration = %s, Status = %s WHERE MemoID = %s;',
             percent, ratio, duration, status, memoid)
-
 
 
     def update_status (self, status, memoid):
@@ -142,8 +142,11 @@ class AXdb(DB):
             status, memoid)
 
 
-
     def check_status (self, memoid):
+        ''' Checks the status of an invite
+        so that steemax knows how to react to
+        a command
+        '''
         if self.get_results("SELECT Status FROM axlist WHERE MemoID = %s;", 
                 memoid):
             return self.dbresults[0][0]
@@ -151,8 +154,10 @@ class AXdb(DB):
             return False
 
 
-
     def get_user_token (self, acct):
+        ''' Gets a user's SteemConnect tokens 
+        and Private Posting Key
+        '''
         if self.get_results("SELECT PrivateKey, Token, RefreshToken "
                             + "FROM users WHERE Account = %s;",
                             acct):
@@ -161,12 +166,12 @@ class AXdb(DB):
             return False
 
 
-
     def update_token (self, acct, accesstoken, refreshtoken):
+        ''' Updates a user's SteemConnect tokens
+        '''
         return self.commit("UPDATE users SET Token = %s, "
                             + "RefreshToken = %s WHERE Account = %s;",
                             accesstoken, refreshtoken, acct)
-
 
 
     def add_invite (self, acct1, acct2, percent, ratio, duration):
@@ -196,26 +201,25 @@ class AXdb(DB):
             return False
 
 
-
     def add_user (self, acct, key, refreshtoken, accesstoken):
+        ''' Adds a user and their tokens/key to the database
+        '''
         return self.commit('INSERT INTO users (Account, PrivateKey, '
                         + 'RefreshToken, Token) '
                         + 'VALUES (%s, %s, %s, %s);',
                         acct, key, refreshtoken, accesstoken)
-            
 
 
     def get_axlist (self):
+        ''' Gets the entire list of transactions
+        to be processed
+        '''
         self.get_results("SELECT * FROM axlist WHERE 1;")
         return self.dbresults
 
 
-
     def generate_memoid (self, length=32):
         return ''.join([str(random.randint(0, 9)) for i in range(length)])
-
-
-
 
     
 

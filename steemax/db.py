@@ -17,7 +17,6 @@ class DB():
                         default.msgmode)
 
 
-
     def open_db(self):
         ''' opens a database connection
         '''
@@ -26,7 +25,6 @@ class DB():
                                     self.dbpass,
                                     self.dbname)
         self.cursor = self.db.cursor()
-
 
 
     def get_results(self, sql, *args):
@@ -47,7 +45,6 @@ class DB():
             self.db.close()
 
 
-
     def commit(self, sql, *args):
         ''' Commits the actions of an SQL 
         statement to the database
@@ -66,18 +63,4 @@ class DB():
             self.db.close()
 
 
-
-# Run as main
-
-if __name__ == "__main__":
-
-    db = DB("bigbird", "Snook_Nook_33", "bot_memory")
-    db.get_results("SELECT * FROM turtlebotmem;")
-    for a in db.dbresults:
-        print (str(a[0]) + " " + str(a[1]) + " " + str(a[2]))
-
-
-
-
 # EOF
-

@@ -6,9 +6,7 @@ from steemax import axdb
 from steemax import default
 
 
-
 class Web:
-
 
 
     def __init__ (self):
@@ -18,8 +16,10 @@ class Web:
                         default.dbname)
 
 
-
     def template (self, templatefile="", **kwargs):
+        ''' opens a template file and fills in the 
+        template with the key value pairs
+        '''
         fh = open(templatefile, 'r')
         template = fh.read()
         regobj = re.compile(
@@ -33,8 +33,11 @@ class Web:
         return newtemplate
 
 
-
     def login (self, token):
+        ''' logs a user in using SteemConnect
+        adds the user to the database if it's
+        their first time.
+        '''
         token = re.sub(r'[^A-Za-z0-9\-\_\.]', 
                         '', str(token))
         if (token is not None
@@ -56,7 +59,6 @@ class Web:
         else:
             url = self.verify.steem.connect.auth_url()
             return ("Location: " + url + "\r\n")
-
 
 
 # EOF

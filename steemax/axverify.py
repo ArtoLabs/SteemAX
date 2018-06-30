@@ -8,14 +8,12 @@ from steemax import default
 class AXverify:
 
 
-
     def __init__(self):
         self.msg = Msg(default.logfilename, 
                         default.logpath, 
                         default.msgmode)
         self.steem = SimpleSteem()
         self.response = None
-
 
 
     def get_vote_value (self, acctname, voteweight=100, 
@@ -39,7 +37,6 @@ class AXverify:
         return self.steem.rshares
 
 
-
     def verify_post (self, account1, account2, mode):
         ''' Gets only the most recent post, gets the 
         timestamp and finds the age of the post in days.
@@ -60,7 +57,6 @@ class AXverify:
         return True
 
 
-
     def eligible_posts (self, account1, account2, mode):
         ''' Verify the posts of both accounts
         '''
@@ -69,7 +65,6 @@ class AXverify:
         if not self.verify_post(account2, account1, mode):
             return False
         return True
-
 
 
     def eligible_votes (self, account1, account2, 
@@ -123,9 +118,4 @@ class AXverify:
             return True
 
 
-
-
-
-
 # EOF
-

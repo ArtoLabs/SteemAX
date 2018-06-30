@@ -11,9 +11,7 @@ from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 
 
-
 class MemoMsg():
-
 
 
     def __init__(self):
@@ -22,9 +20,10 @@ class MemoMsg():
                             default.dbname)
 
 
-
     def invite_msg(self, acct1, acct2, 
                 memoid):
+        ''' Creates the invite message
+        '''
         self.reaction = "started"
         self.db.update_status(0, memoid)
         invite = self.db.get_invite(memoid)
@@ -45,8 +44,9 @@ class MemoMsg():
         self.returnmsg = (msg)
 
 
-
     def accepted_msg(self, acct, memoid):
+        ''' Creates the accept message 
+        '''
         self.reaction = "accepted"
         self.db.update_status(1, memoid)
         self.returnmsg = (
@@ -55,9 +55,10 @@ class MemoMsg():
             + "begin immediately.")
 
 
-
     def barter_msg(self, reaction, status, acct, 
                     per, ratio, dur, memoid):
+        ''' Creates the barter message
+        '''
         self.reaction = reaction
         if status == 2:
             pronoun = "their"
@@ -76,11 +77,11 @@ class MemoMsg():
             acct, per, pronoun, ratio, dur, memoid))
 
 
-
     def ignore(self, reason):
+        ''' Creates the ignore message 
+        '''
         self.reaction = "refund"
         self.returnmsg = reason
-
 
 
     def cancel(self, canceller, memoid):
@@ -93,9 +94,7 @@ class MemoMsg():
             + " has cancelled the exchange.")
 
 
-
 class Reaction(MemoMsg):
-
 
 
     def start(self, acct1, acct2, memofrom, 
@@ -115,7 +114,6 @@ class Reaction(MemoMsg):
                         + "exhange.")
 
 
-
     def accept(self, acct1, acct2, memofrom, 
                     rstatus, memoid):
         ''' The accept method is used to authorize 
@@ -132,7 +130,6 @@ class Reaction(MemoMsg):
         else:
             self.ignore("Invalid Memo ID.")
 
-        
 
     def barter(self, acct1, acct2, memoid, memofrom, 
                     rstatus, per, ratio, dur):
@@ -148,7 +145,6 @@ class Reaction(MemoMsg):
                     acct1, acct2, per, ratio, "quiet", 1):
             self.ignore("Barter invalid. " + verify.response)
             return
-
         if acct1 == memofrom:
             if (int(rstatus) > -1 and int(rstatus) != 2):
                 self.barter_msg("acct1 bartering", 2, 
@@ -173,9 +169,7 @@ class Reaction(MemoMsg):
                         + "respond.")
 
 
-
 class AXtrans:
-
 
 
     def __init__(self):
@@ -189,8 +183,11 @@ class AXtrans:
         self.react = Reaction()
 
 
-
     def parse_memo(self, **kwargs):
+        ''' Parses the memo message in a transaction
+        for the appropriate action. Soon to use
+        OWASP security filters
+        '''
         for key, value in kwargs.items():
             setattr(self, key, value)
         # Ew this is dirty and came from 
@@ -215,10 +212,12 @@ class AXtrans:
             return False
 
 
-
     def send(self, to="artopium", 
                     amt="0.001 SBD", 
                     msg="test"):
+        ''' Sends the forwarded amount of SBD along
+        with the reaction message
+        '''
         r = amt.split(" ")
         if self.steem.transfer_funds(to, float(r[0]), 
                                     r[1], msg):
@@ -227,8 +226,10 @@ class AXtrans:
                             "{}").format(r[0], r[1], to, msg))
 
 
-
     def act(self, acct1, acct2, rstatus, sendto):
+        ''' Decides how to react baed on the action
+        present in the memo message
+        '''
         if not self.db.get_user_token(self.memofrom):
             self.react.ignore(
                 ("{} is not a current member of "
@@ -266,8 +267,10 @@ class AXtrans:
             self.sendto = sendto
 
 
-
     def parse_history_record(self, record, lasttrans):
+        ''' Parses the blockchain record for transdactions
+        sent to @steem-ax 
+        '''
         if (record[1]['op'][0] == 'transfer'
                 and datetime.strptime(
                     record[1]['timestamp'], 
@@ -280,7 +283,6 @@ class AXtrans:
             return True
         else:
             return False
-
 
 
     def fetch_history(self):
@@ -308,7 +310,6 @@ class AXtrans:
                 else:
                     self.react.ignore("Invalid Memo.")
                     self.sendto = self.memofrom
-
                 self.send(self.sendto, 
                                 self.amount, 
                                 self.react.returnmsg)
@@ -318,18 +319,6 @@ class AXtrans:
                                 self.memoid, 
                                 self.react.reaction, 
                                 self.txtime)
-                    
-                    
 
-
-# Run as main
-
-if __name__ == "__main__":
-
-    a = AXtrans()
-    a.fetch_history()
-
-    #a.send()
 
 # EOF
-

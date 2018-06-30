@@ -28,9 +28,7 @@ def run(args=None):
     prompt.cmdloop('\n   ** Welcome to SteemAX ** \n')
 
 
-
 class Enter:
-
 
 
     def new_account(self, acct):
@@ -48,7 +46,6 @@ class Enter:
             return True
         else:
             return False
-
 
 
     def account_name(self, flag):
@@ -76,7 +73,6 @@ class Enter:
         return acct
 
 
-
     def memo_id(self, acct):
         ''' Prompt user for the unique Memo ID that 
         was generated during the creation of an invite
@@ -94,7 +90,6 @@ class Enter:
                 else:
                     return False
         return memoid
-
 
 
     def percentage(self, acct):
@@ -116,7 +111,6 @@ class Enter:
             else:
                 break
         return per
-
 
 
     def ratio(self, acct1, acct2, per, flag):
@@ -151,7 +145,6 @@ class Enter:
         return ratio
 
 
-
     def duration(self):
         ''' Promt user to enter the 
         duration of the auto exchange 
@@ -167,7 +160,6 @@ class Enter:
             else:
                 break
         return dur
-
 
 
     def key(self):
@@ -196,28 +188,29 @@ class Enter:
         return self.username
 
 
-
-
-
-
 class MyPrompt(Cmd):
     ''' Command line interface for SteemAX
     '''
 
 
-
     def do_run(self, args):
+        ''' Runs the auto exchange on all
+        eligible accounts
+        ''' 
         axe.run_exchanges("")
 
 
-
     def do_process(self, args):
+        ''' processes transactions for their
+        memo messages and responds accordingly
+        '''
         xtrans = axtrans.AXtrans()
         xtrans.fetch_history()
 
 
-
     def do_adduser(self, args):
+        ''' Adds a user to steemax
+        '''
         enter = Enter()
         acct = enter.key()
         db.add_user(acct, enter.privatekey, 
@@ -225,8 +218,10 @@ class MyPrompt(Cmd):
                         enter.accesstoken)
 
 
-
     def do_invite(self, args):
+        ''' Initiates an invite. If a user
+        is not a member it adds them
+        '''
         enter = Enter()
         acct1 = enter.account_name(1)
         if not db.get_user_token(acct1):
@@ -247,7 +242,6 @@ class MyPrompt(Cmd):
                         + '{}:start'.format(memoid))
         else:
             msg.message("An invite could not be created.")
-
 
 
     def do_barter(self, args):
@@ -271,7 +265,6 @@ class MyPrompt(Cmd):
                     memoid, per, ratio, dur))
 
 
-
     def do_cancel(self, args):
         ''' Cancel an invite to an exchange
         '''
@@ -283,7 +276,6 @@ class MyPrompt(Cmd):
             msg.message("The exchange has been canceled")
             
 
-
     def do_eligible(self, args):
         ''' Find out if a certain 
         percentage and ratio between 
@@ -294,7 +286,6 @@ class MyPrompt(Cmd):
         acct2 = Enter().account_name(0)
         per = Enter().percentage(acct1)
         ratio = Enter().ratio(acct1, acct2, per, 0)
-
 
 
     def do_account(self, args):
@@ -316,7 +307,6 @@ class MyPrompt(Cmd):
             xverify.votevalue))
 
 
-
     def do_pool(self, args):
         ''' Display current Steemit Reward Balance, 
         Recent Claims and price of STEEM
@@ -333,19 +323,16 @@ class MyPrompt(Cmd):
             xverify.steem.base))
 
 
-
     def do_quit(self, args):
         """Quits the program."""
         print ("Quitting.")
         raise SystemExit
 
 
-
     def do_exit(self, args):
         """Quits the program."""
         print ("Quitting.")
         raise SystemExit
-
 
 
 # Run as main
@@ -356,4 +343,3 @@ if __name__ == "__main__":
     run()
 
 # EOF
-
