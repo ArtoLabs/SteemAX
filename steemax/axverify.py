@@ -10,9 +10,9 @@ class AXverify:
 
     def __init__(self):
         self.msg = Msg(default.logfilename, 
-                        default.logpath, 
+                        default.logpath,
                         default.msgmode)
-        self.steem = SimpleSteem()
+        self.steem = SimpleSteem(screenmode=default.msgmode)
         self.response = None
 
 

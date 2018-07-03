@@ -5,3 +5,5 @@ dbname = "steemax"
 msgmode = "quiet"
 logpath = None
 logfilename = "steemax.log"
+recaptcha_url = "https://www.google.com/recaptcha/api/siteverify"
+recaptcha_secret = ""

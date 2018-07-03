@@ -180,15 +180,17 @@ class AXdb(DB):
         '''
         memoid = self.generate_memoid()
         if acct1 == acct2:
-            self.msg.message('The same account name was '
+            self.errmsg = ('The same account name was '
                         + 'entered for both accounts.')
+            self.msg.error_message(self.errmsg)
             return False
         if self.get_results('SELECT * FROM axlist '
                         + 'WHERE %s IN (Account1, Account2) '
                         + 'AND (%s IN (Account1, Account2));',
                         acct1, acct2):
-            self.msg.message('An exchange has already been '
+            self.errmsg = ('An exchange has already been '
                         + 'made between these accounts.')
+            self.msg.error_message(self.errmsg)
             return False
         if self.commit('INSERT INTO axlist (Account1, Account2, '
                         + 'Percentage, Ratio, '
