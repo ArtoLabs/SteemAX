@@ -51,7 +51,7 @@ class Web:
                             self.verify.steem.refreshtoken, 
                             self.verify.steem.accesstoken)
             return ("\r\n" 
-                    + self.template("index.html", 
+                    + self.template("templates/index.html", 
                     ACCOUNT1=self.verify.steem.username,
                     REFRESHTOKEN=self.verify.steem.refreshtoken))
         else:
@@ -109,7 +109,7 @@ class Web:
         ''' Rutrns the HTML page with the
         given error message
         '''
-        return ("\r\n" + self.template("error.html", 
+        return ("\r\n" + self.template("templates/error.html", 
                                 ERRORMSG=msg))
 
 
