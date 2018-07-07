@@ -1,57 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>SteemAX</title>
-<meta name="description" content="An auto-upvote exchange system for the Steemit blockchain.">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="stylesheet" type="text/css" href="https://steemax.trade/fonts.css" />
-<link rel="stylesheet" type="text/css" href="https://steemax.trade/main.css">
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <title>SteemAX</title>
+    <meta name="description" content="An auto-upvote exchange system for the Steemit blockchain.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,500" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-<div style="width: 100%; height: 100vh; text-align: center;">
-    <h1><img src="https://steemax.trade/images/steemaxlogo.png"></h1>
-    <h2>Welcome ACCOUNT1</h2>
-    <div class="inputbox">
-        <div class="textholder">Invite @</div>
-        <div class="inputholder">
-            <input type="text" name="account2" class="input">
+    <div class="header">
+        <img id="logo-small" src="images/ax-small-logo.svg">
+        <button id="ghost-button">Logout</button>
+    </div>
+
+    <div class="container">
+        <div class="top">
+            <img id="large-logo" src="images/steemax-logo.svg">
+            <h3>Welcome, <span id="name">User 1</span></h3>
+        </div>
+        <div class="input-fields">
+            <div class="inputwithicon tooltip">
+                <input type="text" placeholder="username" name="account2">
+                <img class="input-icon" src="images/user-icon.png">
+                <span class="tooltiptext">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas dapibus ex vel mauris viverra convallis. Pellentesque vitae ipsum lorem.</span>
+            </div>
+            <div class="inputwithicon tooltip">
+                <input class="right" type="number" placeholder="Enter a number from 1 to 100" min="1" max="100" name="amount">
+                <img class="input-icon-right" src="images/percentage-icon.png">
+                <span class="tooltiptext">Pellentesque vitae ipsum lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas dapibus ex vel mauris viverra convallis.</span>
+            </div>
+            <div class="inputwithicon tooltip">
+                 <input class="right" type="number" placeholder="Enter a number from 1 to 100" min="0.1" max="10" step="0.1" name="ratio">
+                <img class="input-icon-right" src="images/1-icon.png">
+                <span class="tooltiptext">Pellentesque vitae ipsum lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas dapibus ex vel mauris viverra convallis.</span>
+            </div>
+            <div class="tooltip">
+                <select name="duration">
+                    <option value="1d">1 days</option>
+                    <option value="3d">3 days</option>
+                    <option value="1w">1 week</option>
+                    <option value="4w">4 week</option>
+                    <option value="12w">12 week</option>
+                    <option value="52w">52 week</option>
+                    <option value="104w">104 week</option>
+                </select>
+                <span class="tooltiptext">Pellentesque vitae ipsum lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas dapibus ex vel mauris viverra convallis.</span>
+             </div>
+            <div id="captcha_holder">
+                 <div class="g-recaptcha" data-sitekey="6Ld60V8UAAAAALQVrR4yBYDiDsYVHO1JRc4BdrxG"></div>
+            </div>
+            <button id="exhange-button">Invite to exchange</button>
+            <p class="powered">Powered by <span><a href="https://steemit.com/@learnelectronics">Artolabs</a></span></p>
         </div>
     </div>
-    <div class="inputbox">
-        <div class="textholder">Upvote %</div>
-        <div class="inputholder" style="width: 56px;">
-            <input type="number" name="amount" min="0" max="100" value="100" class="input" style="width: 50px;">
-        </div>
-    </div>
-    <div class="inputbox">
-        <div class="textholder">Ratio</div>
-        <div class="inputholder" style="width: 56px;">
-            <input type="number" name="ratio" min="0" max="1000" value="1" class="input" style="width: 50px;">
-        </div>
-    </div>
-    <div class="inputbox">
-        <div class="textholder">Duration</div>
-        <div class="inputholder">
-            <select name="duration" class="input" style="width: 170px; height: 38px;">
-                <option>1 week</option>
-                <option>2 weeks</option>
-                <option>3 week</option>
-                <option>4 weeks</option>
-                <option>8 weeks</option>
-                <option>12 weeks</option>
-                <option>52 weeks</option>
-            </select>
-        </div>
-    </div>
-    <div id="captcha_holder">
-        <div class="g-recaptcha" data-sitekey="6Ld60V8UAAAAALQVrR4yBYDiDsYVHO1JRc4BdrxG"></div>
-    </div>
-    <div id="button">Invite to Exchange</div>
-    <div class="inputbox" style="text-align: center;">
-        Powered by <a href="https://steemit.com/@learnelectronics">ArtoLabs</a>
-    </div>
-</div>
 </body>
 </html>
