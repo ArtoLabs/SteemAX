@@ -1,0 +1,83 @@
+body, html {
+	border:0px; 
+	background-color: #ffffff;
+	text-align: left;
+	margin:0px; 
+	top:0;
+	left:0;
+	padding:0px;
+    
+
+}
+div {
+    font-size: 22px;
+    font-family: "LatoWeb";
+
+}
+h1 {
+    text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
+}
+
+
+.memobox {
+	position: relative;
+    float: left;
+    width: calc(100% - 102px);
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-bottom: 3px;
+}
+.minnerbox {
+	position: relative;
+    float: left;
+    min-width: 12%;
+    height: 30px;
+    text-align: center;
+    background-color: #efefef;
+    padding: 3px;
+}
+.xbox {
+	position: relative;
+    float: left;
+    width: calc(100% - 102px);
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-bottom: 3px;
+}
+.xinnerbox {
+	position: relative;
+    float: left;
+    min-width: 12%;
+    height: 30px;
+    text-align: center;
+    background-color: #efefef;
+    padding: 3px;
+}
+
+.button {
+	position: relative;
+    float: right;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 16px;
+	color: #555555;
+	border: 1px solid #999999;
+	border-radius: 2px; 
+	-moz-border-radius: 2px; 
+	-webkit-border-radius: 2px; 
+    
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+background: rgb(238,238,238); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
+    
+    -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+-moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+}

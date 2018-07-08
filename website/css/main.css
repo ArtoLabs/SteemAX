@@ -1,0 +1,193 @@
+body{
+    background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ie10+ */
+    background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */
+    font-family: LatoWeb, sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px;
+}
+
+#logo-small {
+    width: 80px;
+}
+
+#ghost-button {
+    border: 1px solid #8ac2f1;
+    background-color: transparent;
+    padding: 13px 25px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.8s;
+}
+
+#ghost-button:hover {
+    background-color: white;
+    color: #2f7fd2;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+#large-logo {
+    max-width: 400px;
+    display: block;
+    width: auto;
+    margin: auto;
+}
+
+h3 {
+    font-weight: 400;
+    font-size: 25px;
+    text-align: center;
+    margin-top: 18px;
+}
+
+#name {
+    font-weight: 300;
+}
+
+.inputwithicon {
+    padding-top: 35px;
+}
+
+input {
+    width: 100% !important;
+    height: 58px;
+    border-radius: 3px;
+    border-top: transparent !important;
+    border-left: transparent !important;
+    border-right: transparent !important;
+    border-bottom: transparent !important;
+    padding-left: 42px;
+    font-size: 16px;
+    color: #393939;
+    font-weight: 500;
+}
+
+select {
+    width: 100% !important;
+    height: 58px;
+    border-radius: 3px;
+    border-top: transparent !important;
+    border-left: transparent !important;
+    border-right: transparent !important;
+    border-bottom: transparent !important;
+    padding-left: 18px;
+    font-size: 16px;
+    color: #393939;
+    font-weight: 500;
+    margin-top: 35px;
+}
+
+.right {
+    padding-left: 18px;
+    padding-right: 8px;
+}
+
+.input-icon {
+    margin-top: -38px;
+    margin-left: 13px;
+}
+
+.input-icon-right {
+    margin-top: -38px;
+    margin-left: 94%;
+}
+
+.tooltip {
+    position: relative;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: #2d2d2d;
+    color: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    font-weight: 300;
+    font-size: 13px;
+    left: 0px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.g-recaptcha > div {
+    margin: 35px auto;
+}
+
+#exhange-button {
+    background-color: #2d2d2d;
+    border: none;
+    color: white;
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.3s;
+}
+
+#exhange-button:hover {
+    background-color: #353535;
+}
+
+.powered {
+    text-align: center;
+    color: #cddbea;
+    font-weight: 300;
+    font-size: 18px;
+}
+
+.powered > span > a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        margin-top: 10px;
+        padding: 30px;
+    }
+
+    .input-icon-right {
+        margin-left: 85%;
+    }
+}
