@@ -1,101 +1,193 @@
-body, html {
-	border:0px; 
-	background-color: #ffffff;
-	text-align: left;
-	margin:0px; 
-	top:0;
-	left:0;
-	padding:0px;
+body{
+    background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ie10+ */
+    background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px;
+}
+
+#logo-small {
+    width: 80px;
+}
+
+#ghost-button {
+    border: 1px solid #8ac2f1;
+    background-color: transparent;
+    padding: 13px 25px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.8s;
+}
+
+#ghost-button:hover {
+    background-color: white;
+    color: #2f7fd2;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+#large-logo {
+    max-width: 400px;
+    display: block;
+    width: auto;
+    margin: auto;
+}
+
+h3 {
+    font-weight: 400;
+    font-size: 25px;
+    text-align: center;
+    margin-top: 18px;
+}
+
+#name {
+    font-weight: 300;
+}
+
+.inputwithicon {
+    padding-top: 35px;
+}
+
+input {
+    width: 100% !important;
+    height: 58px;
+    border-radius: 3px;
+    border-top: transparent !important;
+    border-left: transparent !important;
+    border-right: transparent !important;
+    border-bottom: transparent !important;
+    padding-left: 42px;
+    font-size: 16px;
+    color: #393939;
+    font-weight: 500;
+}
+
+select {
+    width: 100% !important;
+    height: 58px;
+    border-radius: 3px;
+    border-top: transparent !important;
+    border-left: transparent !important;
+    border-right: transparent !important;
+    border-bottom: transparent !important;
+    padding-left: 18px;
+    font-size: 16px;
+    color: #393939;
+    font-weight: 500;
+    margin-top: 35px;
+}
+
+.right {
+    padding-left: 18px;
+    padding-right: 8px;
+}
+
+.input-icon {
+    margin-top: -38px;
+    margin-left: 13px;
+}
+
+.input-icon-right {
+    margin-top: -38px;
+    margin-left: 94%;
+}
+
+.tooltip {
+    position: relative;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: #2d2d2d;
+    color: #fff;
+    border-radius: 3px;
+    padding: 10px;
     
-/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#6c8acc+0,8ba2d6+99 */
-background: rgb(108,138,204); /* Old browsers */
-background: -moz-linear-gradient(top, rgba(108,138,204,1) 0%, rgba(139,162,214,1) 99%); /* FF3.6-15 */
-background: -webkit-linear-gradient(top, rgba(108,138,204,1) 0%,rgba(139,162,214,1) 99%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to bottom, rgba(108,138,204,1) 0%,rgba(139,162,214,1) 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6c8acc', endColorstr='#8ba2d6',GradientType=0 ); /* IE6-9 */
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    font-weight: 300;
+    font-size: 13px;
+    left: 0px;
+    opacity: 0;
+    transition: opacity 1s;
 }
-div {
-    font-size: 22px;
-    font-family: "LatoWeb";
-    color: #ffffff;
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
-h1 {
-    text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
+
+.g-recaptcha > div {
+    margin: 35px auto;
 }
-.textholder {
-	position: relative;
-    float: left;
-    width: 150px;
+
+#exhange-button {
+    background-color: #2d2d2d;
+    border: none;
+    color: white;
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.3s;
 }
-.inputbox {
-	position: relative;
-    margin: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 380px;
-    height: 35px;
+
+#exhange-button:hover {
+    background-color: #353535;
 }
-.inputholder {
-	position: relative;
-    float: left;
-	overflow: hidden;
-	border: 1px solid;
-	border-color: #999999; 
-	border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	-webkit-border-radius: 4px;
-    height: 30px;
-    width: 100px;
--webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
--moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+
+.powered {
+    text-align: center;
+    color: #cddbea;
+    font-weight: 300;
+    font-size: 18px;
 }
-.input {
-	position: relative;
-	top: -4px;
-	left: -2px;
-    height: 34px;
-    width: 104px;
-    background-color: #ffffff;
-	font-family: "LatoWeb";
-	color: #666666;
-	font-size: 16px;
-	padding: 0px;
-	padding-left: 5px;
+
+.powered > span > a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
 }
-#captcha_holder {
-    margin: 40px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 300px;
-}
-    
-#button {
-	position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    width: 230px;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 7px;
-	padding-bottom: 7px;
-	overflow: hidden;
-	font-family: "LatoWebBold";
-	font-size: 20px;
-	color: #555555;
-	border: 1px solid #999999;
-	border-radius: 8px; 
-	-moz-border-radius: 8px; 
-	-webkit-border-radius: 8px; 
-    
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
-background: rgb(238,238,238); /* Old browsers */
-background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
-    
-    -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
--moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+
+@media screen and (max-width: 600px) {
+    .container {
+        margin-top: 10px;
+        padding: 30px;
+    }
+
+    .input-icon-right {
+        margin-left: 85%;
+    }
 }
