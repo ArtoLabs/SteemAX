@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>SteemAX</title>
+<meta name="description" content="An auto-upvote exchange system for the Steemit blockchain.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css" />
+<link rel="stylesheet" type="text/css" href="https://steemax.trade/css/info.css">
+<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+<script src="https://www.steemax.trade/js/steemjs.js"></script>
+<script lang="javascript">
+
+function get_all_votes() {
+    get_vote_value('learnelectronics', 100, 1);
+    get_vote_value('artopium', 100);
+}
+</script>
+</head>
+<body>
+<div style="width: 100%; height: 100vh;">
+    <img src="https://steemax.trade/images/steemaxlogo.png">
+    <br>
+    <div id="welcome">@learnelectronics <div id="learnelectronicsvote" style="width: auto;"></div></div>
+    <br>
+
+    <div class="xbox">
+        <input type="hidden" id="artopiumvotevalue">
+        <input type="hidden" id="artopiumpercentage" value="70">
+        <input type="hidden" id="artopiumratio" value="0.1">
+        <input type="hidden" id="artopiumduration" value="365">
+        <input type="hidden" id="artopiuminvitee" value="1">
+        <div class="xinnerbox">Invitee: @Artopium</div>
+        <div class="xinnerbox" id="artopiumvote" style="width: auto;"></div>
+        <div class="xinnerbox">70%</div>
+        <div class="xinnerbox">0.1:1 ratio</div>
+        <div class="xinnerbox">365 days</div>
+        <div class="button">Accept</div>
+        <div class="button" onClick="compare_votes('artopium');">Barter</div>
+        <div class="button">Cancel</div>
+    </div>
+    <div class="memobox" id="artopiummemo">
+        <div class="minnerbox" id="artopiumcompare"></div>
+        <div class="minnerbox">2093475982374509237509237852389759023</div>
+    </div>
+
+</div>
+</body>
+</html>
