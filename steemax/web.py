@@ -4,6 +4,7 @@ import re
 import urllib3
 import json
 from urllib.parse import urlencode
+from screenlogger.screenlogger import Msg
 from steemax import axverify
 from steemax import axdb
 from steemax import default
@@ -16,23 +17,31 @@ class Web:
         self.db = axdb.AXdb(default.dbuser, 
                             default.dbpass, 
                             default.dbname)
+        self.msg = Msg(default.logfilename, 
+                        default.logpath,
+                        default.msgmode)
 
 
     def template (self, templatefile="", **kwargs):
         ''' opens a template file and fills in the 
         template with the key value pairs
         '''
-        fh = open(templatefile, 'r')
-        template = fh.read()
-        regobj = re.compile(
-            r"^(.+)(?:\n|\r\n?)((?:(?:\n|\r\n?).+)+)", 
-            re.MULTILINE)
-        newtemplate = regobj.sub('', template)
-        for key, value in kwargs.items():
-            newtemplate = re.sub(str(key), 
-                                str(value), 
-                                newtemplate)
-        return newtemplate
+        templatepath = default.webpath + "/" + templatefile
+        with open(templatepath, 'r') as fh:
+            try:
+                template = fh.read()
+            except Exception as e:
+                self.msg.error_message(e)
+            else:
+                regobj = re.compile(
+                    r"^(.+)(?:\n|\r\n?)((?:(?:\n|\r\n?).+)+)", 
+                    re.MULTILINE)
+                newtemplate = regobj.sub('', template)
+                for key, value in kwargs.items():
+                    newtemplate = re.sub(str(key), 
+                                        str(value), 
+                                        newtemplate)
+                return newtemplate
 
 
     def login (self, token):
