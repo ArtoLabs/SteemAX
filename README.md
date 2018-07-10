@@ -1,4 +1,4 @@
-# SteemAX v0.3
+# SteemAX
 
 SteemAX is a web application that allows a Steemian to barter with other Steemians for an automatic exchange of upvotes for an agreed duration.
 
