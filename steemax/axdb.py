@@ -212,11 +212,16 @@ class AXdb(DB):
                         acct, key, refreshtoken, accesstoken)
 
 
-    def get_axlist (self):
+    def get_axlist (self, account=None):
         ''' Gets the entire list of transactions
         to be processed
         '''
-        self.get_results("SELECT * FROM axlist WHERE 1;")
+        if not account:
+            self.get_results("SELECT * FROM axlist WHERE 1;")
+        else:
+            self.get_results('SELECT * FROM axlist '                    
+                        + 'WHERE %s IN (Account1, Account2);',
+                        account)
         return self.dbresults
 
 
