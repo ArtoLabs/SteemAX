@@ -11,24 +11,34 @@ body{
     margin: 0;
 }
 .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
+    position: relative;
+    width: calc(100% - 400px);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
 }
 .header-side {
-    width: 302px;
+    width: 20%;
+    min-width: 200px;
+    position: relative;
+    margin-bottom: 40px;
 }
 .myvotevalue {
-    margin-left:auto;
-    margin-right: auto;
+    position: relative;
+    float: left;
     font-size: 25px;
     font-weight: 500;
     color: #ffffff;
-    margin-top: 20px;
+    margin-top: 10px;
+    width: 40%;
+    max-width: 700px;
+    min-width: 100px;
+    text-align: right;
 }
 .container {
     max-width: 360px;
     margin: auto;
+    clear: both;
 }
 .tooltip {
     position: relative;
@@ -149,23 +159,33 @@ option {
     font-weight: 300;
     font-size: 18px;
 }
-#exhange-button {
+#loadergif {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+}
+#buttonholder {
+    position: relative;
+    margin-top: 40px;
+    width: 360px;
+}
+#exchange-button {
     background-color: #2d2d2d;
+    padding: 20px;
     border: none;
     color: #ffffff;
-    padding: 20px;
-    width: 360px;
+    width: 320px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 18px;
     font-weight: 500;
-    margin-top: 40px;
     cursor: pointer;
     border-radius: 3px;
     transition: 0.3s;
 }
-#exhange-button:hover {
+#exchange-button:hover {
     background-color: #353535;
 }
 #powered {
