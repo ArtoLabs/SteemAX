@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css" />
     <link rel="stylesheet" type="text/css" href="https://www.steemax.trade/css/main.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="https://www.steemax.trade/js/steem.min.js"></script>
     <script src="https://www.steemax.trade/js/steemjs.js"></script>
     <script lang="javascript">
         if (window != top) {top.location.replace(document.location);}
@@ -18,12 +18,14 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-side">
-            <img id="large-logo" src="https://steemax.trade/images/steemaxlogo.png">
+        <div class="header-side" style="float: left;">
+            <img id="large-logo" src="https://steemax.trade/images/steemaxlogo.png" width="200">
         </div>
         <div id="ACCOUNT1vote" class="myvotevalue"></div>
-        <div class="header-side">
-            <button id="ghost-button">Logout</button>
+        <div class="header-side" style="float: right;">
+            <a href="https://steemax.info/@ACCOUNT1">
+            <button id="ghost-button">See my exchanges</button>
+            </a>
         </div>
     </div>
     <form action="https://steemax.trade/post.py" id="axform">
@@ -37,14 +39,14 @@
                 <span class="tooltiptext">Enter the name of a Steemit.com account that you wish to exchange upvotes.</span>
             </div>
             <div class="tooltip">
-                <input type="number" placeholder="Percentage from 1 to 100" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes()" class="inputshadow">
+                <input type="number" placeholder="Percentage from 1 to 100" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
                 <span class="tooltiptext">This is the percentage of your upvote that you'd like to exchange. Exchanges are always negotiated using the inviter's upvote. The person you invite will have the opportunity to barter with you before they accept and it will always be your (inviter's) upvote that is being bartered on.</span>
             </div>
             <div class="tooltip">
-                 <input type="number" placeholder="Ratio from 0.01 to 100" min="0.001" max="1000" step="0.01" name="ratio" id="ratio" onchange="compare_votes()" class="inputshadow">
+                 <input type="number" placeholder="Ratio from 0.001 to 1000" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/1-icon.png">
-                <span class="tooltiptext">This is the ratio between your upvote and the person's upvote that you are inviting. This allows whales and minnows to exchange unequal upvotes! Just like the percentage, it's <i>your</i> upvote that is being adjusted, which is the number on the left of the ratio. You can adjust the ratio from 0.001 (one hundredth of your upvote compared to the person you're inviting) all the way to 1000 (your upvote is one hundred times the other upvote).</span>
+                <span class="tooltiptext">This is the ratio between your upvote and the person's upvote that you are inviting. This allows whales and minnows to exchange unequal upvotes! Just like the percentage, it's <i>your</i> upvote that is being adjusted, which is the number on the left of the ratio. You can adjust the ratio from 0.001 (one thousandth of your upvote compared to the person you're inviting) all the way to 1000 (your upvote is one thousand times the other upvote).</span>
             </div>
             <select name="duration" id="duration" class="inputshadow">
                 <option value="7">1 week</option>
@@ -57,7 +59,10 @@
             <div id="captcha_holder">
                  <div class="g-recaptcha" data-sitekey="6Ld60V8UAAAAALQVrR4yBYDiDsYVHO1JRc4BdrxG"></div>
             </div>
-            <button type="button" id="exhange-button" onClick="verifyform(); return false;">Invite to exchange</button>
+            <div id="buttonholder">
+                <a href="javascript" onClick="verifyform(); return false;"><div id="exchange-button">Invite to exchange</div></a>
+                <img src="https://steemax.trade/images/loader_small.gif" id="loadergif">
+            </div>
             <div id="powered">Powered by <a href="https://steemit.com/@learnelectronics">Artolabs</a></div>
         </div>
     </div>
