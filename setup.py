@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     python_requires='>=3.0',
     name='SteemAX',
-    version='0.4',
+    version='0.6',
     packages=['steemax'],
     license='MIT',
     keywords='steemit steem upvote exchange',
@@ -24,5 +24,3 @@ setup(
     include_package_data=True,
     zip_safe=False
 )
-
-
