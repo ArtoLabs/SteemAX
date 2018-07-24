@@ -1,13 +1,14 @@
-body, html {
-	border:0px; 
-	background-color: #ffffff;
-	text-align: left;
-	margin:0px; 
-	top:0;
-	left:0;
-	padding:0px;
-    
-
+body{
+    background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ie10+ */
+    background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */
+    font-family: Lato, sans-serif;
+    height: 100vh;
+    margin: 0;
 }
 div {
     font-size: 22px;
@@ -17,41 +18,117 @@ div {
 h1 {
     text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
 }
-
-
+.header {
+    position: relative;
+    width: calc(100% - 400px);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+.header-side {
+    width: 20%;
+    min-width: 200px;
+    position: relative;
+    margin-bottom: 40px;
+}
+.myvotevalue {
+    position: relative;
+    float: left;
+    font-size: 25px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-top: 10px;
+    width: 40%;
+    max-width: 700px;
+    min-width: 100px;
+    text-align: right;
+}
+input {
+    width: 360px;
+    height: 25px;
+    border-radius: 3px;
+    border-top: transparent !important;
+    border-left: transparent !important;
+    border-right: transparent !important;
+    border-bottom: transparent !important;
+    padding-left: 10px;
+    margin: 4px;
+    font-size: 12px;
+    font-family: Verdana, sans-serif;
+    color: #333333;
+    font-weight: 500;
+    background-color: #ffffff;
+}
+#large-logo {
+    max-width: 400px;
+    display: block;
+    float: left;
+}
+#ghost-button {
+    float: right;
+    border: 1px solid #8ac2f1;
+    background-color: transparent;
+    margin-top: 10px;
+    padding: 3px 5px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.8s;
+}
+#ghost-button:hover {
+    background-color: white;
+    color: #2f7fd2;
+}
 .memobox {
+    display: none;
 	position: relative;
     float: left;
-    width: calc(100% - 102px);
-    padding-left: 50px;
-    padding-right: 50px;
-    margin-bottom: 3px;
+    width: 100%;
+    margin-bottom: 1px;
+    background-color: #cfcfcf;
+    opacity: 0;
+    transition: opacity 1s;
 }
 .minnerbox {
 	position: relative;
     float: left;
-    min-width: 12%;
     height: 30px;
-    text-align: center;
-    background-color: #efefef;
-    padding: 3px;
+    text-align: left;
+    padding: 12px;
+    padding-bottom: 0px;
+    color: #333333;
+    font-size: 16px;
 }
 .xbox {
-	position: relative;
+    position: relative;
     float: left;
-    width: calc(100% - 102px);
-    padding-left: 50px;
-    padding-right: 50px;
-    margin-bottom: 3px;
+    width: calc(100% - 10px);
+    margin-bottom: 1px;
+    background-color: #efefef;
+    padding-right: 10px;
+    transition: transform 0.5s;
 }
 .xinnerbox {
 	position: relative;
     float: left;
     min-width: 12%;
     height: 30px;
-    text-align: center;
-    background-color: #efefef;
-    padding: 3px;
+    text-align: left;
+    padding: 12px;
+    padding-bottom: 0px;
+    color: #333333;
+    font-size: 16px;
+}
+#exchange_table {
+	position: relative;
+    width: calc(100% - 400px);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
 }
 
 .button {
@@ -61,6 +138,8 @@ h1 {
 	padding-right: 5px;
 	padding-top: 3px;
 	padding-bottom: 3px;
+    margin: 5px;
+    margin-top: 8px;
 	overflow: hidden;
 	font-family: "LatoWebBold";
 	font-size: 16px;
@@ -80,4 +159,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', end
     -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
 -moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
 box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+}
+.button:hover {
+    cursor: pointer;
+    color: #999999;
 }
