@@ -1,6 +1,9 @@
 steemax/config.py
 steemax/error.log
-website/
+website/fonts
+website/js/steem.min.js
+website/favicon.ico
+steemax_logo/SVG-20180627T154747Z-001.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
