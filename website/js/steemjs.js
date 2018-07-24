@@ -8,6 +8,7 @@ var myaccountname = "";
 var vote1 = 0;
 var vote2 = 0;
 var formstate = 0;
+var itemshowing = 0;
 steem.api.getRewardFund("post", function(err, fund) {
     reward_fund = parseFloat(fund.reward_balance.replace(" STEEM", ""));
     recent_claims = parseInt(fund.recent_claims, 10);
@@ -22,15 +23,15 @@ steem.api.getRewardFund("post", function(err, fund) {
         });
     });
 });
-function fix_values() {
+function fix_values(per, ratio) {
     per = document.getElementById("percentage");
     ratio = document.getElementById("ratio");
     if (per.value > 100) {per.value = 100;}
     else if (per.value < 1) {per.value = 1;}
     if (ratio.value > 1000) {ratio.value = 1000;}
-    else if (ratio.value < 0.001) {ratio.value = 0.001;}
+    else if (ratio.value < 0.001) {ratio.value = 1;}
 }
-function verifyform () {
+function verifyform() {
     var regex = new RegExp('[^0-9\.]', 'g');
     per = document.getElementById("percentage").value;
     per = per.replace(regex, '');
@@ -38,22 +39,32 @@ function verifyform () {
     ratio = ratio.replace(regex, '');
     dur = document.getElementById("duration").value;
     dur = dur.replace(regex, '');
-    if ((per < 0) || (per > 100)) {
+    acctname = document.getElementById("accountbox").value;
+    var regex = new RegExp('[^A-Za-z0-9\.\-\_]', 'g');
+    acctname = acctname.replace(regex, '');
+    if (acctname == "") {
+        alert("Please enter an Steemit.com account name.");
+        return false;
+    }
+    else if ((per < 0) || (per > 100)) {
         alert("Please enter a percentage between 1 and 100.");
         fix_values();
+        return false;
     }
     else if ((ratio < 0.001) || (ratio > 1000)) {
         alert("Please enter a ratio between 0.001 and 1000.");
         fix_values();
+        return false;
     }
     else if ((dur < 7) || (dur > 365)) {
         alert("Please enter a duration between 7 days and 365 days.");
+        return false;
     }
     else {
-        acctname = document.getElementById("accountbox").value;
-        var regex = new RegExp('[^A-Za-z0-9\.\-\_]', 'g');
-        acctname = acctname.replace(regex, '');
-        get_vote_value(acctname, 100, 3);
+        document.getElementById("exchange-button").style.display = "none";
+        document.getElementById("loadergif").style.display = "block";
+        document.getElementById("accountbox").focus();
+        get_vote_value(acctname, 100, 3, 0);
     }
 }
 function verifyform_callback() {
@@ -67,17 +78,10 @@ function steem_callback () {
     disableform();
 }
 function enableform () {
-    document.getElementById("percentage").disabled = false;
-    document.getElementById("ratio").disabled = false;
-    document.getElementById("duration").disabled = false;
-    document.getElementById("exhange-button").disabled = false;
+    document.getElementById("percentage").focus();
     formstate = 1;
 }
 function disableform () {
-    document.getElementById("percentage").disabled = true;
-    document.getElementById("ratio").disabled = true;
-    document.getElementById("duration").disabled = true;
-    document.getElementById("exhange-button").disabled = true;
     formstate = 0;
 }
 function input_error(obj) {
@@ -105,7 +109,7 @@ function sp_to_rshares(steempower, votepower, voteweight) {
 function rshares_to_steem(rshares) {
     return rshares * reward_fund / recent_claims * price_of_steem;
 }
-function get_vote_value(accountname, weight, flag) {
+function get_vote_value(accountname, weight, flag, id) {
     var regex = new RegExp('[^A-Za-z0-9\.\-\_]', 'g');
     accountname = accountname.replace(regex, '');
     weight = weight * 100;
@@ -118,14 +122,15 @@ function get_vote_value(accountname, weight, flag) {
             var steem_power = vests_to_sp(totalvests);
             var rshares = sp_to_rshares(steem_power, 10000, weight);
             var vote_value = rshares_to_steem(rshares);
-            vote_value = parseFloat(vote_value).toFixed(4);
             if (flag == 1) {
                 myvote = vote_value;
                 myaccountname = accountname;
-                var id = accountname + "vote";
-                document.getElementById(id).innerHTML = '@' + accountname + ' $' + vote_value;
+                var elementid = accountname + "vote";
+                vote_value = parseFloat(vote_value).toFixed(4);
+                document.getElementById(elementid).innerHTML = '@' + accountname + ' $' + vote_value;
             }
             if (flag == 2) {
+                vote_value = parseFloat(vote_value).toFixed(4);
                 vote2 = vote_value;
                 document.getElementById("errormsg").innerHTML = "@" + accountname +  " $" + vote2;
                 enableform();
@@ -136,10 +141,18 @@ function get_vote_value(accountname, weight, flag) {
                 enableform();
                 verifyform_callback();
             }
-            //id2 = accountname + "votevalue";
-            //document.getElementById(id2).value = vote_value;
+            if (flag == 4) {
+                crazy = document.getElementById("invitee"+id).value
+                if (document.getElementById("invitee"+id).value == 0) {
+                    vote2 = vote_value;
+                }
+                else {
+                    vote1 = vote_value;
+                }
+                compare_votes_info_callback(id);
+            }
         }
-        else if (flag > 1) {
+        else if ((flag > 1) && (flag != 4)){
             disableform();
             input_error(document.getElementById("accountbox"));
             document.getElementById("errormsg").innerHTML = "Invalid account name.";
@@ -149,7 +162,68 @@ function get_vote_value(accountname, weight, flag) {
         }
     });
 }
-function compare_votes(account) {
+function start(id, account) {
+    var memoid = document.getElementById("storedmemoid"+id).value;
+    var memomsg = memoid + ":start";
+    document.getElementById("memoid"+id).value = memomsg;
+    compare_votes_info(id, account);
+}
+function show_item(id) {
+    hide_item();
+    document.getElementById("memo"+id).style.display = 'block';
+    document.getElementById("memo"+id).offsetHeight;
+    document.getElementById("memo"+id).style.opacity = '1';
+    itemshowing = id;
+}
+function hide_item() {
+    if (document.getElementById("memo"+itemshowing)) {
+        document.getElementById("memo"+itemshowing).style.display = 'none';
+        document.getElementById("memo"+itemshowing).style.opacity = '0';
+    }
+}
+function compare_votes_info_callback(id) {
+    var regex = new RegExp('[^0-9\.]', 'g');
+    var ratio = document.getElementById("ratio"+id).value;
+    ratio = ratio.replace(regex, '');
+    var votecut = ((vote1 / vote2) * 100) / ratio;
+    var exceeds = 0;
+    if (votecut < 1) {votecut = 1;exceeds = 1;}
+    if (votecut > 100) {votecut = 100;exceeds = 1;}
+    var newvotevalue = vote2 * (votecut / 100);
+    newvotevalue = parseFloat(newvotevalue).toFixed(4);
+    vote1 = parseFloat(vote1).toFixed(4);
+    document.getElementById("votevalue"+id).value = newvotevalue;
+    document.getElementById("compare"+id).innerHTML = ("$"+vote1+" vs. $"+newvotevalue);
+    show_item(id);
+}
+function compare_votes_info(id, account) {
+    if (document.getElementById("votevalue"+id).value > 0) {
+        show_item(id);
+    }
+    else {
+        var regex = new RegExp('[^0-9\.]', 'g');
+        var percentage = document.getElementById("percentage"+id).value;
+        percentage = percentage.replace(regex, '');
+        var ratio = document.getElementById("ratio"+id).value;
+        ratio = ratio.replace(regex, '');
+        var votevalue;
+        var account1;
+        var account2;
+        var otheraccount = document.getElementById("otheraccount"+id).value;
+        if (document.getElementById("invitee"+id).value == 0) {
+            vote1 = myvote * (percentage / 100);
+            account1 = myaccountname;
+            account2 = otheraccount;
+        }
+        else {
+            vote2 = myvote * (percentage / 100);
+            account2 = myaccountname;
+            account1 = otheraccount;
+        }
+        get_vote_value(otheraccount, 100, 4, id);
+    }
+}
+function compare_votes_index() {
     fix_values();
     var regex = new RegExp('[^0-9\.]', 'g');
     var percentage = document.getElementById("percentage").value;
@@ -159,34 +233,17 @@ function compare_votes(account) {
     var votevalue;
     var account1;
     var account2;
-    if (document.getElementById(account + "votevalue")) {
-        votevalue = document.getElementById(account + "votevalue").value;
-        if (document.getElementById(account + "invitee").value == 1) {
-            vote1 = myvote * (percentage / 100);
-            vote2 = votevalue;
-            account1 = myaccountname;
-            account2 = account;
-        }
-        else {
-            vote2 = myvote * (percentage / 100);
-            vote1 = votevalue;
-            account2 = myaccountname;
-            account1 = account;
-        }
-    }
-    else {
-        vote1 = myvote * (percentage / 100);
-        account1 = myaccountname;
-        account2 = document.getElementById("accountbox").value;
-        var regex = new RegExp('[^A-Za-z0-9\.\-\_]', 'g');
-        account2 = account2.replace(regex, '');
-    }
+    vote1 = myvote * (percentage / 100);
+    account1 = myaccountname;
+    account2 = document.getElementById("accountbox").value;
+    var regex = new RegExp('[^A-Za-z0-9\.\-\_]', 'g');
+    account2 = account2.replace(regex, '');
     vote1 = parseFloat(vote1).toFixed(4);
     var votecut = ((vote1 / vote2) * 100) / ratio;
     var exceeds = 0;
     if (votecut < 1) {votecut = 1;exceeds = 1;}
     if (votecut > 100) {votecut = 100;exceeds = 1;}
-    newvotevalue = vote2 * (votecut / 100);
+    var newvotevalue = vote2 * (votecut / 100);
     newvotevalue = parseFloat(newvotevalue).toFixed(4);
     if (exceeds == 1) {
         if (votecut == 1) {
