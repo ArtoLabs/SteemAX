@@ -285,7 +285,7 @@ class MyPrompt(Cmd):
         acct1 = Enter().account_name(1)    
         acct2 = Enter().account_name(0)
         per = Enter().percentage(acct1)
-        ratio = Enter().ratio(acct1, acct2, per, 0)
+        ratio = Enter().ratio(acct1, acct2, per, 1)
 
 
     def do_account(self, args):
@@ -305,6 +305,18 @@ class MyPrompt(Cmd):
             xverify.steem.steempower, 
             xverify.voteweight, 
             xverify.votevalue))
+
+
+    def do_list(self, args):
+        account = input("Account (press enter for none): ")
+        axlist = db.get_axlist(account)
+        for value in axlist:
+            print (value[1] + " vs. " + value[2])
+            print ('    MemoID: ' + value[6])
+            print ('    Per: ' + value[3] 
+                    + '%    Ratio: ' + value[4] 
+                    + ':1      Dur: ' + value[5] 
+                    + ' days     Status: ' + value[7] + '\n')
 
 
     def do_pool(self, args):
