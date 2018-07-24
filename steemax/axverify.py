@@ -12,7 +12,10 @@ class AXverify:
         self.msg = Msg(default.logfilename, 
                         default.logpath,
                         default.msgmode)
-        self.steem = SimpleSteem(screenmode=default.msgmode)
+        self.steem = SimpleSteem(client_id=default.client_id,
+                                client_secret=default.client_secret,
+                                callback_url=default.callback_url,
+                                screenmode=default.msgmode)
         self.response = None
 
 
@@ -28,10 +31,10 @@ class AXverify:
         if votepower == 0:
             votepower = self.steem.votepower
         self.votevalue = self.steem.current_vote_value(
-                    self.steem.lastvotetime, 
-                    self.steem.steempower, 
-                    voteweight, 
-                    votepower)
+                    lastvotetime=self.steem.lastvotetime, 
+                    steempower=self.steem.steempower, 
+                    voteweight=int(voteweight), 
+                    votepower=int(votepower))
         self.voteweight = voteweight
         self.votepower = votepower
         return self.steem.rshares
@@ -80,8 +83,8 @@ class AXverify:
             vpow = 100
         else:
             vpow = 0
-        v1 = self.get_vote_value(account1, percentage, vpow, mode)
-        v2 = self.get_vote_value(account2, 100, vpow, mode)
+        v1 = self.get_vote_value(account1, percentage, vpow)
+        v2 = self.get_vote_value(account2, 100, vpow)
         v3 = ((v1 / v2) * 100) / float(ratio)
         v3a = round(v3, 2)
         exceeds = False
@@ -93,7 +96,9 @@ class AXverify:
             exceeds = True
         self.msg.message(account2 + " needs to vote " 
                 + str(v3a) + "% in order to meet " + account1)
-        v4 = self.get_vote_value(account2, v3, vpow, mode)
+        trythis = v3 * 100
+        v4 = self.get_vote_value(account2, trythis, vpow)
+        
         v1s = self.steem.rshares_to_steem(v1)
         v4s = self.steem.rshares_to_steem(v4)
         if exceeds:
