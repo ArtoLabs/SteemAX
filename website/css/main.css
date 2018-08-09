@@ -1,3 +1,8 @@
+@charset "utf-8";
+/* CSS Document */
+@media screen and (-webkit-min-device-pixel-ratio: 3.0) and (max-width: 1080px), screen and (max-width: 380px) {
+//most phones including Galaxy S4
+}
 body{
     background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
@@ -9,6 +14,7 @@ body{
     font-family: Lato, sans-serif;
     height: 100vh;
     margin: 0;
+    min-height: 700px;
 }
 .header {
     position: relative;
@@ -17,11 +23,17 @@ body{
     margin-right: auto;
     margin-top: 20px;
 }
-.header-side {
-    width: 20%;
-    min-width: 200px;
+#header-logo {
+    width: 25%;
     position: relative;
     margin-bottom: 40px;
+    min-width: 200px;
+    float: left;
+}
+#header-button {
+    position: relative;
+    margin-bottom: 40px;
+    float: right;
 }
 .myvotevalue {
     position: relative;
@@ -71,9 +83,11 @@ body{
     margin-right: auto;
 }
 #large-logo {
-    max-width: 400px;
+    width: 200px;
+    height: 54px;
     display: block;
     float: left;
+    background:url(https://steemax.trade/images/steemaxlogo200.png);
 }
 #ghost-button {
     float: right;
@@ -93,6 +107,11 @@ body{
 #ghost-button:hover {
     background-color: white;
     color: #2f7fd2;
+}
+#input-fields {
+    position: relative;
+    height: 700px;
+    min-height: 700px;
 }
 .input-icon {
     position: absolute;
@@ -202,13 +221,4 @@ option {
     color: white;
     text-decoration: none;
     font-weight: 500;
-}
-@media screen and (max-width: 600px) {
-    .container {
-        margin-top: 10px;
-        padding: 30px;
-    }
-    .input-icon-right {
-        margin-left: 85%;
-    }
 }
