@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://steemax.trade/favicon.ico' rel='icon' type='image/vnd.microsoft.icon'>
-    <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css" />
-    <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/info.css">
+    <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css">
+    <link rel="stylesheet" media="only screen and (max-width: 4000px) and (min-width: 1000px)" href="https://steemax.trade/css/info.css">
+    <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/info600.css">
+    <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/info380.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://steemax.trade/js/steem.min.js"></script>
     <script src="https://steemax.trade/js/steemjs.js"></script>
@@ -18,18 +20,43 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-side" style="float: left;">
-            <img id="large-logo" src="https://steemax.trade/images/steemaxlogo.png" width="200">
+        <div id="header-logo">
+            <div id="large-logo"></div>
         </div>
         <div id="ACCOUNT1vote" class="myvotevalue"></div>
-        <div class="header-side" style="float: right;">
+        <div id="header-button">
             <a href="https://steemax.trade">
-            <button id="ghost-button">Exchange my upvote</button>
+            <button id="ghost-button">Exchange</button>
             </a>
         </div>
     </div>
     <div id="exchange_table">
     INFOBOX
+    </div>
+    <div id="myModal">
+        <div id="modal-content">
+            <span id="closemodal" onClick='close_modal();'>&times;</span>
+            <div id="errormsg"></div>
+            <div class="infotip">
+                <input type="number" class="modal_input" placeholder="Percentage from 1 to 100" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index(currentbarterid);">
+                <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
+            </div>
+            <div class="infotip">
+                 <input type="number" class="modal_input" placeholder="Ratio from 0.001 to 1000" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index(currentbarterid);">
+                <img class="input-icon-right" src="https://www.steemax.trade/images/1-icon.png">
+            </div>
+            <select name="duration" id="duration" class="inputshadow">
+                <option value="7">1 week</option>
+                <option value="14">2 weeks</option>
+                <option value="28">4 weeks</option>
+                <option value="56">2 months</option>
+                <option value="84">6 months</option>
+                <option value="365">1 year</option>
+            </select>
+            <div id="buttonholder">
+                <div id="exchange-button" onClick="make_barter_memo(); return false;">Create Memo Message</div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

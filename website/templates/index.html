@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://steemax.trade/favicon.ico' rel='icon' type='image/vnd.microsoft.icon'>
     <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css" />
-    <link rel="stylesheet" type="text/css" href="https://www.steemax.trade/css/main.css">
+    <link rel="stylesheet" media="only screen and (max-width: 4000px) and (min-width: 1000px)" href="https://steemax.trade/css/main.css">
+    <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/main600.css">
+    <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/main380.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.steemax.trade/js/steem.min.js"></script>
     <script src="https://www.steemax.trade/js/steemjs.js"></script>
@@ -18,11 +20,11 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-side" style="float: left;">
-            <img id="large-logo" src="https://steemax.trade/images/steemaxlogo.png" width="200">
+        <div id="header-logo" style="float: left;">
+            <div id="large-logo"></div>
         </div>
         <div id="ACCOUNT1vote" class="myvotevalue"></div>
-        <div class="header-side" style="float: right;">
+        <div id="header-button" style="float: right;">
             <a href="https://steemax.info/@ACCOUNT1">
             <button id="ghost-button">See my exchanges</button>
             </a>
@@ -39,14 +41,14 @@
                 <span class="tooltiptext">Enter the name of a Steemit.com account that you wish to exchange upvotes.</span>
             </div>
             <div class="tooltip">
-                <input type="number" placeholder="Percentage from 1 to 100" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
+                <input type="number" placeholder="Percentage" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
-                <span class="tooltiptext">This is the percentage of your upvote that you'd like to exchange. Exchanges are always negotiated using the inviter's upvote. The person you invite will have the opportunity to barter with you before they accept and it will always be your (inviter's) upvote that is being bartered on.</span>
+                <span class="tooltiptext">This is the percentage of your upvote that you'd like to exchange. Exchanges are always negotiated using the inviter's upvote. The person you invite will have the opportunity to barter with you before they accept. It will always be the percentage of your (inviter's) upvote that is being bartered on.</span>
             </div>
             <div class="tooltip">
-                 <input type="number" placeholder="Ratio from 0.001 to 1000" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index();" class="inputshadow">
+                 <input type="number" placeholder="Ratio" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/1-icon.png">
-                <span class="tooltiptext">This is the ratio between your upvote and the person's upvote that you are inviting. This allows whales and minnows to exchange unequal upvotes! Just like the percentage, it's <i>your</i> upvote that is being adjusted, which is the number on the left of the ratio. You can adjust the ratio from 0.001 (one thousandth of your upvote compared to the person you're inviting) all the way to 1000 (your upvote is one thousand times the other upvote).</span>
+                <span class="tooltiptext">This is the ratio between your upvote and the person's upvote that you are inviting. This allows whales and minnows to exchange unequal upvotes! Unlike the percentage, it's <i>their</i> upvote that is being adjusted. You can adjust the ratio from 0.001:1 (the invitee's upvote is one thousand times bigger than the inviter's upvote) all the way to 1000:1 (the invitee's upvote is one thousandth 1/1000 the size of the inviter's upvote).</span>
             </div>
             <select name="duration" id="duration" class="inputshadow">
                 <option value="7">1 week</option>
