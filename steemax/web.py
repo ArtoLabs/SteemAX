@@ -94,20 +94,20 @@ class Web:
             return self.error_page("Invalid captcha.")
         if self.verify_token(sec.filter_token(token)):
             account2 = sec.filter_account(account2)
-            if self.steem.account(account2):
+            if self.steem.account(account2) == False:
+                return self.error_page(account2 + " is an invalid account name.")
+            else:
                 memoid = self.db.add_invite(
                         self.steem.username, 
                         account2,  
                         sec.filter_number(per), 
-                        sec.filter_number(ratio), 
-                        sec.filter_number(dur))
+                        sec.filter_number(ratio, 1000), 
+                        sec.filter_number(dur, 365))
                 if memoid == False:
                     return self.error_page(self.db.errmsg)
                 elif int(memoid) > 0:
                     return ("Location: https://steemax.info/@" 
                             + self.steem.username + "\r\n")
-            else:
-                return self.error_page("Invalid account name.")
         else:
             return self.auth_url()
 
@@ -126,6 +126,8 @@ class Web:
         infobox = ""
         invitee = 0
         otheraccount = ""
+        buttoncode = ""
+        exp = ""
         for value in axlist:
             if account == value[2]:
                 invitee = 1
@@ -133,32 +135,57 @@ class Web:
             else:
                 invitee = 0
                 otheraccount = value[2]
-            if int(value[7]) == -1:
-                memoid = str(value[6]) + ":start"
+            if int(value[7]) == -1 and invitee == 0:
                 buttoncode = '''
-                <div class="button" onClick="start('{}, {}')">Start</div>'''.format(
+                <div class="button" onClick="command('{}', '{}', '{}')">Start</div>
+                                '''.format(
                                 value[0], 
-                                otheraccount)
-            if int(value[7]) == 0 or int(value[7]) > 1:
-                memoid = str(value[6]) + ":accept"
+                                otheraccount,
+                                "start")
+            if int(value[7]) == 0 and invitee == 1:
                 buttoncode = '''
-                <div class="button" onClick="compare_votes_info('{}')">Accept</div>
-                <div class="button">Cancel</div>
-                <div class="button">Barter</div>'''.format(value[0])
+                <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
+                <div class="button" onClick="barter_window('{}');">Barter</div>
+                                '''.format(
+                                value[0],
+                                otheraccount,
+                                "accept",
+                                value[0])
+            elif int(value[7]) == 0 and invitee == 0:
+                buttoncode = '<div id="pending">Pending</div>\n'
             if int(value[7]) == 1:
-                memoid = str(value[6])
+                buttoncode = '<div id="pending">Active</div>\n'
+                exp = "Expires " + self.db.expiration_date(value[8], value[5])
+            else:
+                exp = value[5] + " days"
+            if int(value[7]) > 1:
                 buttoncode = '''
-                <div class="button">Cancel</div>'''
-            if int(value[7]) != 4:
+                <div class="button" onClick="barter_window('{}');">
+                Barter</div>\n'''.format(value[0])
+            buttoncode = buttoncode + '''
+                <div class="button" onClick="command('{}', '{}', '{}')">
+                                Cancel</div>
+                                '''.format(
+                                value[0],
+                                otheraccount,
+                                "cancel")
+            if ((int(value[7]) == 2 and invitee == 1) 
+                        or (int(value[7]) == 3 and invitee == 0)):
+                buttoncode = buttoncode + '''
+                <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
+                                '''.format(
+                                value[0],
+                                otheraccount,
+                                "accept")
+            if int(value[7]) != 4 and not (int(value[7]) == -1 and invitee == 1):
                 box = self.make_page(boxtemplate,
                                 AXID=value[0],
                                 ACCOUNT1=value[1],
                                 ACCOUNT2=value[2],
                                 PERCENTAGE=value[3],
-                                DURATION=value[5],
+                                DURATION=exp,
                                 DARATIO=value[4],
                                 MEMOID=value[6],
-                                MEMOSTR=memoid,
                                 INVITEE=invitee,
                                 OTHERACCOUNT=otheraccount,
                                 BTNCODE=buttoncode)
