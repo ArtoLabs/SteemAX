@@ -17,6 +17,9 @@ class AXverify:
                                 callback_url=default.callback_url,
                                 screenmode=default.msgmode)
         self.response = None
+        self.post_one = ""
+        self.post_two = ""
+        self.vote_cut = 0
 
 
     def get_vote_value (self, acctname, voteweight=100, 
@@ -40,38 +43,49 @@ class AXverify:
         return self.steem.rshares
 
 
-    def verify_post (self, account1, account2, mode):
+    def verify_post (self, account1, account2):
         ''' Gets only the most recent post, gets the 
         timestamp and finds the age of the post in days.
         Is the post too old? Did account2 
         vote on the post already?
         '''
-        permlink = self.steem.get_post_info(account1)
-        if not permlink:
+        identifier = self.steem.recent_post(account1)
+        if not identifier:
             self.msg.error_message("No post for " + account1)
             return False
         else:
-            votes = self.steem.vote_history(account1, permlink)
+            permlink = self.steem.util.permlink(identifier)
+            votes = self.steem.vote_history(permlink[1], account1)
             for v in votes:
                 if v['voter'] == account2:
                     self.msg.message(account2 + 
-                        " has aready voted on " + permlink)
+                        " has aready voted on " + permlink[1])
                     return False
-        return True
+        return permlink[1]
 
 
-    def eligible_posts (self, account1, account2, mode):
+    def eligible_posts (self, account1, account2):
         ''' Verify the posts of both accounts
         '''
-        if not self.verify_post(account1, account2, mode):
+        post = self.verify_post(account1, account2)
+        if not post:
+            self.msg.message(account1 
+                + " does not have an eligible post.")
             return False
-        if not self.verify_post(account2, account1, mode):
+        else:
+            self.post_one = post
+        post = self.verify_post(account2, account1)
+        if not post:
+            self.msg.message(account2 
+                + " does not have an eligible post.")
             return False
+        else:
+            self.post_two = post
         return True
 
 
-    def eligible_votes (self, account1, account2, 
-                        percentage, ratio, mode, flag):
+    def eligible_votes(self, account1, account2, 
+                        percentage, ratio, flag):
         ''' If the flag is raised use the full voting 
         power to make the comparison rather
         than the current voting power. 
@@ -96,12 +110,11 @@ class AXverify:
             exceeds = True
         self.msg.message(account2 + " needs to vote " 
                 + str(v3a) + "% in order to meet " + account1)
-        trythis = v3 * 100
-        v4 = self.get_vote_value(account2, trythis, vpow)
-        
+        self.vote_cut = v3
+        v4 = self.get_vote_value(account2, v3, vpow)
         v1s = self.steem.rshares_to_steem(v1)
         v4s = self.steem.rshares_to_steem(v4)
-        if exceeds:
+        if exceeds and flag != 2:
             if v3 == 1:
                 v5 = v4 - v1
                 v5s = self.steem.rshares_to_steem(v5)
