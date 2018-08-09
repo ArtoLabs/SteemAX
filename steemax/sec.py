@@ -21,10 +21,12 @@ def filter_account (string):
     return string
 
 
-def filter_number (string):
+def filter_number (string, limit=100):
     string = re.sub(r'[^0-9\.]', 
                 '', str(string))
     string = string[0:6]
-    if float(string) < 0.01:
+    if float(string) < 0.001:
         string = "1"
+    if float(string) > limit:
+        string = limit
     return string
