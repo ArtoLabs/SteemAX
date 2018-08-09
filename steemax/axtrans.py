@@ -7,6 +7,7 @@ from datetime import datetime
 from steemax import axdb
 from steemax import axverify
 from steemax import default
+from steemax import sec
 from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 
@@ -27,15 +28,15 @@ class MemoMsg():
         self.reaction = "started"
         self.db.update_status(0, memoid)
         invite = self.db.get_invite(memoid)
-        msg = ("Hello {}, {} has invited you "
+        msg = ("Hello @{}, @{} has invited you "
             + " to an auto-upvote exchange. "
             + "They have offered {}% of their upvote "
-            + "At a ratio of {}:1 for {} days."
+            + "At a ratio of {}:1 for {} days. "
             ).format(acct2, acct1, 
             invite[0], invite[1], invite[2])
         if self.db.get_user_token(acct2):
-            msg = msg + ("please send any amount SBD to "
-                    + "@steemax with the following in "
+            msg = msg + ("Please send any amount SBD to "
+                    + "@steem-ax with the following in "
                     + "the memo: '{}:accept'. "
                     ).format(memoid)
         msg = msg + ("For more info please visit "
@@ -50,13 +51,13 @@ class MemoMsg():
         self.reaction = "accepted"
         self.db.update_status(1, memoid)
         self.returnmsg = (
-            "{} has accepted the invite. ".format(acct)
+            "@{} has accepted the invite. ".format(acct)
             + "The auto-upvote exchange will "
             + "begin immediately.")
 
 
     def barter_msg(self, reaction, status, acct, 
-                    per, ratio, dur, memoid):
+                    per, ratio, dur, memoid, acct2):
         ''' Creates the barter message
         '''
         self.reaction = reaction
@@ -67,14 +68,15 @@ class MemoMsg():
         self.db.update_invite(per, ratio, 
                             dur, memoid, status)
         self.returnmsg = (
-            ("{} has offered to barter. They offer " 
+            ("@{} has offered to barter. They offer " 
             + "{}% of {} upvote at a ratio of " 
             + "{}:1 for {} days. " 
-            + "Send any amount along with the " 
-            + "memo code:\n\n{}:accept " 
+            + "Send any SBD along with this " 
+            + "memo code to @steem-ax to accept this invite: "
+            + "\n\n'{}:accept'. " 
             + "To generate your own barter offer, "
-            + "please visit [link]").format(
-            acct, per, pronoun, ratio, dur, memoid))
+            + "please visit https://steemax.info/@{}").format(
+            acct, per, pronoun, ratio, dur, memoid, acct2))
 
 
     def ignore(self, reason):
@@ -90,7 +92,7 @@ class MemoMsg():
         '''
         self.reaction = "cancelled"
         self.db.update_status(4, memoid)
-        self.returnmsg = (canceller 
+        self.returnmsg = ("@" + canceller 
             + " has cancelled the exchange.")
 
 
@@ -106,12 +108,12 @@ class Reaction(MemoMsg):
             if rstatus < 1:
                 self.invite_msg(acct1, acct2, memoid)
             else:
-                self.ignore("{} has already".format(acct1)
+                self.ignore("@{} has already".format(acct1)
                         + "started this exchange.")
         else:
-            self.ignore("Invalid action. {} ".format(acct1)
+            self.ignore("Invalid action. @{} ".format(acct1)
                         + " has not yet started this "
-                        + "exhange.")
+                        + "exchange.")
 
 
     def accept(self, acct1, acct2, memofrom, 
@@ -149,20 +151,20 @@ class Reaction(MemoMsg):
             if (int(rstatus) > -1 and int(rstatus) != 2):
                 self.barter_msg("acct1 bartering", 2, 
                                 acct1, per, ratio, 
-                                dur, memoid)
+                                dur, memoid, acct2)
             else:
                 invalid = True
         elif acct2 == memofrom:
             if (int(rstatus) > -1 and int(rstatus) < 3):
                 self.barter_msg("acct2 bartering", 3, 
                                 acct2, per, ratio, 
-                                dur, memoid)
+                                dur, memoid, acct1)
             else:
                 invalid = True
         else:
             self.ignore("Invalid Memo ID.")
         if invalid:
-            self.ignore("Invalid barter. Please be sure that "
+            self.ignore("Invalid barter. Please be sure that @"
                         + acct1 + " has started the invite. "
                         + "If you've already sent a barter "
                         + "please wait for the other side to "
@@ -185,28 +187,23 @@ class AXtrans:
 
     def parse_memo(self, **kwargs):
         ''' Parses the memo message in a transaction
-        for the appropriate action. Soon to use
-        OWASP security filters
+        for the appropriate action.
         '''
         for key, value in kwargs.items():
             setattr(self, key, value)
-        # Ew this is dirty and came from 
-        # strangers! Must be sanitized!
         try:
             memo = self.memo.split(":")
         except:
             return False
-        self.memoid = memo[0] or None
-        if re.match(r'^[A-Za-z0-9\:]$', self.memoid):
-            return False
+        self.memoid = sec.filter_token(memo[0])
         if len(memo) == 2:
-            self.action = memo[1] or None
+            self.action = sec.filter_account(memo[1])
             return True
         elif len(memo) == 5:
-            self.action = memo[1] or None
-            self.percentage = memo[2] or None
-            self.ratio = memo[3] or None
-            self.duration = memo[4] or None
+            self.action = sec.filter_account(memo[1])
+            self.percentage = sec.filter_number(memo[2])
+            self.ratio = sec.filter_number(memo[3], 1000)
+            self.duration = sec.filter_number(memo[4], 365)
             return True
         else:
             return False
@@ -232,8 +229,8 @@ class AXtrans:
         '''
         if not self.db.get_user_token(self.memofrom):
             self.react.ignore(
-                ("{} is not a current member of "
-                + " https://steemax.trade! Join now "
+                ("@{} is not a current member of "
+                + " https://steemax.trade !!Join now!! "
                 + "using SteemConnect.").format(self.memofrom))
         elif (self.action == "start"):
             self.react.start(acct1, 
