@@ -13,7 +13,7 @@ from screenlogger.screenlogger import Msg
 class AXdb(DB):
 
 
-    def __init__ (self, dbuser, dbpass, dbname):
+    def __init__(self, dbuser, dbpass, dbname):
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
@@ -22,7 +22,7 @@ class AXdb(DB):
                         default.msgmode)
 
 
-    def first_time_setup (self):
+    def first_time_setup(self):
         ''' Sets up all three needed tables if they do not
         already exist
         '''
@@ -51,7 +51,7 @@ class AXdb(DB):
                 + 'ON UPDATE CURRENT_TIMESTAMP);')
 
 
-    def get_most_recent_trans (self):
+    def get_most_recent_trans(self):
         ''' Returns the timestamp from 
         the most recent memo id message. 
         '''
@@ -62,7 +62,7 @@ class AXdb(DB):
             return self.dbresults[0][0]
 
 
-    def add_trans (self, txid, memofrom, amt, 
+    def add_trans(self, txid, memofrom, amt, 
                     memoid, action, txtime):
         ''' Adds a processed transaction 
         to the axtrans database 
@@ -73,14 +73,14 @@ class AXdb(DB):
             txid, memofrom, amt,  memoid, action, txtime)
         
 
-    def verify_memoid (self, acct0, memoid):
+    def verify_memoid(self, acct0, memoid):
         '''Verify that the Memo ID entered 
         matches the account name entered. 
         '''
         if not self.get_results('SELECT Account1, Account2, '
                                 + 'Status FROM axlist WHERE MemoID = %s;',
                                 memoid):
-            self.msg.error_message("Memo ID not in database.")
+            self.msg.error_message("The Memo ID "+memoid+" is not in database.")
             return False
         if acct0 == self.dbresults[0][0]:
             self.sendto = self.dbresults[0][1]
@@ -96,7 +96,7 @@ class AXdb(DB):
         return True
 
 
-    def cancel (self, acct, memoid):
+    def cancel(self, acct, memoid):
         ''' Either account can cancel
         '''
         return self.commit('DELETE FROM axlist WHERE %s IN '
@@ -104,7 +104,7 @@ class AXdb(DB):
             acct, memoid)
 
 
-    def get_invite (self, memoid):
+    def get_invite(self, memoid):
         ''' Gets an invite from the database
         and returns it as a list
         '''
@@ -120,7 +120,7 @@ class AXdb(DB):
             return [0, 0, 0, 0]
 
 
-    def update_invite (self, percent, ratio, duration, memoid, status):
+    def update_invite(self, percent, ratio, duration, memoid, status):
         ''' Updates and invite during
         the barter process
         '''
@@ -129,7 +129,7 @@ class AXdb(DB):
             percent, ratio, duration, status, memoid)
 
 
-    def update_status (self, status, memoid):
+    def update_status(self, status, memoid):
         '''
         -1 = waiting for inviter to authorize
          0 = invite sent. waiting for invitee
@@ -142,7 +142,7 @@ class AXdb(DB):
             status, memoid)
 
 
-    def check_status (self, memoid):
+    def check_status(self, memoid):
         ''' Checks the status of an invite
         so that steemax knows how to react to
         a command
@@ -154,7 +154,7 @@ class AXdb(DB):
             return False
 
 
-    def get_user_token (self, acct):
+    def get_user_token(self, acct):
         ''' Gets a user's SteemConnect tokens 
         and Private Posting Key
         '''
@@ -166,7 +166,7 @@ class AXdb(DB):
             return False
 
 
-    def update_token (self, acct, accesstoken, refreshtoken):
+    def update_token(self, acct, accesstoken, refreshtoken):
         ''' Updates a user's SteemConnect tokens
         '''
         return self.commit("UPDATE users SET Token = %s, "
@@ -174,7 +174,7 @@ class AXdb(DB):
                             accesstoken, refreshtoken, acct)
 
 
-    def add_invite (self, acct1, acct2, percent, ratio, duration):
+    def add_invite(self, acct1, acct2, percent, ratio, duration):
         '''Adds the initial invite to the database 
         and provides the unique Memo ID.
         '''
@@ -186,7 +186,8 @@ class AXdb(DB):
             return False
         if self.get_results('SELECT * FROM axlist '
                         + 'WHERE %s IN (Account1, Account2) '
-                        + 'AND (%s IN (Account1, Account2));',
+                        + 'AND (%s IN (Account1, Account2)) '
+                        + 'AND (Status != 4);',
                         acct1, acct2):
             self.errmsg = ('An exchange has already been '
                         + 'made between these accounts.')
@@ -203,7 +204,7 @@ class AXdb(DB):
             return False
 
 
-    def add_user (self, acct, key, refreshtoken, accesstoken):
+    def add_user(self, acct, key, refreshtoken, accesstoken):
         ''' Adds a user and their tokens/key to the database
         '''
         return self.commit('INSERT INTO users (Account, PrivateKey, '
@@ -212,22 +213,40 @@ class AXdb(DB):
                         acct, key, refreshtoken, accesstoken)
 
 
-    def get_axlist (self, account=None):
+    def get_axlist(self, account=None, run=False):
         ''' Gets the entire list of transactions
         to be processed
         '''
-        if not account:
-            self.get_results("SELECT * FROM axlist WHERE 1;")
+        if run:
+            self.get_results('SELECT * FROM axlist WHERE Status = 1;')
+        elif account is None:
+            self.get_results('SELECT * FROM axlist WHERE Status != 4 ORDER BY Status;')
         else:
             self.get_results('SELECT * FROM axlist '                    
-                        + 'WHERE %s IN (Account1, Account2);',
+                        + 'WHERE %s IN (Account1, Account2) AND (Status != 4) ORDER BY Status;',
                         account)
         return self.dbresults
 
 
-    def generate_memoid (self, length=32):
+    def generate_memoid(self, length=32):
         return ''.join([str(random.randint(0, 9)) for i in range(length)])
 
-    
+
+    def expiration_date(self, timestamp, duration):
+        end_date = (datetime.strptime(str(timestamp), '%Y-%m-%d %H:%M:%S')
+                + timedelta(days=int(duration)))
+        return (str(end_date.strftime("%B")) + " " 
+                + str(end_date.day) + ", " 
+                + str(end_date.year))
+
+
+    def expire(self):
+        self.get_results("SELECT ID, Duration, Time, Account1, Account2 FROM axlist WHERE 1;")
+        for row in self.dbresults:
+            if (datetime.strptime(str(row[2]), '%Y-%m-%d %H:%M:%S')
+                    + timedelta(days=int(row[1])) < datetime.now()):
+                self.commit("UPDATE TABLE axlist SET Status = '4' WHERE ID = '%s';", row[0])
+                self.msg.message(row[3]+" vs. "+row[4]+" has expired.")
+
 
 # EOF
