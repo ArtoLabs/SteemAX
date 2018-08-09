@@ -197,7 +197,7 @@ class MyPrompt(Cmd):
         ''' Runs the auto exchange on all
         eligible accounts
         ''' 
-        axe.run_exchanges("")
+        axe.exchange()
 
 
     def do_process(self, args):
@@ -206,6 +206,13 @@ class MyPrompt(Cmd):
         '''
         xtrans = axtrans.AXtrans()
         xtrans.fetch_history()
+
+
+    def do_expire(self, args):
+        ''' Sets the status to 4 (cancelled/expired)
+        if the timestamp is past datetime.now 
+        '''
+        db.expire()
 
 
     def do_adduser(self, args):
