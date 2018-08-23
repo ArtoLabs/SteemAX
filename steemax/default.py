@@ -2,7 +2,7 @@
 dbuser = "steemax"
 dbpass = "SteemAX_pass23"
 dbname = "steemax"
-msgmode = "quiet"
+msgmode = "verbose"
 logpath = ""
 logfilename = "steemax.log"
 webpath = ""

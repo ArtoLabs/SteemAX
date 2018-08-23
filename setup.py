@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     python_requires='>=3.0',
     name='SteemAX',
-    version='1.0',
+    version='1.0.8',
     packages=['steemax'],
     license='MIT',
     keywords='steemit steem upvote exchange',

@@ -158,8 +158,8 @@ class AXdb(DB):
         ''' Gets a user's SteemConnect tokens 
         and Private Posting Key
         '''
-        if self.get_results("SELECT PrivateKey, Token, RefreshToken "
-                            + "FROM users WHERE Account = %s;",
+        if self.get_results('SELECT PrivateKey, Token, RefreshToken '
+                            + 'FROM users WHERE Account = %s;',
                             acct):
             return self.dbresults[0][1]
         else:
@@ -245,7 +245,7 @@ class AXdb(DB):
         for row in self.dbresults:
             if (datetime.strptime(str(row[2]), '%Y-%m-%d %H:%M:%S')
                     + timedelta(days=int(row[1])) < datetime.now()):
-                self.commit("UPDATE TABLE axlist SET Status = '4' WHERE ID = '%s';", row[0])
+                self.commit("UPDATE axlist SET Status = 4 WHERE ID = %s;", row[0])
                 self.msg.message(row[3]+" vs. "+row[4]+" has expired.")
 
 

@@ -144,7 +144,7 @@ class Reaction(MemoMsg):
         invalid = False
         verify = axverify.AXverify()
         if not verify.eligible_votes(
-                    acct1, acct2, per, ratio, "quiet", 1):
+                    acct1, acct2, per, ratio, 1):
             self.ignore("Barter invalid. " + verify.response)
             return
         if acct1 == memofrom:

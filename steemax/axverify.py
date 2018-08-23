@@ -3,23 +3,76 @@
 from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 from steemax import default
+from steemax import axdb
 
 
 class AXverify:
 
 
     def __init__(self):
-        self.msg = Msg(default.logfilename, 
-                        default.logpath,
-                        default.msgmode)
         self.steem = SimpleSteem(client_id=default.client_id,
                                 client_secret=default.client_secret,
                                 callback_url=default.callback_url,
                                 screenmode=default.msgmode)
+        self.msg = Msg(default.logfilename, 
+                        default.logpath,
+                        default.msgmode)
         self.response = None
         self.post_one = ""
         self.post_two = ""
         self.vote_cut = 0
+
+
+    def vote_on_it(self, voter, author, post, weight):
+        ''' Refresh the token in the database
+        and use voter's token to upvote 
+        author's post
+        '''
+        self.steem.connect.sc = None
+        newtoken = self.renew_token(voter)
+        if newtoken is not False:
+            self.steem.connect.sc = None
+            self.steem.connect.steemconnect(
+                            newtoken)
+            result = self.steem.connect.vote(
+                            voter, 
+                            author, 
+                            post, 
+                            int(weight))
+        else:
+            self.msg.error_message("A NEW TOKEN COULD NOT BE CREATED")
+            return False
+        try:
+            result['error']
+        except:
+            # The vote was successful
+            print(str(voter)+" has voted on "
+                            +str(post)+" "
+                            +str(weight)+"%")                    
+        else:
+            self.msg.error_message(str(result))   
+        
+
+    def renew_token(self, accountname):
+        ''' If the access token has expired
+        use the refresh token to get a new accss token.
+        '''
+        db = axdb.AXdb(default.dbuser, 
+                        default.dbpass, 
+                        default.dbname)
+        print ("Renewing token for "+accountname)
+        if db.get_user_token(accountname) is not False:
+            refreshtoken = db.dbresults[0][2]
+        else:
+            return False
+        if self.steem.verify_key(
+                        acctname="", tokenkey=refreshtoken):
+            db.update_token(self.steem.username,
+                    self.steem.accesstoken, 
+                    self.steem.refreshtoken)
+            return self.steem.accesstoken
+        else:
+            return False
 
 
     def get_vote_value (self, acctname, voteweight=100, 
@@ -50,7 +103,7 @@ class AXverify:
         vote on the post already?
         '''
         identifier = self.steem.recent_post(account1)
-        if not identifier:
+        if identifier is False or identifier is None:
             self.msg.error_message("No post for " + account1)
             return False
         else:
@@ -68,14 +121,14 @@ class AXverify:
         ''' Verify the posts of both accounts
         '''
         post = self.verify_post(account1, account2)
-        if not post:
+        if post is False or post is None:
             self.msg.message(account1 
                 + " does not have an eligible post.")
             return False
         else:
             self.post_one = post
         post = self.verify_post(account2, account1)
-        if not post:
+        if post is False or post is None:
             self.msg.message(account2 
                 + " does not have an eligible post.")
             return False

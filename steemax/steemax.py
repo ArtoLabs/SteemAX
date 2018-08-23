@@ -197,7 +197,7 @@ class MyPrompt(Cmd):
         ''' Runs the auto exchange on all
         eligible accounts
         ''' 
-        axe.exchange()
+        axe.Axe().exchange()
 
 
     def do_process(self, args):

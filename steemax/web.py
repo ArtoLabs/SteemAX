@@ -142,7 +142,9 @@ class Web:
                                 value[0], 
                                 otheraccount,
                                 "start")
-            if int(value[7]) == 0 and invitee == 1:
+            if ((int(value[7]) == 0 and invitee == 1) 
+                    or (int(value[7]) == 2 and invitee == 1)
+                    or (int(value[7]) == 3 and invitee == 0)):
                 buttoncode = '''
                 <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
                 <div class="button" onClick="barter_window('{}');">Barter</div>
@@ -151,17 +153,15 @@ class Web:
                                 otheraccount,
                                 "accept",
                                 value[0])
-            elif int(value[7]) == 0 and invitee == 0:
+            elif ((int(value[7]) == 0 and invitee == 0)  
+                    or (int(value[7]) == 3 and invitee == 1)
+                    or (int(value[7]) == 2 and invitee == 0)):
                 buttoncode = '<div id="pending">Pending</div>\n'
             if int(value[7]) == 1:
                 buttoncode = '<div id="pending">Active</div>\n'
                 exp = "Expires " + self.db.expiration_date(value[8], value[5])
             else:
                 exp = value[5] + " days"
-            if int(value[7]) > 1:
-                buttoncode = '''
-                <div class="button" onClick="barter_window('{}');">
-                Barter</div>\n'''.format(value[0])
             buttoncode = buttoncode + '''
                 <div class="button" onClick="command('{}', '{}', '{}')">
                                 Cancel</div>
@@ -169,14 +169,6 @@ class Web:
                                 value[0],
                                 otheraccount,
                                 "cancel")
-            if ((int(value[7]) == 2 and invitee == 1) 
-                        or (int(value[7]) == 3 and invitee == 0)):
-                buttoncode = buttoncode + '''
-                <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
-                                '''.format(
-                                value[0],
-                                otheraccount,
-                                "accept")
             if int(value[7]) != 4 and not (int(value[7]) == -1 and invitee == 1):
                 box = self.make_page(boxtemplate,
                                 AXID=value[0],
