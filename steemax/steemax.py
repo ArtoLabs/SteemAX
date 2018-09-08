@@ -316,6 +316,7 @@ class MyPrompt(Cmd):
 
     def do_list(self, args):
         account = input("Account (press enter for none): ")
+        print ("Getting list for " + account)
         axlist = db.get_axlist(account)
         for value in axlist:
             print (value[1] + " vs. " + value[2])
