@@ -316,6 +316,8 @@ class MyPrompt(Cmd):
 
     def do_list(self, args):
         account = input("Account (press enter for none): ")
+        if not account or account == "" or account == 0:
+            account = None
         print ("Getting list for " + account)
         axlist = db.get_axlist(account)
         for value in axlist:
@@ -325,6 +327,21 @@ class MyPrompt(Cmd):
                     + '%    Ratio: ' + value[4] 
                     + ':1      Dur: ' + value[5] 
                     + ' days     Status: ' + value[7] + '\n')
+
+
+    def do_exchanges(self, args):
+        ''' Lists all the archived exhanges for an account
+        '''
+        account = input("Account (press enter for none): ")
+        if not account or account == "" or account == 0:
+            account = None
+        else:
+            print ("Looking up " + account)
+        axlist = db.get_exchange_archive(account)
+        for trade in axlist:
+            print(str(trade[6]))
+            print("@" + str(trade[0]) + "/" + str(trade[2]) + "\nvs.\n" + "@" + str(trade[1]) + "/" + str(trade[3]))
+            print(str(trade[4]) + " vs. " + str(trade[5]) + "\n\n")
 
 
     def do_pool(self, args):
