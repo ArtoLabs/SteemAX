@@ -53,15 +53,15 @@ class AXdb(DB):
             self.commit('CREATE TABLE IF NOT EXISTS axhistory '
                 + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
                 + 'MemoID varchar(100), '
-                + 'Account1 varchar(50), Account2 varchar(50), '
-                + 'VoteValue1 float(20), VoteValue2 float(20), '
+                + 'Account1 varchar(200), Account2 varchar(200), '
+                + 'VoteValue1 varchar(100), VoteValue2 varchar(100), '
                 + 'Identifier1 varchar(400), Identifier2 varchar(400), '
                 + 'Time TIMESTAMP NOT NULL '
                 + 'DEFAULT CURRENT_TIMESTAMP '
                 + 'ON UPDATE CURRENT_TIMESTAMP);')
 
 
-    def archive_transaction(self, memoid, account1, account2, 
+    def archive_exchange(self, memoid, account1, account2, 
                                 ident1, ident2, vote1, vote2):
         ''' If posts and votes are eligible and
         an exchange occurs it is recorded in the
@@ -71,6 +71,23 @@ class AXdb(DB):
             + 'Account2, VoteValue1, VoteValue2, Identifier1, Identifier2) '
             + 'VALUES (%s, %s, %s, %s, %s, %s, %s);',
             memoid, account1, account2, vote1, vote2, ident1, ident2)
+
+
+    def get_exchange_archive(self, account=None):
+        ''' Returns a list of all the recent exchanges
+        that have occured on steemax
+        '''
+        if account is None:
+            if self.get_results('SELECT Account1, Account2, VoteValue1, '
+                                + 'VoteValue2, Identifier1, Identifier2, Time '
+                                + 'FROM axhistory WHERE 1;')
+                return self.dbresults
+        else:
+            if self.get_results('SELECT Account1, Account2, VoteValue1, '
+                                + 'VoteValue2, Identifier1, Identifier2, Time '
+                                + 'FROM axhistory WHERE %s IN (Account1, Account2);'),
+                                str(account)):
+                return self.dbresults
 
 
     def get_most_recent_trans(self):
