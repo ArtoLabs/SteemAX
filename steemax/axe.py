@@ -50,7 +50,7 @@ class Axe:
                     vv1 = self.verify.votevalue
                     self.verify.get_vote_value(row[2], self.verify.vote_cut)
                     vv2 = self.verify.votevalue
-                    self.db.archive_transaction(row[6], row[1], row[2], 
+                    self.db.archive_exchange(row[6], row[1], row[2], 
                                                 vv1, vv2, 
                                                 self.verify.post_one, 
                                                 self.verify.post_two)
