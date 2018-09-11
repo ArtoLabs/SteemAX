@@ -4,14 +4,13 @@ from steemax import axdb
 from steemax import axverify
 from steemax import default
 
-class Axe:
 
+class Axe:
     def __init__(self):
-        self.db = axdb.AXdb(default.dbuser, 
-                            default.dbpass, 
+        self.db = axdb.AXdb(default.dbuser,
+                            default.dbpass,
                             default.dbname)
         self.verify = axverify.AXverify()
-
 
     def exchange(self):
         ''' This method actualizes the exchange between Steemians.
@@ -27,34 +26,32 @@ class Axe:
         '''
         axlist = self.db.get_axlist(run=True)
         for row in axlist:
-            print("Comparing "+str(row[1])+" vs. "+str(row[2]))
+            print("Comparing " + str(row[1]) + " vs. " + str(row[2]))
             if self.verify.eligible_posts(row[1], row[2]) is not False:
                 print("Posts are eligible.")
-                if self.verify.eligible_votes(row[1], 
-                                    row[2], 
-                                    row[3], 
-                                    row[4], 
-                                    2) is not False:
+                if self.verify.eligible_votes(row[1],
+                                              row[2],
+                                              row[3],
+                                              row[4],
+                                              2) is not False:
                     print("Votes are eligible")
                     # Inviter votes invitee's post
-                    self.verify.vote_on_it(row[1], 
-                                row[2], 
-                                self.verify.post_two, 
-                                int(row[3]))
+                    self.verify.vote_on_it(row[1],
+                                           row[2],
+                                           self.verify.post_two,
+                                           int(row[3]))
                     # Invitee votes inviter's post
-                    self.verify.vote_on_it(row[2], 
-                                row[1], 
-                                self.verify.post_one, 
-                                self.verify.vote_cut)
+                    self.verify.vote_on_it(row[2],
+                                           row[1],
+                                           self.verify.post_one,
+                                           self.verify.vote_cut)
                     self.verify.get_vote_value(row[1], int(row[3]))
                     vv1 = self.verify.votevalue
                     self.verify.get_vote_value(row[2], self.verify.vote_cut)
                     vv2 = self.verify.votevalue
-                    self.db.archive_exchange(row[6], row[1], row[2], 
-                                                vv1, vv2, 
-                                                self.verify.post_one, 
-                                                self.verify.post_two)
-
-
+                    self.db.archive_exchange(row[6], row[1], row[2],
+                                             vv1, vv2,
+                                             self.verify.post_one,
+                                             self.verify.post_two)
 
 # EOF

@@ -12,8 +12,8 @@ class DB():
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
-        self.msg = Msg(default.logfilename, 
-                        default.logpath, 
+        self.msg = Msg(default.logfilename,
+                        default.logpath,
                         default.msgmode)
 
 
@@ -46,7 +46,7 @@ class DB():
 
 
     def commit(self, sql, *args):
-        ''' Commits the actions of an SQL 
+        ''' Commits the actions of an SQL
         statement to the database
         '''
         self.open_db()
