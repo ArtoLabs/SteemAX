@@ -7,76 +7,77 @@ from steemax import axdb
 
 
 class AXverify:
-
-
     def __init__(self):
         self.steem = SimpleSteem(client_id=default.client_id,
-                                client_secret=default.client_secret,
-                                callback_url=default.callback_url,
-                                screenmode=default.msgmode)
-        self.msg = Msg(default.logfilename, 
-                        default.logpath,
-                        default.msgmode)
+                                 client_secret=default.client_secret,
+                                 callback_url=default.callback_url,
+                                 screenmode=default.msgmode)
+        self.msg = Msg(default.logfilename,
+                       default.logpath,
+                       default.msgmode)
         self.response = None
         self.post_one = ""
         self.post_two = ""
         self.vote_cut = 0
-
 
     def vote_on_it(self, voter, author, post, weight):
         ''' Refresh the token in the database
         and use voter's token to upvote 
         author's post
         '''
-        self.steem.connect.sc = None
-        newtoken = self.renew_token(voter)
-        if newtoken is not False:
-            self.steem.connect.sc = None
-            self.steem.connect.steemconnect(
-                            newtoken)
-            result = self.steem.connect.vote(
-                            voter, 
-                            author, 
-                            post, 
-                            int(weight))
+        db = axdb.AXdb(default.dbuser,
+                       default.dbpass,
+                       default.dbname)
+        if db.get_user_token(voter) is not False:
+            accesstoken = db.dbresults[0][1]
+            refreshtoken = db.dbresults[0][2]
         else:
-            self.msg.error_message("A NEW TOKEN COULD NOT BE CREATED")
             return False
+        if not self.sc_vote(voter, author, post, weight, accesstoken):
+            print("Renewing token for " + voter)
+            newtoken = self.renew_token(voter, refreshtoken)
+            if newtoken is not False:
+                return self.sc_vote(voter, author, post, weight, newtoken)
+            else:
+                self.msg.error_message("A NEW TOKEN COULD NOT BE CREATED")
+                return False
+
+    def sc_vote(self, voter, author, post, weight, token):
+        self.steem.connect.sc = None
+        self.steem.connect.steemconnect(
+            token)
+        result = self.steem.connect.vote(
+            voter,
+            author,
+            post,
+            int(weight))
         try:
             result['error']
         except:
             # The vote was successful
-            print(str(voter)+" has voted on "
-                            +str(post)+" "
-                            +str(weight)+"%")                    
+            print(str(voter) + " has voted on "
+                  + str(post) + " "
+                  + str(weight) + "%")
+            return True
         else:
-            self.msg.error_message(str(result))   
-        
+            self.msg.error_message(str(result))
+            return False
 
-    def renew_token(self, accountname):
+    def renew_token(self, accountname, refreshtoken):
         ''' If the access token has expired
         use the refresh token to get a new accss token.
         '''
-        db = axdb.AXdb(default.dbuser, 
-                        default.dbpass, 
-                        default.dbname)
-        print ("Renewing token for "+accountname)
-        if db.get_user_token(accountname) is not False:
-            refreshtoken = db.dbresults[0][2]
-        else:
-            return False
         if self.steem.verify_key(
-                        acctname="", tokenkey=refreshtoken):
+                acctname="", tokenkey=refreshtoken):
             db.update_token(self.steem.username,
-                    self.steem.accesstoken, 
-                    self.steem.refreshtoken)
+                            self.steem.accesstoken,
+                            self.steem.refreshtoken)
             return self.steem.accesstoken
         else:
             return False
 
-
-    def get_vote_value (self, acctname, voteweight=100, 
-                        votepower=0):
+    def get_vote_value(self, acctname, voteweight=100,
+                       votepower=0):
         ''' Voteweight and votepower are entered 
         as a percentage value (1 to 100)
         If the default is used for votepower (0) 
@@ -87,16 +88,15 @@ class AXverify:
         if votepower == 0:
             votepower = self.steem.votepower
         self.votevalue = self.steem.current_vote_value(
-                    lastvotetime=self.steem.lastvotetime, 
-                    steempower=self.steem.steempower, 
-                    voteweight=int(voteweight), 
-                    votepower=int(votepower))
+            lastvotetime=self.steem.lastvotetime,
+            steempower=self.steem.steempower,
+            voteweight=int(voteweight),
+            votepower=int(votepower))
         self.voteweight = voteweight
         self.votepower = votepower
         return self.steem.rshares
 
-
-    def verify_post (self, account1, account2):
+    def verify_post(self, account1, account2):
         ''' Gets only the most recent post, gets the 
         timestamp and finds the age of the post in days.
         Is the post too old? Did account2 
@@ -111,34 +111,32 @@ class AXverify:
             votes = self.steem.vote_history(permlink[1], account1)
             for v in votes:
                 if v['voter'] == account2:
-                    self.msg.message(account2 + 
-                        " has aready voted on " + permlink[1])
+                    self.msg.error_message(account2 +
+                                           " has aready voted on " + permlink[1])
                     return False
         return permlink[1]
 
-
-    def eligible_posts (self, account1, account2):
+    def eligible_posts(self, account1, account2):
         ''' Verify the posts of both accounts
         '''
         post = self.verify_post(account1, account2)
         if post is False or post is None:
-            self.msg.message(account1 
-                + " does not have an eligible post.")
+            self.msg.message(account1
+                             + " does not have an eligible post.")
             return False
         else:
             self.post_one = post
         post = self.verify_post(account2, account1)
         if post is False or post is None:
-            self.msg.message(account2 
-                + " does not have an eligible post.")
+            self.msg.message(account2
+                             + " does not have an eligible post.")
             return False
         else:
             self.post_two = post
         return True
 
-
-    def eligible_votes(self, account1, account2, 
-                        percentage, ratio, flag):
+    def eligible_votes(self, account1, account2,
+                       percentage, ratio, flag):
         ''' If the flag is raised use the full voting 
         power to make the comparison rather
         than the current voting power. 
@@ -161,8 +159,8 @@ class AXverify:
         if v3a > 100:
             v3 = 100
             exceeds = True
-        self.msg.message(account2 + " needs to vote " 
-                + str(v3a) + "% in order to meet " + account1)
+        self.msg.message(account2 + " needs to vote "
+                         + str(v3a) + "% in order to meet " + account1)
         self.vote_cut = v3
         v4 = self.get_vote_value(account2, v3, vpow)
         v1s = self.steem.rshares_to_steem(v1)
@@ -171,22 +169,21 @@ class AXverify:
             if v3 == 1:
                 v5 = v4 - v1
                 v5s = self.steem.rshares_to_steem(v5)
-                self.response = (account2 + "'s vote of " + str(v4s) 
-                                + " will be larger than " + account1 
-                                + "'s vote by: " + str(v5s))
+                self.response = (account2 + "'s vote of " + str(v4s)
+                                 + " will be larger than " + account1
+                                 + "'s vote by: " + str(v5s))
                 self.msg.message(self.response)
             if v3 == 100:
                 v5 = v1 - v4
                 v5s = self.steem.rshares_to_steem(v5)
-                self.response = (account1 + "'s vote of " + str(v1s) 
-                                + " will be larger than " + account2 
-                                + "'s vote by: " + str(v5s))
+                self.response = (account1 + "'s vote of " + str(v1s)
+                                 + " will be larger than " + account2
+                                 + "'s vote by: " + str(v5s))
                 self.msg.message(self.response)
             return False
         else:
-            self.msg.message(account1 + " will upvote $" + str(v1s) 
-                    + " and " + account2 + " will upvote $" + str(v4s))
+            self.msg.message(account1 + " will upvote $" + str(v1s)
+                             + " and " + account2 + " will upvote $" + str(v4s))
             return True
-
 
 # EOF
