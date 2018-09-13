@@ -21,10 +21,10 @@ class AXverify:
         self.vote_cut = 0
 
     def vote_on_it(self, voter, author, post, weight):
-        ''' Refresh the token in the database
+        """ Refresh the token in the database
         and use voter's token to upvote 
         author's post
-        '''
+        """
         db = axdb.AXdb(default.dbuser,
                        default.dbpass,
                        default.dbname)
@@ -53,6 +53,8 @@ class AXverify:
             int(weight))
         try:
             result['error']
+        # We use a broad exception clause to "catch" everything
+        # that is not an error
         except:
             # The vote was successful
             print(str(voter) + " has voted on "
@@ -64,9 +66,9 @@ class AXverify:
             return False
 
     def renew_token(self, accountname, refreshtoken):
-        ''' If the access token has expired
+        """ If the access token has expired
         use the refresh token to get a new accss token.
-        '''
+        """
         if self.steem.verify_key(
                 acctname="", tokenkey=refreshtoken):
             db.update_token(self.steem.username,
@@ -78,12 +80,12 @@ class AXverify:
 
     def get_vote_value(self, acctname, voteweight=100,
                        votepower=0):
-        ''' Voteweight and votepower are entered 
+        """ Voteweight and votepower are entered 
         as a percentage value (1 to 100)
         If the default is used for votepower (0) 
         it is set by the system at the time
         the account last voted.
-        '''
+        """
         self.steem.check_balances(acctname)
         if votepower == 0:
             votepower = self.steem.votepower
@@ -97,11 +99,11 @@ class AXverify:
         return self.steem.rshares
 
     def verify_post(self, account1, account2):
-        ''' Gets only the most recent post, gets the 
+        """ Gets only the most recent post, gets the 
         timestamp and finds the age of the post in days.
         Is the post too old? Did account2 
         vote on the post already?
-        '''
+        """
         identifier = self.steem.recent_post(account1)
         if identifier is False or identifier is None:
             self.msg.error_message("No post for " + account1)
@@ -117,8 +119,8 @@ class AXverify:
         return permlink[1]
 
     def eligible_posts(self, account1, account2):
-        ''' Verify the posts of both accounts
-        '''
+        """ Verify the posts of both accounts
+        """
         post = self.verify_post(account1, account2)
         if post is False or post is None:
             self.msg.message(account1
@@ -137,13 +139,13 @@ class AXverify:
 
     def eligible_votes(self, account1, account2,
                        percentage, ratio, flag):
-        ''' If the flag is raised use the full voting 
+        """ If the flag is raised use the full voting 
         power to make the comparison rather
         than the current voting power. 
         If ratio was not acheived return false 
         Otherwise display approximate 
         upvote matches
-        '''
+        """
         if flag == 1:
             vpow = 100
         else:

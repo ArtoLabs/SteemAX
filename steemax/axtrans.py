@@ -12,16 +12,24 @@ from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 
 
-class MemoMsg():
+class MemoMsg:
     def __init__(self):
         self.db = axdb.AXdb(default.dbuser,
                             default.dbpass,
                             default.dbname)
+        self.reaction = None
+        self.returnmsg = None
+        self.memoid = None
+        self.action = None
+        self.percentage = None
+        self.ratio = None
+        self.duration = None
+        self.sendto = None
 
     def invite_msg(self, acct1, acct2,
                    memoid):
-        ''' Creates the invite message
-        '''
+        """ Creates the invite message
+        """
         self.reaction = "started"
         self.db.update_status(0, memoid)
         invite = self.db.get_invite(memoid)
@@ -32,18 +40,16 @@ class MemoMsg():
                ).format(acct2, acct1,
                         invite[0], invite[1], invite[2])
         if self.db.get_user_token(acct2):
-            msg = msg + ("Please send any amount SBD to "
-                         + "@steem-ax with the following in "
-                         + "the memo: '{}:accept'. "
-                         ).format(memoid)
-        msg = msg + ("For more info please visit "
-                     + "https://steemax.info/@{}"
-                     ).format(acct2)
-        self.returnmsg = (msg)
+            msg += ("Please send any amount SBD to "
+                     + "@steem-ax with the following in "
+                     + "the memo: '{}:accept'. ").format(memoid)
+        msg += ("For more info please visit "
+                 + "https://steemax.info/@{}").format(acct2)
+        self.returnmsg = msg
 
     def accepted_msg(self, acct, memoid):
-        ''' Creates the accept message 
-        '''
+        """ Creates the accept message 
+        """
         self.reaction = "accepted"
         self.db.update_status(1, memoid)
         self.returnmsg = (
@@ -53,8 +59,8 @@ class MemoMsg():
 
     def barter_msg(self, reaction, status, acct,
                    per, ratio, dur, memoid, acct2):
-        ''' Creates the barter message
-        '''
+        """ Creates the barter message
+        """
         self.reaction = reaction
         if status == 2:
             pronoun = "their"
@@ -74,15 +80,15 @@ class MemoMsg():
                 acct, per, pronoun, ratio, dur, memoid, acct2))
 
     def ignore(self, reason):
-        ''' Creates the ignore message 
-        '''
+        """ Creates the ignore message 
+        """
         self.reaction = "refund"
         self.returnmsg = reason
 
     def cancel(self, canceller, memoid):
-        ''' The cancel command can be 
+        """ The cancel command can be 
         given at any time by either party
-        '''
+        """
         self.reaction = "cancelled"
         self.db.update_status(4, memoid)
         self.returnmsg = ("@" + canceller
@@ -92,9 +98,9 @@ class MemoMsg():
 class Reaction(MemoMsg):
     def start(self, acct1, acct2, memofrom,
               rstatus, memoid):
-        ''' The start method grants the authority to the 
+        """ The start method grants the authority to the 
         exchange from the inviter. 
-        '''
+        """
         if acct1 == memofrom:
             if rstatus < 1:
                 self.invite_msg(acct1, acct2, memoid)
@@ -108,28 +114,27 @@ class Reaction(MemoMsg):
 
     def accept(self, acct1, acct2, memofrom,
                rstatus, memoid):
-        ''' The accept method is used to authorize 
+        """ The accept method is used to authorize 
         a change whenever an invite or a barter is 
         sent. 
-        '''
-        invalid = False
+        """
         if acct1 == memofrom:
-            if (int(rstatus) > -1 and int(rstatus) != 2):
+            if int(rstatus) > -1 and int(rstatus) != 2:
                 self.accepted_msg(acct1, memoid)
         elif acct2 == memofrom:
-            if (int(rstatus) > -1 and int(rstatus) < 3):
+            if int(rstatus) > -1 and int(rstatus) < 3:
                 self.accepted_msg(acct2, memoid)
         else:
             self.ignore("Invalid Memo ID.")
 
     def barter(self, acct1, acct2, memoid, memofrom,
                rstatus, per, ratio, dur):
-        ''' A barter command can be used any 
+        """ A barter command can be used any 
         time after both parties have authorized 
         the exchange.
          2 = inviter (account1) has offered to barter
          3 = invitee (account2) has offered to barter
-        '''
+        """
         invalid = False
         verify = axverify.AXverify()
         if not verify.eligible_votes(
@@ -137,14 +142,14 @@ class Reaction(MemoMsg):
             self.ignore("Barter invalid. " + verify.response)
             return
         if acct1 == memofrom:
-            if (int(rstatus) > -1 and int(rstatus) != 2):
+            if int(rstatus) > -1 and int(rstatus) != 2:
                 self.barter_msg("acct1 bartering", 2,
                                 acct1, per, ratio,
                                 dur, memoid, acct2)
             else:
                 invalid = True
         elif acct2 == memofrom:
-            if (int(rstatus) > -1 and int(rstatus) < 3):
+            if int(rstatus) > -1 and int(rstatus) < 3:
                 self.barter_msg("acct2 bartering", 3,
                                 acct2, per, ratio,
                                 dur, memoid, acct1)
@@ -172,13 +177,15 @@ class AXtrans:
         self.react = Reaction()
 
     def parse_memo(self, **kwargs):
-        ''' Parses the memo message in a transaction
+        """ Parses the memo message in a transaction
         for the appropriate action.
-        '''
+        """
         for key, value in kwargs.items():
             setattr(self, key, value)
         try:
             memo = self.memo.split(":")
+        # A broad exception is used because any exception
+        # should return false.
         except:
             return False
         self.memoid = sec.filter_token(memo[0])
@@ -197,9 +204,9 @@ class AXtrans:
     def send(self, to="artopium",
              amt="0.001 SBD",
              msg="test"):
-        ''' Sends the forwarded amount of SBD along
+        """ Sends the forwarded amount of SBD along
         with the reaction message
-        '''
+        """
         r = amt.split(" ")
         if self.steem.transfer_funds(to, float(r[0]),
                                      r[1], msg):
@@ -208,30 +215,30 @@ class AXtrans:
                               "{}").format(r[0], r[1], to, msg))
 
     def act(self, acct1, acct2, rstatus, sendto):
-        ''' Decides how to react baed on the action
+        """ Decides how to react baed on the action
         present in the memo message
-        '''
+        """
         if not self.db.get_user_token(self.memofrom):
             self.react.ignore(
                 ("@{} is not a current member of "
                  + " https://steemax.trade !!Join now!! "
                  + "using SteemConnect.").format(self.memofrom))
-        elif (self.action == "start"):
+        elif self.action == "start":
             self.react.start(acct1,
                              acct2,
                              self.memofrom,
                              rstatus,
                              self.memoid)
-        elif (self.action == "cancel"):
+        elif self.action == "cancel":
             self.react.cancel(self.memofrom,
                               self.memoid)
-        elif (self.action == "accept"):
+        elif self.action == "accept":
             self.react.accept(acct1,
                               acct2,
                               self.memofrom,
                               rstatus,
                               self.memoid)
-        elif (self.action == "barter"):
+        elif self.action == "barter":
             self.react.barter(acct1,
                               acct2,
                               self.memoid,
@@ -248,9 +255,9 @@ class AXtrans:
             self.sendto = sendto
 
     def parse_history_record(self, record, lasttrans):
-        ''' Parses the blockchain record for transdactions
+        """ Parses the blockchain record for transdactions
         sent to @steem-ax 
-        '''
+        """
         if (record[1]['op'][0] == 'transfer'
             and datetime.strptime(
                 record[1]['timestamp'],
@@ -265,11 +272,11 @@ class AXtrans:
             return False
 
     def fetch_history(self):
-        ''' Processes the transaction history. 
+        """ Processes the transaction history. 
         The memo message is parsed for a valid 
         command and performs the 
         directed action.
-        '''
+        """
         rt = self.db.get_most_recent_trans()
         for a in self.steem.get_my_history():
             if self.parse_history_record(a, rt):

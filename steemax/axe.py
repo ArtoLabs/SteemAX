@@ -13,7 +13,7 @@ class Axe:
         self.verify = axverify.AXverify()
 
     def exchange(self):
-        ''' This method actualizes the exchange between Steemians.
+        """ This method actualizes the exchange between Steemians.
         ID          row[0]
         Inviter     row[1]
         Invitee     row[2]
@@ -23,12 +23,22 @@ class Axe:
         MemoID      row[6]
         Status      row[7]
         Timestamp   row[8]
-        '''
+        """
         axlist = self.db.get_axlist(run=True)
         for row in axlist:
             print("Comparing " + str(row[1]) + " vs. " + str(row[2]))
             if self.verify.eligible_posts(row[1], row[2]) is not False:
                 print("Posts are eligible.")
+                # In the method eligible_votes
+                # the last argument is a flag set to "2" indicating
+                # that even if the calculated vote weight for the invitee
+                # exceeds more than 100%
+                # or less than 1% to go ahead and
+                # make the exchange anyway at 100% or 1%
+                # IF the flag is set to 1 vote values are calculated
+                # at 100% voting power, whereas if the flag is set
+                # to 0 or 2 vote values are calculated at their
+                # current voting power.
                 if self.verify.eligible_votes(row[1],
                                               row[2],
                                               row[3],

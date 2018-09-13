@@ -5,31 +5,31 @@ import re
 from screenlogger.screenlogger import Msg
 from steemax import default
 
-class DB():
 
-
+class DB:
     def __init__(self, dbuser, dbpass, dbname):
         self.dbuser = dbuser
         self.dbpass = dbpass
         self.dbname = dbname
         self.msg = Msg(default.logfilename,
-                        default.logpath,
-                        default.msgmode)
-
+                       default.logpath,
+                       default.msgmode)
+        self.db = None
+        self.cursor = None
+        self.dbresults = none
 
     def open_db(self):
-        ''' opens a database connection
-        '''
+        """ opens a database connection
+        """
         self.db = pymysql.connect("localhost",
-                                    self.dbuser,
-                                    self.dbpass,
-                                    self.dbname)
+                                  self.dbuser,
+                                  self.dbpass,
+                                  self.dbname)
         self.cursor = self.db.cursor()
 
-
     def get_results(self, sql, *args):
-        ''' Gets the results of an SQL statement
-        '''
+        """ Gets the results of an SQL statement
+        """
         self.open_db()
         try:
             self.cursor.execute(pymysql.escape_string(sql), args)
@@ -42,13 +42,18 @@ class DB():
         else:
             return len(self.dbresults)
         finally:
+            # Every call to this method from the other
+            # classes in this package only takes place once
+            # so we can safely close the DB every time
+            # This can be moved to the deconstructor
+            # if functionality demands multiple calls to
+            # this method
             self.db.close()
 
-
     def commit(self, sql, *args):
-        ''' Commits the actions of an SQL
+        """ Commits the actions of an SQL
         statement to the database
-        '''
+        """
         self.open_db()
         try:
             self.cursor.execute(pymysql.escape_string(sql), args)
@@ -61,6 +66,5 @@ class DB():
             return True
         finally:
             self.db.close()
-
 
 # EOF

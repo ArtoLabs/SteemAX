@@ -28,10 +28,16 @@ def run(args=None):
 
 
 class Enter:
+    def __init__(self):
+        self.privatekey = None
+        self.refreshtoken = None
+        self.accesstoken = None
+        self.username = None
+    
     def new_account(self, acct):
-        '''Prompts user to create an account
+        """Prompts user to create an account
         when an account is not found
-        '''
+        """
         answer = input(("{} has not joined SteemAX.\n"
                         + "Would you like to add this "
                         + "user [y/n]? ").format(acct))
@@ -45,10 +51,10 @@ class Enter:
             return False
 
     def account_name(self, flag):
-        ''' Prompt user for their Steemit account name. 
+        """ Prompt user for their Steemit account name. 
         'flag' indicates entering the account name 
         for an invitee or inviter
-        '''
+        """
         if flag:
             question = 'Your account name @'
         else:
@@ -56,8 +62,8 @@ class Enter:
         while True:
             acct = input(question)
             if (not re.match(r'^[a-z0-9\-]+$', acct)
-                or len(acct) == 0
-                or len(acct) > 32):
+                    or len(acct) == 0
+                    or len(acct) > 32):
                 msg.message('The account name you entered is '
                             + 'blank or contains invalid characters.')
             else:
@@ -69,14 +75,14 @@ class Enter:
         return acct
 
     def memo_id(self, acct):
-        ''' Prompt user for the unique Memo ID that 
+        """ Prompt user for the unique Memo ID that 
         was generated during the creation of an invite
-        '''
+        """
         while True:
             memoid = input('Memo ID: ')
             if (not re.match(r'^[0-9]+$', memoid)
-                or len(memoid) == 0
-                or len(memoid) > 32):
+                    or len(memoid) == 0
+                    or len(memoid) > 32):
                 msg.message('The Memo ID you entered is '
                             + 'blank or contains invalid characters.')
             else:
@@ -87,19 +93,19 @@ class Enter:
         return memoid
 
     def percentage(self, acct):
-        ''' Prompt user for the percentage of their 
+        """ Prompt user for the percentage of their 
         upvote they wish to exchange. 
         This is always a percentage of the inviter's 
         (Account1) upvote, not the invitee (Account2)
-        '''
+        """
         while True:
             per = input(
-                '''Percentage of {}'s upvote (1 to 100):'''.format(acct))
+                'Percentage of {}\'s upvote (1 to 100): '.format(acct))
             if (not re.match(r'^[0-9]+$', per)
-                or len(per) == 0
-                or len(per) > 3
-                or int(per) < 1
-                or int(per) > 100):
+                    or len(per) == 0
+                    or len(per) > 3
+                    or int(per) < 1
+                    or int(per) > 100):
                 msg.message('Please only enter a number '
                             + 'between 1 and 100.')
             else:
@@ -107,7 +113,7 @@ class Enter:
         return per
 
     def ratio(self, acct1, acct2, per, flag):
-        ''' Prompt user for the ratio between 
+        """ Prompt user for the ratio between 
         accounts for the exchanges. This ratios 
         is expressed as a two digit decimal number
         to two places in proportion to 1, i.e. 
@@ -116,15 +122,15 @@ class Enter:
         This is always so that X is inviter's 
         (Account1) upvote, to 1 which is the 
         invitee's (Account2) upvote
-        '''
+        """
         while True:
             ratio = input('Enter ratio '
                           + 'as X ({}) to 1 ({}). X is: '.format(acct1, acct2))
             if (not re.match(r'^[0-9\.]+$', ratio)
-                or len(ratio) == 0
-                or len(ratio) > 5
-                or float(ratio) < 0.01
-                or float(ratio) > 99):
+                    or len(ratio) == 0
+                    or len(ratio) > 5
+                    or float(ratio) < 0.01
+                    or float(ratio) > 99):
                 msg.message('Please enter a one or two '
                             + 'digit number to represent a ratio in '
                             + 'the format x to 1 where x is your '
@@ -138,15 +144,15 @@ class Enter:
         return ratio
 
     def duration(self):
-        ''' Promt user to enter the 
+        """ Promt user to enter the 
         duration of the auto exchange 
         in the number of days
-        '''
+        """
         while True:
             dur = input('Duration of exchange in days: ')
             if (not re.match(r'[0-9]', dur)
-                or len(dur) == 0
-                or len(dur) > 3):
+                    or len(dur) == 0
+                    or len(dur) > 3):
                 msg.message('Please only enter a number '
                             + 'up to three digits.')
             else:
@@ -154,12 +160,12 @@ class Enter:
         return dur
 
     def key(self):
-        ''' Prompt user for their private 
+        """ Prompt user for their private 
         posting key as found in their 
         steemit.com wallet or for their
         SteemConnect Refresh Token as 
         given by the auth_url login
-        '''
+        """
         msg.message(xverify.steem.connect.auth_url())
         while True:
             key = input('Your Private Posting Key or'
@@ -180,31 +186,31 @@ class Enter:
 
 
 class MyPrompt(Cmd):
-    ''' Command line interface for SteemAX
-    '''
+    """ Command line interface for SteemAX
+    """
 
     def do_run(self, args):
-        ''' Runs the auto exchange on all
+        """ Runs the auto exchange on all
         eligible accounts
-        '''
+        """
         axe.Axe().exchange()
 
     def do_process(self, args):
-        ''' processes transactions for their
+        """ processes transactions for their
         memo messages and responds accordingly
-        '''
+        """
         xtrans = axtrans.AXtrans()
         xtrans.fetch_history()
 
     def do_expire(self, args):
-        ''' Sets the status to 4 (cancelled/expired)
+        """ Sets the status to 4 (cancelled/expired)
         if the timestamp is past datetime.now 
-        '''
+        """
         db.expire()
 
     def do_adduser(self, args):
-        ''' Adds a user to steemax
-        '''
+        """ Adds a user to steemax
+        """
         enter = Enter()
         acct = enter.key()
         db.add_user(acct, enter.privatekey,
@@ -212,9 +218,9 @@ class MyPrompt(Cmd):
                     enter.accesstoken)
 
     def do_invite(self, args):
-        ''' Initiates an invite. If a user
+        """ Initiates an invite. If a user
         is not a member it adds them
-        '''
+        """
         enter = Enter()
         acct1 = enter.account_name(1)
         if not db.get_user_token(acct1):
@@ -237,10 +243,10 @@ class MyPrompt(Cmd):
             msg.message("An invite could not be created.")
 
     def do_barter(self, args):
-        ''' Barter on the 
+        """ Barter on the 
         percentage, ratio and 
         duration of an exchange
-        '''
+        """
         acct = Enter().account_name(1)
         memoid = Enter().memo_id(acct)
         if not db.verify_memoid(acct, memoid):
@@ -254,11 +260,11 @@ class MyPrompt(Cmd):
                     + 'any amount SBD to @steem-ax with '
                     + 'the following in the memo:\n\n  '
                     + '{}:barter:{}:{}:{}'.format(
-            memoid, per, ratio, dur))
+                    memoid, per, ratio, dur))
 
     def do_cancel(self, args):
-        ''' Cancel an invite to an exchange
-        '''
+        """ Cancel an invite to an exchange
+        """
         acct = Enter().account_name(1)
         memoid = Enter().memo_id(acct)
         if not db.verify_memoid(acct, memoid):
@@ -267,29 +273,49 @@ class MyPrompt(Cmd):
             msg.message("The exchange has been canceled")
 
     def do_eligible(self, args):
-        ''' Find out if a certain 
+        """ Find out if a certain 
         percentage and ratio between 
         two accounts will create an 
         eligible exchange
-        '''
+        """
         acct1 = Enter().account_name(1)
         acct2 = Enter().account_name(0)
         per = Enter().percentage(acct1)
         ratio = Enter().ratio(acct1, acct2, per, 1)
+        if xverify.eligible_posts(acct1, acct2) is not False:
+            print("Posts are eligible.")
+            # In the method eligible_votes
+            # the last argument is a flag set to "1" indicating
+            # that vote values should be calculated at
+            # 100% voting power. If the flag were set to "2"
+            # even if the calculated vote weight for the invitee
+            # exceeds more than 100%
+            # or less than 1% to go ahead and
+            # make the exchange anyway at 100% or 1%
+            # If the flag is set to 1 vote values are calculated
+            # at 100% voting power, whereas if the flag is set
+            # to 0 or 2 vote values are calculated at their
+            # current voting power.
+            if xverify.eligible_votes(acct1,
+                                      acct2,
+                                      per,
+                                      ratio,
+                                      0) is not False:
+                print("Votes are eligible")
 
     def do_account(self, args):
-        ''' Find and verify a Steemit 
+        """ Find and verify a Steemit 
         account and see if it has 
         started an exchange
-        '''
+        """
         acct = Enter().account_name(1)
         xverify.get_vote_value(acct)
-        msg.message('''
+        msg.message("""
     __{}__
     Vote Power: {}
     Steem Power: {}   
     Vote Value at {}%: ${}
-            '''.format(acct,
+            """.format(acct,
                        xverify.steem.votepower,
                        xverify.steem.steempower,
                        xverify.voteweight,
@@ -310,8 +336,8 @@ class MyPrompt(Cmd):
                    + ' days     Status: ' + value[7] + '\n')
 
     def do_exchanges(self, args):
-        ''' Lists all the archived exhanges for an account
-        '''
+        """ Lists all the archived exhanges for an account
+        """
         account = input("Account (press enter for none): ")
         if not account or account == "" or account == 0:
             account = None
@@ -320,21 +346,22 @@ class MyPrompt(Cmd):
         axlist = db.get_exchange_archive(account)
         for trade in axlist:
             print(str(trade[6]))
-            print("@" + str(trade[0]) + "/" + str(trade[2]) + "\nvs.\n" + "@" + str(trade[1]) + "/" + str(trade[3]))
+            print("@" + str(trade[0]) + "/" + str(trade[2])
+                  + "\nvs.\n" + "@" + str(trade[1]) + "/" + str(trade[3]))
             print(str(trade[4]) + " vs. " + str(trade[5]) + "\n\n")
 
     def do_pool(self, args):
-        ''' Display current Steemit Reward Balance, 
+        """ Display current Steemit Reward Balance, 
         Recent Claims and price of STEEM
-        '''
+        """
         xverify.steem.reward_pool_balances()
-        msg.message('''
+        msg.message("""
     ------------------------------------------------
     Reward balance: {}
     Recent claims: {}
     Steem = ${}
     ------------------------------------------------
-            '''.format(xverify.steem.reward_balance,
+            """.format(xverify.steem.reward_balance,
                        xverify.steem.recent_claims,
                        xverify.steem.base))
 

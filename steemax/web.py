@@ -25,11 +25,12 @@ class Web:
         self.msg = Msg(default.logfilename,
                        default.logpath,
                        default.msgmode)
+        self.json_resp = None
 
     def load_template(self, templatefile=""):
-        ''' opens a template file and loads it
+        """ opens a template file and loads it
         into memory stored in a variable
-        '''
+        """
         templatepath = default.webpath + "/" + templatefile
         with open(templatepath, 'r') as fh:
             try:
@@ -41,9 +42,9 @@ class Web:
                 return template
 
     def make_page(self, template, **kwargs):
-        ''' Fills in key / value pairs on a 
+        """ Fills in key / value pairs on a 
         given template
-        '''
+        """
         regobj = re.compile(
             r"^(.+)(?:\n|\r\n?)((?:(?:\n|\r\n?).+)+)",
             re.MULTILINE)
@@ -55,10 +56,10 @@ class Web:
         return newtemplate
 
     def login(self, token, dest="home"):
-        ''' logs a user in using SteemConnect
+        """ logs a user in using SteemConnect
         adds the user to the database if it's
         their first time.
-        '''
+        """
         if self.verify_token(token):
             if self.db.get_user_token(self.steem.username):
                 self.db.update_token(self.steem.username,
@@ -75,22 +76,22 @@ class Web:
             else:
                 return ("\r\n"
                         + self.make_page(self.load_template(
-                    "templates/index.html"),
-                    ACCOUNT1=self.steem.username,
-                    REFRESHTOKEN=self.steem.refreshtoken))
+                            "templates/index.html"),
+                            ACCOUNT1=self.steem.username,
+                            REFRESHTOKEN=self.steem.refreshtoken))
         else:
             return self.auth_url()
 
     def invite(self, token, account2, per,
                ratio, dur, response, ip):
-        ''' Creates an invite
-        '''
+        """ Creates an invite
+        """
         response = sec.filter_token(response)
         if not self.verify_recaptcha(response, ip):
             return self.error_page("Invalid captcha.")
         if self.verify_token(sec.filter_token(token)):
             account2 = sec.filter_account(account2)
-            if self.steem.account(account2) == False:
+            if self.steem.account(account2) is False:
                 return self.error_page(account2 + " is an invalid account name.")
             else:
                 memoid = self.db.add_invite(
@@ -99,7 +100,7 @@ class Web:
                     sec.filter_number(per),
                     sec.filter_number(ratio, 1000),
                     sec.filter_number(dur, 365))
-                if memoid == False:
+                if memoid is False:
                     return self.error_page(self.db.errmsg)
                 elif int(memoid) > 0:
                     return ("Location: https://steemax.info/@"
@@ -108,11 +109,11 @@ class Web:
             return self.auth_url()
 
     def archive_page(self, account=None):
-        ''' Provides a list of all the exchanges that
+        """ Provides a list of all the exchanges that
         have occured for a particular account. if
         no account is provided then a list of all exchanges
         for all accounts is returned.
-        '''
+        """
         infobox = ""
         if account is not None:
             account = sec.filter_account(account)
@@ -143,11 +144,11 @@ class Web:
                                         INFOBOX=infobox))
 
     def info_page(self, account):
-        ''' Creates the page at steemax.info that displays
+        """ Creates the page at steemax.info that displays
         all the exchanges a user is involved in and which
         provides the options to accept, barter or cancel a 
         particular exchange.
-        '''
+        """
         account = sec.filter_account(account)
         if not self.db.get_user_token(account):
             return self.auth_url()
@@ -166,19 +167,19 @@ class Web:
                 invitee = 0
                 otheraccount = value[2]
             if int(value[7]) == -1 and invitee == 0:
-                buttoncode = '''
+                buttoncode = """
                 <div class="button" onClick="command('{}', '{}', '{}')">Start</div>
-                                '''.format(
+                                """.format(
                     value[0],
                     otheraccount,
                     "start")
             if ((int(value[7]) == 0 and invitee == 1)
-                or (int(value[7]) == 2 and invitee == 1)
-                or (int(value[7]) == 3 and invitee == 0)):
-                buttoncode = '''
+                    or (int(value[7]) == 2 and invitee == 1)
+                    or (int(value[7]) == 3 and invitee == 0)):
+                buttoncode = """
                 <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
                 <div class="button" onClick="barter_window('{}');">Barter</div>
-                                '''.format(
+                                """.format(
                     value[0],
                     otheraccount,
                     "accept",
@@ -192,10 +193,10 @@ class Web:
                 exp = "Expires " + self.db.expiration_date(value[8], value[5])
             else:
                 exp = value[5] + " days"
-            buttoncode = buttoncode + '''
+            buttoncode += """
                 <div class="button" onClick="command('{}', '{}', '{}')">
                                 Cancel</div>
-                                '''.format(
+                                """.format(
                 value[0],
                 otheraccount,
                 "cancel")
@@ -218,9 +219,9 @@ class Web:
                                         INFOBOX=infobox))
 
     def verify_token(self, token):
-        ''' cleans and verifies a SteemConnect
+        """ cleans and verifies a SteemConnect
         refresh token
-        '''
+        """
         token = sec.filter_token(token)
         if (token is not None
             and self.steem.verify_key(
@@ -230,24 +231,24 @@ class Web:
             return False
 
     def auth_url(self):
-        ''' Returns the SteemConnect authorization
+        """ Returns the SteemConnect authorization
         URL for SteemAX
-        '''
+        """
         url = self.steem.connect.auth_url()
-        return ("Location: " + url + "\r\n")
+        return "Location: " + url + "\r\n"
 
     def error_page(self, msg):
-        ''' Returns the HTML page with the
+        """ Returns the HTML page with the
         given error message
-        '''
+        """
         return ("\r\n"
                 + self.make_page(
-            self.load_template("templates/error.html"),
-            ERRORMSG=msg))
+                    self.load_template("templates/error.html"),
+                    ERRORMSG=msg))
 
     def verify_recaptcha(self, response, remoteip):
-        ''' Verifies a Google recaptcha v2 token
-        '''
+        """ Verifies a Google recaptcha v2 token
+        """
         http = urllib3.PoolManager()
         encoded_args = urlencode({'secret': default.recaptcha_secret,
                                   'response': response,
