@@ -21,9 +21,9 @@ class AXverify:
         self.vote_cut = 0
 
     def vote_on_it(self, voter, author, post, weight):
-        """ Refresh the token in the database
-        and use voter's token to upvote 
-        author's post
+        """ Use the tokens in the database to vote on
+        a post. If the vote fails, renews the token
+        and tries again.
         """
         db = axdb.AXdb(default.dbuser,
                        default.dbpass,
@@ -33,6 +33,7 @@ class AXverify:
             refreshtoken = db.dbresults[0][2]
         else:
             return False
+        # If the vote fails then we renew the token
         if not self.sc_vote(voter, author, post, weight, accesstoken):
             print("Renewing token for " + voter)
             newtoken = self.renew_token(voter, refreshtoken)
@@ -43,6 +44,10 @@ class AXverify:
                 return False
 
     def sc_vote(self, voter, author, post, weight, token):
+        """ Takes the given token and initializes SteemConnect
+        to make a vote. Analyzes the result and prints the
+        outcome to screen as well as returns a boolean result.
+        """
         self.steem.connect.sc = None
         self.steem.connect.steemconnect(
             token)
