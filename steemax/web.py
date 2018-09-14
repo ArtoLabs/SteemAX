@@ -131,6 +131,8 @@ class Web:
                                  TIMESTAMP=date,
                                  ACCOUNT1=trade[0],
                                  ACCOUNT2=trade[1],
+                                 IDENT1=trade[2],
+                                 IDENT2=trade[3],
                                  VOTEVALUE1=trade[4],
                                  VOTEVALUE2=trade[5])
             infobox = infobox + box
