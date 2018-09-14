@@ -79,12 +79,13 @@ class AXdb(DB):
         if account is None:
             if self.get_results('SELECT Account1, Account2, VoteValue1, '
                                 + 'VoteValue2, Identifier1, Identifier2, Time '
-                                + 'FROM axhistory WHERE 1;'):
+                                + 'FROM axhistory WHERE 1 ORDER BY Time DESC;'):
                 return self.dbresults
         else:
             if self.get_results('SELECT Account1, Account2, VoteValue1, '
                                 + 'VoteValue2, Identifier1, Identifier2, Time '
-                                + 'FROM axhistory WHERE %s IN (Account1, Account2);',
+                                + 'FROM axhistory WHERE %s IN (Account1, Account2) '
+                                + 'ORDER BY Time DESC;',
                                 str(account)):
                 return self.dbresults
 
