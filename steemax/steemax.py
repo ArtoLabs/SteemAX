@@ -339,6 +339,7 @@ class MyPrompt(Cmd):
         """ Lists all the archived exhanges for an account
         """
         account = input("Account (press enter for none): ")
+        # If no account is entered return the whole list
         if not account or account == "" or account == 0:
             account = None
         else:

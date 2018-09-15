@@ -117,6 +117,7 @@ class Web:
         infobox = ""
         if account is not None:
             account = sec.filter_account(account)
+            # If the token is invalid return user to the login page
             if not self.db.get_user_token(account):
                 return self.auth_url()
         axlist = self.db.get_exchange_archive(account)
@@ -137,6 +138,9 @@ class Web:
                                  VOTEVALUE2=trade[5])
             infobox = infobox + box
         pagetemplate = self.load_template("templates/archive.html")
+        # If the account was provide we display it with the @
+        # however if it's not we convert it to an empty string
+        # so that it is not displayed in HTML
         if account is None:
             account = ""
         else:
