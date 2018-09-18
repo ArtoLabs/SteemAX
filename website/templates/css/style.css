@@ -1,0 +1,171 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    margin: 0;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 40px;
+    margin: 0;
+}
+
+h2 {
+    font-weight: 600;
+    font-size: 38px;
+    margin: 0;
+    height: 50px;
+}
+
+h3 {
+    color: #989898;
+    font-size: 16px;
+    margin: 0;
+}
+
+#header-paragraph {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.header-steemax {
+    height: 400px;
+    color: white;
+    text-align: center;
+    background: -moz-linear-gradient(81deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(81deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(81deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(81deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ie10+ */
+    background: linear-gradient(9deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */ 
+}
+
+.header-section {
+    padding-top: 120px;
+}
+
+.container {
+    width: 1140px;
+    margin: 0 auto;
+}
+
+.number-of-users, .number-of-exhanges, .login-box {
+    width: 32%;
+    display: inline-block;
+    background-color: white;
+    height: 240px;
+    text-align: center;
+    padding-top:70px;
+    border-radius: 5px;
+    border: 1px solid #e3e3e3;
+    margin-top: -20px;
+    box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.15); 
+}
+
+#text-short {
+    width: 80%;
+    margin: 0 auto;
+    padding-bottom: 23px;
+}
+
+.box-img {
+    padding-bottom: 20px;
+}
+
+#filled-button {
+    background-color: #2366bd;
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 10px 20px 10px 20px;
+    border: none;
+    color: white;
+    font-size: 16px;
+
+}
+
+.steemax-footer {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    background-color: #f1f1f1;
+    height: 65px;
+    text-align: center;
+    color: #7d7d7d;
+    font-size: 18px;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.09) inset; 
+}
+
+
+.footer-text > a {
+    color: #2366bd;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+    .login-section {
+        width: 95%;
+        margin: 0 auto;
+    }
+
+    .container {
+        width: 95%;
+        margin: 0 auto;
+    }
+
+    #text-short {
+        padding-bottom: 0px !important;
+    }
+    
+    .number-of-users, .number-of-exhanges, .login-box {
+        margin-top: -30px;
+    }
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .login-section {
+        width: 95%;
+        margin: 0 auto;
+    }
+
+    .container {
+        width: 95%;
+        margin: 0 auto;
+    }
+
+    .number-of-users, .number-of-exhanges, .login-box {
+        width: 95%;
+        margin-top: 0px;
+        margin-bottom: 20px;
+    }
+
+    .number-of-users {
+        margin-top: 30px !important;
+    }
+
+    #ghost-button {
+        margin-top: 15px;
+    }
+
+    h1 {
+        font-size: 25px;
+    }
+
+    .header-section {
+        padding: 90px 25px 25px 25px;
+    }
+
+    .header-section > img {
+        padding-bottom: 15px;
+    }
+
+    #logo {
+        width: 80%;
+    }
+
+    br {
+        display: none;
+    }
+}
