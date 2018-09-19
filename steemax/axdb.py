@@ -239,6 +239,14 @@ class AXdb(DB):
                            + 'VALUES (%s, %s, %s, %s);',
                            acct, key, refreshtoken, accesstoken)
 
+    def number_of_users(self):
+        self.get_results('SELECT COUNT(*) FROM users;')
+        return self.dbresults[0][0]
+
+    def number_of_exchanges(self):
+        self.get_results('SELECT COUNT(*) FROM axlist;')
+        return self.dbresults[0][0]
+
     def get_axlist(self, account=None, run=False):
         """ Gets the entire list of transactions
         to be processed
