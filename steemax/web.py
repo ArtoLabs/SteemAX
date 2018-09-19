@@ -55,6 +55,16 @@ class Web:
                                  newtemplate)
         return newtemplate
 
+    def index_page(self):
+        """ Creates the Home page for SteemAX and includes
+        the number of users and the number of exchanges.
+        """
+        return ("\r\n"
+        + self.make_page(self.load_template(
+            "templates/index.html"),
+            USERS=self.db.number_of_users(),
+            EXCHANGES=self.db.number_of_exchanges()))
+
     def login(self, token, dest="home"):
         """ logs a user in using SteemConnect
         adds the user to the database if it's
@@ -76,7 +86,7 @@ class Web:
             else:
                 return ("\r\n"
                         + self.make_page(self.load_template(
-                            "templates/index.html"),
+                            "templates/invite_form.html"),
                             ACCOUNT1=self.steem.username,
                             REFRESHTOKEN=self.steem.refreshtoken))
         else:
