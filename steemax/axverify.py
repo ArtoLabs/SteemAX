@@ -76,6 +76,9 @@ class AXverify:
         """
         if self.steem.verify_key(
                 acctname="", tokenkey=refreshtoken):
+            db = axdb.AXdb(default.dbuser,
+                           default.dbpass,
+                           default.dbname)
             db.update_token(self.steem.username,
                             self.steem.accesstoken,
                             self.steem.refreshtoken)
