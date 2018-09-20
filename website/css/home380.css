@@ -6,18 +6,18 @@ body {
 }
 h1 {
     font-weight: 600;
-    font-size: 35px;
+    font-size: 25px;
     margin: 0;
 }
 h2 {
     font-weight: 600;
-    font-size: 32px;
+    font-size: 18px;
     margin: 0;
 
 }
 h3 {
     color: #989898;
-    font-size: 15px;
+    font-size: 12px;
     margin: 0;
 }
 a {
@@ -25,7 +25,7 @@ a {
 }
 #header-paragraph {
     font-family: LatoWebLight, sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 400;
     margin: 0;
 
@@ -42,29 +42,30 @@ a {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */ 
 }
 .header-section {
-    padding-top: 70px;
-    padding-bottom: 100px;
-    margin-left: 200px;
-    margin-right: 200px;
+    padding-top: 20px;
+    padding-bottom: 60px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 .main-content {
-    width: 990px;
-    height: 320px;
+    position: relative;
+    width: 100%;
+    height: 240px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: -40px;
 }
 .info-box {
-    width: 320px;
-    float: left;
+    width: 210px;
     background-color: #ffffff;
-    height: 220px;
+    height: 180px;
     text-align: center;
-    padding-top:70px;
+    padding-top:25px;
     border-radius: 5px;
     border: 1px solid #e3e3e3;
-    margin-top: -40px;
-    margin-left: 4px;
-    margin-right: 4px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
     box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.15);
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
@@ -74,21 +75,20 @@ a {
 .info-box:hover {
     background-color: #ffffff;
     cursor: pointer;
-    margin-top: -43px;
-    margin-left: 1px;
-    margin-right: 7px;
+    width: 214px;
+    height: 184px;
     box-shadow: 3px 6px 3px 0px rgba(0, 0, 0, 0.15);
 }
 #numuserboxtop {
-    display: block;
+    display: none;
 }
 #numuserboxbottom {
-    display: none;
+    display: block;
 }
 #text-short {
     width: 80%;
     margin: 0 auto;
-    padding-bottom: 23px;
+    padding-bottom: 10px;
 }
 .box-img {
     padding-bottom: 20px;
