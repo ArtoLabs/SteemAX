@@ -6,36 +6,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://steemax.trade/favicon.ico' rel='icon' type='image/vnd.microsoft.icon'>
-    <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/home.css" />
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,600" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css">
+    <link rel="stylesheet" media="only screen and (max-width: 6000px) and (min-width: 1000px)" href="https://steemax.trade/css/home.css">
+    <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/home600.css">
+    <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/home380.css">
 </head>
 <body>
     <div class="header-steemax">
         <div class="header-section">
             <img id="logo" src="https://steemax.trade/images/logo.png">
-            <h1>Nulla ullamcorper velit sed lobortis</h1>
-            <p id="header-paragraph">In eleifend augue sit amet consectetur ultrices. Aliquam ut urna</br>tempor, eleifend justo eu, ullamcorper purus.</p>
+            <h1>Automatically exchange upvotes with other Steemians</h1>
+            <p id="header-paragraph">
+                Set the amount you'd like to exchange then send an invite to another Steemit user.
+                Create disproportional exchanges that support minnows and grant bigger curation rewards.
+            </p>
         </div>
     </div>
-    <div class="container">
-            <div class="number-of-users">
+    <div class="main-content">
+            <a href="https://steemax.info/history"><div class="info-box" id="numuserboxtop">
                 <img class="box-img" src="https://steemax.trade/images/users.svg">
-                <h2>465 748</h2>
+                <h2 style="color: #2366bd;">USERS</h2>
                 <h3>Number of users</h3>
-            </div>
-            <div class="login-box">
+            </div></a>
+            <a href="https://steemax.trade/login"><div class="info-box">
                 <img src="https://steemax.trade/images/login.svg">
                 <h3 id="text-short">Login now with Steem Connect and increase your upvotes.</h3>
-                <button id="filled-button">Login</button>
-        </div>
-            <div class="number-of-exhanges">
-                    <img class="box-img" src="https://steemax.trade/images/exchanges.svg">
-                    <h2>3 892 149</h2>
-                    <h3>Number of exchanges</h3>
-            </div>
+                <div id="filled-button">Login</div>
+            </div></a>
+            <a href="https://steemax.info/history"><div id="numexchangebox" class="info-box">
+                <img class="box-img" src="https://steemax.trade/images/exchanges.svg">
+                <h2 style="color: #2366bd;">EXCHANGES</h2>
+                <h3>Number of exchanges</h3>
+            </div></a>
+            <a href="https://steemax.info/history"><div id="numuserboxbottom" class="info-box">
+                <img class="box-img" src="https://steemax.trade/images/users.svg">
+                <h2 style="color: #2366bd;">USERS</h2>
+                <h3>Number of users</h3>
+            </div></a>
     </div>
     <div class="steemax-footer">
-        <p class="footer-text">Powered by <a href="#">ArtoLabs</a></p>
+        <p class="footer-text">Powered by <a href="https://www.steemit.com/@learnelectronics">ArtoLabs (@learnelectronics)</a></p>
     </div>
 </body>
 </html>
