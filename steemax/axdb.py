@@ -244,7 +244,7 @@ class AXdb(DB):
         return self.dbresults[0][0]
 
     def number_of_exchanges(self):
-        self.get_results('SELECT COUNT(*) FROM axlist;')
+        self.get_results('SELECT COUNT(*) FROM axhistory;')
         return self.dbresults[0][0]
 
     def get_axlist(self, account=None, run=False):
