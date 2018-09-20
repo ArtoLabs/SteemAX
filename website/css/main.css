@@ -11,7 +11,7 @@ body{
     background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ie10+ */
     background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */
-    font-family: Lato, sans-serif;
+    font-family: LatoWeb, sans-serif;
     height: 100vh;
     margin: 0;
     min-height: 700px;
@@ -88,6 +88,7 @@ body{
     display: block;
     float: left;
     background:url(https://steemax.trade/images/steemaxlogo200.png);
+    background-repeat: no-repeat;
 }
 #ghost-button {
     float: right;
