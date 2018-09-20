@@ -122,6 +122,27 @@ h1 {
     padding-left: 3px;
     padding-right: 3px;
 }
+.tooltip {
+
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: #2d2d2d;
+    color: #fff;
+    border-radius: 3px;
+    width: 220px;
+    position: absolute;
+    z-index: 1;
+    padding: 10px;
+    font-weight: 300;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
 #clearit {
     clear: none;
 }

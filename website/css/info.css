@@ -54,6 +54,7 @@ h1 {
     display: block;
     float: left;
     background:url(https://steemax.trade/images/steemaxlogo200.png);
+    background-repeat: no-repeat;
 }
 #ghost-button {
     float: right;
