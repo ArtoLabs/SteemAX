@@ -19,6 +19,7 @@ class AXverify:
         self.post_one = ""
         self.post_two = ""
         self.vote_cut = 0
+        self.post_list = {}
 
     def vote_on_it(self, voter, author, post, weight):
         """ Use the tokens in the database to vote on
@@ -112,24 +113,37 @@ class AXverify:
         Is the post too old? Did account2 
         vote on the post already?
         """
-        identifier = self.steem.recent_post(account1)
+        from_memory = False
+        if account1 in self.post_list:
+            identifier = self.post_list[account1]["id"]
+            from_memory = True
+        else:
+            identifier = self.steem.recent_post(account1, 0, 1)
+            self.post_list[account1] = {"id":identifier,"votes":None}
         if identifier is False or identifier is None:
             self.msg.error_message("No post for " + account1)
             return False
         else:
             permlink = self.steem.util.permlink(identifier)
-            votes = self.steem.vote_history(permlink[1], account1)
-            for v in votes:
-                if v['voter'] == account2:
-                    self.msg.error_message(account2 +
-                                           " has aready voted on " + permlink[1])
-                    return False
+            if from_memory:
+                votes = self.post_list[account1]["votes"]
+            else:
+                votes = self.steem.vote_history(permlink[1], account1)
+                self.post_list[account1]["votes"] = votes
+            if votes is not None and len(votes) > 0:
+                for v in votes:
+                    if v['voter'] == account2:
+                        self.msg.error_message(account2 +
+                                               " has aready voted on " + permlink[1])
+                        return False
         return permlink[1]
 
     def eligible_posts(self, account1, account2):
         """ Verify the posts of both accounts
         """
+
         post = self.verify_post(account1, account2)
+
         if post is False or post is None:
             self.msg.message(account1
                              + " does not have an eligible post.")
