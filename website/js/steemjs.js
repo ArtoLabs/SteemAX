@@ -59,6 +59,9 @@ global properties fetched at page initialization */
 function get_vote_value(accountname, weight, flag, id) {
     var regex = new RegExp('[^A-Za-z0-9\\.\\-\\_]', 'g');
     accountname = accountname.replace(regex, '');
+    if (flag === 2) {
+        document.getElementById("accountbox").value = accountname;
+    }
     weight = weight * 100;
     steem.api.getAccounts([accountname], function(err, result) {
         if ((result != null) && (result != "")){
@@ -141,13 +144,17 @@ function verifyform() {
     var regex = new RegExp('[^0-9\\.]', 'g');
     per = document.getElementById("percentage").value;
     per = per.replace(regex, '');
+    document.getElementById("percentage").value = per;
     ratio = document.getElementById("ratio").value;
     ratio = ratio.replace(regex, '');
+    document.getElementById("ratio").value = ratio;
     dur = document.getElementById("duration").value;
     dur = dur.replace(regex, '');
+    document.getElementById("duration").value = dur;
     acctname = document.getElementById("accountbox").value;
     var regex = new RegExp('[^A-Za-z0-9\\.\\-\\_]', 'g');
     acctname = acctname.replace(regex, '');
+    document.getElementById("accountbox").value = acctname;
     if (acctname === "steem-ax") {
         alert("You may not create an exchange with @steem-ax.");
         return false;
@@ -231,12 +238,23 @@ function calc_votes(id) {
     var ratio = 0;
     var percentage = 0;
     if (id > 0) {
-        ratio = document.getElementById("ratio"+id).value.replace(regex, '');
         percentage = document.getElementById("percentage"+id).value.replace(regex, '');
+        if (percentage > 100) { percentage = 100; }
+        document.getElementById("percentage"+id).value = percentage;
+        ratio = document.getElementById("ratio"+id).value.replace(regex, '');
+        if (ratio > 1000) { ratio = 1000; }
+        if ((ratio < 0.001) && (ratio != 0)) { ratio = 0.001; }
+        document.getElementById("ratio"+id).value = ratio;
     }
     else {
-        ratio = document.getElementById("ratio").value.replace(regex, '');
         percentage = document.getElementById("percentage").value.replace(regex, '');
+        if (percentage > 100) { percentage = 100; }
+        document.getElementById("percentage").value = percentage;
+        ratio = document.getElementById("ratio").value.replace(regex, '');
+        
+        if (ratio > 1000) { ratio = 1000; }
+        if ((ratio < 0.001) && (ratio != 0)) { ratio = 0.001; }
+        document.getElementById("ratio").value = ratio;
     }
     calc_vote1(percentage);
     calc_vote2(ratio);
@@ -259,7 +277,7 @@ function compare_votes_info(id) {
         get_vote_value(otheraccount, 100, 4, id);
     }
 }
-function compare_votes_index(id) {
+function compare_votes_index(id, ratio) {
     exceeds = false;
     assign_votes(id);
     calc_votes();
@@ -341,3 +359,35 @@ function make_barter_memo() {
     document.getElementById("votevalue"+currentbarterid).value = 0;
     compare_votes_info(currentbarterid);
 }
+function onRangeChange(rangeInputElmt, listener, id) {
+  var inputEvtHasNeverFired = true;
+  var rangeValue = {current: undefined, mostRecent: undefined};
+  rangeInputElmt.addEventListener("input", function(evt) {
+    inputEvtHasNeverFired = false;
+    rangeValue.current = evt.target.value;
+    if (rangeValue.current !== rangeValue.mostRecent) {
+      listener(evt, id);
+    }
+    rangeValue.mostRecent = rangeValue.current;
+  });
+  rangeInputElmt.addEventListener("change", function(evt) {
+    if (inputEvtHasNeverFired) {
+      listener(evt, id);
+    }
+  }); 
+}
+var myListener = function(myEvt, id) {
+    var ratio = 1;
+    if (myEvt.target.value > 100) { ratio = myEvt.target.value - 100; }
+    else if (myEvt.target.value === 100) { ratio = 1; }
+    else if (myEvt.target.value < 100) { ratio = myEvt.target.value / 100; }
+    if (id > 0) {
+        document.getElementById("ratio"+id).value = ratio;
+    }
+    else {
+        document.getElementById("ratio").value = ratio;
+    }
+    compare_votes_index(id);
+};
+
+
