@@ -26,7 +26,7 @@
         function get_all_votes() {  get_vote_value('ACCOUNT1', 100, 1); }
     </script>
 </head>
-<body>
+<body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener);">
     <div class="header">
         <div id="header-logo" style="float: left;">
             <a href="https://steemax.trade"><div id="large-logo"></div></a>
@@ -49,12 +49,13 @@
                 <span class="tooltiptext">Enter the name of a Steemit.com account that you wish to exchange upvotes.</span>
             </div>
             <div class="tooltip">
-                <input type="number" placeholder="Percentage" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
+                <input placeholder="Percentage" pattern="[0-9]{3}" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
                 <span class="tooltiptext">This is the percentage of your upvote that you'd like to exchange. Exchanges are always negotiated using the inviter's upvote. The person you invite will have the opportunity to barter with you before they accept. It will always be the percentage of your (inviter's) upvote that is being bartered on.</span>
             </div>
             <div class="tooltip">
-                 <input type="number" placeholder="Ratio" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index();" class="inputshadow">
+                <input type="range" min="1" max="200" step="1" name="ratio-slider" id="ratio-slider" class="slider" value="100">
+                <input pattern="[0-9\\.]{8}" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index();" value="1">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/1-icon.png">
                 <span class="tooltiptext">This is the ratio between your upvote and the person's upvote that you are inviting. This allows whales and minnows to exchange unequal upvotes! Unlike the percentage, it's <i>their</i> upvote that is being adjusted. You can adjust the ratio from 0.001:1 (the invitee's upvote is one thousand times bigger than the inviter's upvote) all the way to 1000:1 (the invitee's upvote is one thousandth 1/1000 the size of the inviter's upvote).</span>
             </div>
