@@ -60,10 +60,10 @@ class Web:
         the number of users and the number of exchanges.
         """
         return ("\r\n"
-        + self.make_page(self.load_template(
-            "templates/index.html"),
-            USERS=self.db.number_of_users(),
-            EXCHANGES=self.db.number_of_exchanges()))
+                + self.make_page(self.load_template(
+                    "templates/index.html"),
+                    USERS=self.db.number_of_users(),
+                    EXCHANGES=self.db.number_of_exchanges()))
 
     def login(self, token, dest="home"):
         """ logs a user in using SteemConnect
@@ -172,6 +172,7 @@ class Web:
         boxtemplate = self.load_template("templates/infobox.html")
         infobox = ""
         invitee = 0
+        myaccount = ""
         otheraccount = ""
         buttoncode = ""
         exp = ""
@@ -179,9 +180,11 @@ class Web:
             if account == value[2]:
                 invitee = 1
                 otheraccount = value[1]
+                myaccount = value[2]
             else:
                 invitee = 0
                 otheraccount = value[2]
+                myaccount = value[1]
             if int(value[7]) == -1 and invitee == 0:
                 buttoncode = """
                 <div class="button" onClick="command('{}', '{}', '{}')">Start</div>
@@ -227,6 +230,7 @@ class Web:
                                      MEMOID=value[6],
                                      INVITEE=invitee,
                                      OTHERACCOUNT=otheraccount,
+                                     MYACCOUNT=myaccount,
                                      BTNCODE=buttoncode)
                 infobox = infobox + box
         pagetemplate = self.load_template("templates/info.html")
