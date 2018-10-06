@@ -26,7 +26,7 @@
         function get_all_votes() {  get_vote_value('ACCOUNT1', 100, 1); }
     </script>
 </head>
-<body>
+<body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener);">
     <div class="header">
         <div id="header-logo">
             <a href="https://steemax.trade"><div id="large-logo"></div></a>
@@ -46,11 +46,12 @@
             <span id="closemodal" onClick='close_modal();'>&times;</span>
             <div id="errormsg"></div>
             <div class="infotip">
-                <input type="number" class="modal_input" placeholder="Percentage from 1 to 100" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index(currentbarterid);">
+                <input class="modal_input" pattern="[0-9]{3}" placeholder="Percentage" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index(currentbarterid);">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
             </div>
             <div class="infotip">
-                 <input type="number" class="modal_input" placeholder="Ratio from 0.001 to 1000" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index(currentbarterid);">
+                <input type="range" min="1" max="200" step="1" name="ratio-slider" id="ratio-slider" class="slider" value="100">
+                <input pattern="[0-9\\.]{8}" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index(currentbarterid);" value="1">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/1-icon.png">
             </div>
             <select name="duration" id="duration" class="inputshadow">

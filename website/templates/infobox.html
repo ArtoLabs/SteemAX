@@ -13,11 +13,12 @@
         <div class="xbuttons">BTNCODE</div>
     </div>
     <div class="memobox" id="memoAXID">
-        <div class="minnerbox" id="compareAXID" style="min-width: 100px; max-width: 250px; padding-top: 24px;"></div>
-        <div class="minnerbox" style="margin: 0px; padding: 0px; padding-top: 15px;">
-            <input type="text" value="MEMOID" id="memoidAXID">
+        <div class="minnerbox" id="compareAXID" style="min-width: 100px; max-width: 250px; padding-top: 15px; vertical-align: text-bottom; margin-right: 50px;"></div>
+        <div class="minnerbox" style="margin: 0px; padding-bottom: 5px; padding-top: 5px; font-size: 12px;">
+            <p style="float: left; padding-left: 10px;">Send $0.001 SBD with this in a memo to @steem-ax</p>
+            <input type="text" value="MEMOID" id="memoidAXID" style="clear: left; float: left;">
         </div>
-        <div class="minnerbox" style="font-size: 14px; padding: 10px; padding-top: 25px; font-size: 12px;">
-            Send any SBD to @steem-ax with this in the memo.
+        <div class="minnerbox" style="padding-top: 45px;">
+            <div class="button" onClick="sendSbdToSteemax('MYACCOUNT', AXID);">Send using SteemConnect</div>
         </div>
     </div>
