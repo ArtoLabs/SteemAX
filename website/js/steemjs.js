@@ -62,6 +62,18 @@ function get_vote_value(accountname, weight, flag, id) {
     if (flag === 2) {
         document.getElementById("accountbox").value = accountname;
     }
+    if (accountname === "steem-ax") {
+        disableform();
+        input_error(document.getElementById("accountbox"));
+        document.getElementById("errormsg").innerHTML = "You may not create an exchange with @steem-ax.";
+        return false;
+    }
+    if (accountname === myaccountname) {
+        disableform();
+        input_error(document.getElementById("accountbox"));
+        document.getElementById("errormsg").innerHTML = "You may not exchange with yourself, Silly.";
+        return false;
+    }
     weight = weight * 100;
     steem.api.getAccounts([accountname], function(err, result) {
         if ((result != null) && (result != "")){
@@ -277,7 +289,10 @@ function compare_votes_info(id) {
         get_vote_value(otheraccount, 100, 4, id);
     }
 }
-function compare_votes_index(id, ratio) {
+function compare_votes_index(id) {
+    if ((formstate === 0) && (id < 1)) {
+        return;
+    }
     exceeds = false;
     assign_votes(id);
     calc_votes();
@@ -349,45 +364,62 @@ function close_modal() {
     document.getElementById("myModal").style.opacity = '0';
 }
 function make_barter_memo() {
-    close_modal();
     var memoid = document.getElementById("storedmemoid"+currentbarterid).value;
     var percentage = document.getElementById("percentage").value;
     var ratio = document.getElementById("ratio").value;
     var duration = document.getElementById("duration").value;
+    if ((percentage < 0) || (percentage > 100)) {
+        alert("Please enter a percentage between 1 and 100.");
+        fix_values();
+        return false;
+    }
+    else if ((ratio < 0.001) || (ratio > 1000)) {
+        alert("Please enter a ratio between 0.001 and 1000.");
+        fix_values();
+        return false;
+    }
+    else if ((duration < 7) || (duration > 365)) {
+        alert("Please enter a duration between 7 days and 365 days.");
+        return false;
+    }
+    close_modal();
     var memomsg = memoid + ":barter" + ":" + percentage + ":" + ratio + ":" + duration;
     document.getElementById("memoid"+currentbarterid).value = memomsg;
     document.getElementById("votevalue"+currentbarterid).value = 0;
     compare_votes_info(currentbarterid);
 }
 function onRangeChange(rangeInputElmt, listener, id) {
-  var inputEvtHasNeverFired = true;
-  var rangeValue = {current: undefined, mostRecent: undefined};
-  rangeInputElmt.addEventListener("input", function(evt) {
-    inputEvtHasNeverFired = false;
-    rangeValue.current = evt.target.value;
-    if (rangeValue.current !== rangeValue.mostRecent) {
-      listener(evt, id);
-    }
-    rangeValue.mostRecent = rangeValue.current;
-  });
-  rangeInputElmt.addEventListener("change", function(evt) {
-    if (inputEvtHasNeverFired) {
-      listener(evt, id);
-    }
-  }); 
+    // We create an event listener for both input and change in order
+    // to be cross browser and mobile friendly.
+    // inputEvtHasNeverFired ensures only one of the two is used.
+    var inputEvtHasNeverFired = true;
+    var rangeValue = {current: undefined, mostRecent: undefined};
+    rangeInputElmt.addEventListener("input", function(evt) {
+        inputEvtHasNeverFired = false;
+        rangeValue.current = evt.target.value;
+        if (rangeValue.current !== rangeValue.mostRecent) {listener(evt);}
+        rangeValue.mostRecent = rangeValue.current;
+    });
+    rangeInputElmt.addEventListener("change", function(evt) {
+        if (inputEvtHasNeverFired) {listener(evt);}
+    }); 
 }
-var myListener = function(myEvt, id) {
+var myListener = function(myEvt) {
+    // The listener callback function adjusts the sliders value then
+    // inserts it into the ratio box for further calculating.
     var ratio = 1;
     if (myEvt.target.value > 100) { ratio = myEvt.target.value - 100; }
     else if (myEvt.target.value === 100) { ratio = 1; }
     else if (myEvt.target.value < 100) { ratio = myEvt.target.value / 100; }
-    if (id > 0) {
-        document.getElementById("ratio"+id).value = ratio;
+    if (currentbarterid > 0) {
+        document.getElementById("ratio"+currentbarterid).value = ratio;
     }
-    else {
-        document.getElementById("ratio").value = ratio;
-    }
-    compare_votes_index(id);
+    document.getElementById("ratio").value = ratio;
+    compare_votes_index(currentbarterid);
 };
-
-
+function sendSbdToSteemax(account, id) {
+    regex = new RegExp('[^A-Za-z0-9\\:\\.]', 'g');
+    var memoid = document.getElementById("memoid"+id).value.replace(regex, '');
+    var url = "https://steemconnect.com/sign/transfer?from="+account+"&to=steem-ax&amount=0.001%20SBD&memo="+memoid+"&redirect_uri=https://steemax.info/@"+account;
+    window.location = (url);
+}
