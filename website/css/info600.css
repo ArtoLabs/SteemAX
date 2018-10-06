@@ -88,7 +88,7 @@ h1 {
 .minnerbox {
 	position: relative;
     float: left;
-    height: 30px;
+    height: auto;
     text-align: left;
     padding: 12px;
     padding-bottom: 0px;
