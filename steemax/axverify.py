@@ -121,7 +121,7 @@ class AXverify:
             identifier = self.steem.recent_post(account1, 0, 1)
             self.post_list[account1] = {"id":identifier,"votes":None}
         if identifier is False or identifier is None:
-            self.msg.error_message("No post for " + account1)
+            self.msg.message("No post for " + account1)
             return False
         else:
             permlink = self.steem.util.permlink(identifier)
@@ -133,8 +133,8 @@ class AXverify:
             if votes is not None and len(votes) > 0:
                 for v in votes:
                     if v['voter'] == account2:
-                        self.msg.error_message(account2 +
-                                               " has aready voted on " + permlink[1])
+                        self.msg.message(account2 +
+                                       " has already voted on " + permlink[1])
                         return False
         return permlink[1]
 
