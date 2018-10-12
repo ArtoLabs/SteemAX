@@ -9,11 +9,6 @@ account = FieldStorage().getvalue('account')
 per = FieldStorage().getvalue('percentage')
 ratio = FieldStorage().getvalue('ratio')
 dur = FieldStorage().getvalue('duration')
+ajax = FieldStorage().getvalue('ajax')
 print ("Content-type: text/html")
-print (web.Web().invite(code, 
-                        account, 
-                        per, 
-                        ratio, 
-                        dur, 
-                        response, 
-                        ip))
+print (web.Web().invite(code, account, per, ratio, dur, response, ip, ajax))
