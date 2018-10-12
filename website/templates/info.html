@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://steemax.trade/favicon.ico' rel='icon' type='image/vnd.microsoft.icon'>
     <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css">
+    <link rel="stylesheet" media="only screen and (max-width: 6000px) and (min-width: 1000px)" href="https://steemax.trade/css/page_layout.css">
+    <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/page_layout600.css">
+    <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/page_layout380.css">
     <link rel="stylesheet" media="only screen and (max-width: 6000px) and (min-width: 1000px)" href="https://steemax.trade/css/info.css">
     <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/info600.css">
     <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/info380.css">
@@ -28,14 +31,16 @@
 </head>
 <body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener);">
     <div class="header">
-        <div id="header-logo">
-            <a href="https://steemax.trade"><div id="large-logo"></div></a>
-        </div>
-        <div id="ACCOUNT1vote" class="myvotevalue"></div>
-        <div id="header-button">
-            <a href="https://steemax.trade/login">
-            <button id="ghost-button">Exchange</button>
-            </a>
+        <div class="header-container">
+            <div id="header-logo">
+                <a href="https://steemax.trade"><div id="large-logo"></div></a>
+            </div>
+            <div id="ACCOUNT1vote" class="myvotevalue"></div>
+            <div id="header-button">
+                <a href="https://steemax.trade/login">
+                <button id="ghost-button">Exchange</button>
+                </a>
+            </div>
         </div>
     </div>
     <div id="exchange_table">
@@ -44,7 +49,16 @@
     <div id="myModal">
         <div id="modal-content">
             <span id="closemodal" onClick='close_modal();'>&times;</span>
-            <div id="errormsg"></div>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+            <td id="showinviter"></td>
+            <td rowspan="2">vs.</td>
+            <td id="showinvitee"></td>
+            </tr><tr>
+            <td id="amt1"></td>
+            <td id="amt2"></td>
+            </tr>
+            </table>
+            <!--<div id="errormsg"></div>-->
             <div class="infotip">
                 <input class="modal_input" pattern="[0-9]{3}" placeholder="Percentage" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index(currentbarterid);">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
