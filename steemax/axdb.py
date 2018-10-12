@@ -247,6 +247,13 @@ class AXdb(DB):
         self.get_results('SELECT COUNT(*) FROM axhistory;')
         return self.dbresults[0][0]
 
+    def number_of_invites(self, account):
+        self.get_results('SELECT COUNT(*) FROM axlist WHERE Account1 = %s AND ((Status = -1) OR (Status = 3));', account)
+        count = self.dbresults[0][0]
+        self.get_results('SELECT COUNT(*) FROM axlist WHERE Account2 = %s AND ((Status = 0) OR (Status = 2));', account)
+        count += self.dbresults[0][0]
+        return count
+
     def get_axlist(self, account=None, run=False):
         """ Gets the entire list of transactions
         to be processed
