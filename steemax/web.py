@@ -88,21 +88,31 @@ class Web:
                         + self.make_page(self.load_template(
                             "templates/invite_form.html"),
                             ACCOUNT1=self.steem.username,
-                            REFRESHTOKEN=self.steem.refreshtoken))
+                            REFRESHTOKEN=self.steem.refreshtoken,
+                            INVITECOUNT=self.db.number_of_invites(self.steem.username)))
         else:
             return self.auth_url()
 
     def invite(self, token, account2, per,
-               ratio, dur, response, ip):
+               ratio, dur, response, ip, ajax):
         """ Creates an invite
         """
+        ajax = sec.filter_number(int(ajax))
         response = sec.filter_token(response)
         if not self.verify_recaptcha(response, ip):
-            return self.error_page("Invalid captcha.")
+            if (int(ajax) == 1):
+                return "\r\nInvalid captcha"
+            else:
+                return self.error_page("Invalid captcha.")
         if self.verify_token(sec.filter_token(token)):
             account2 = sec.filter_account(account2)
             if self.steem.account(account2) is False:
-                return self.error_page(account2 + " is an invalid account name.")
+                if (int(ajax) == 1):
+                    return ("\r\n"+account2 
+                        + " is an invalid account name.")
+                else:
+                    return self.error_page(account2 
+                        + " is an invalid account name.")
             else:
                 memoid = self.db.add_invite(
                     self.steem.username,
@@ -111,10 +121,16 @@ class Web:
                     sec.filter_number(ratio, 1000),
                     sec.filter_number(dur, 365))
                 if memoid is False:
-                    return self.error_page(self.db.errmsg)
+                    if (int(ajax) == 1):
+                        return "\r\n"+self.db.errmsg
+                    else:
+                        return self.error_page(self.db.errmsg)
                 elif int(memoid) > 0:
-                    return ("Location: https://steemax.info/@"
-                            + self.steem.username + "\r\n")
+                    if (int(ajax) == 1):
+                        return "\r\n1"
+                    else:
+                        return ("Location: https://steemax.info/@"
+                                + self.steem.username + "\r\n")
         else:
             return self.auth_url()
 
@@ -188,7 +204,7 @@ class Web:
             if int(value[7]) == -1 and invitee == 0:
                 buttoncode = """
                 <div class="button" onClick="command('{}', '{}', '{}')">Start</div>
-                                """.format(
+                    """.format(
                     value[0],
                     otheraccount,
                     "start")
@@ -198,14 +214,14 @@ class Web:
                 buttoncode = """
                 <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
                 <div class="button" onClick="barter_window('{}');">Barter</div>
-                                """.format(
+                    """.format(
                     value[0],
                     otheraccount,
                     "accept",
                     value[0])
             elif ((int(value[7]) == 0 and invitee == 0)
-                  or (int(value[7]) == 3 and invitee == 1)
-                  or (int(value[7]) == 2 and invitee == 0)):
+                    or (int(value[7]) == 3 and invitee == 1)
+                    or (int(value[7]) == 2 and invitee == 0)):
                 buttoncode = '<div id="pending">Pending</div>\n'
             if int(value[7]) == 1:
                 buttoncode = '<div id="pending">Active</div>\n'
@@ -215,7 +231,7 @@ class Web:
             buttoncode += """
                 <div class="button" onClick="command('{}', '{}', '{}')">
                                 Cancel</div>
-                                """.format(
+                """.format(
                 value[0],
                 otheraccount,
                 "cancel")
@@ -234,9 +250,7 @@ class Web:
                                      BTNCODE=buttoncode)
                 infobox = infobox + box
         pagetemplate = self.load_template("templates/info.html")
-        return ("\r\n" + self.make_page(pagetemplate,
-                                        ACCOUNT1=account,
-                                        INFOBOX=infobox))
+        return ("\r\n" + self.make_page(pagetemplate, ACCOUNT1=account, INFOBOX=infobox))
 
     def verify_token(self, token):
         """ cleans and verifies a SteemConnect
