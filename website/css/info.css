@@ -1,79 +1,9 @@
-body{
-    background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1)));
-    background: -webkit-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: -o-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 );
-    font-family: Lato, sans-serif;
-    height: 100vh;
-    margin: 0;
-}
 div {
     font-size: 22px;
     font-family: "LatoWeb";
 }
 h1 {
     text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
-}
-.header {
-    position: relative;
-    width: calc(100% - 400px);
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-}
-#header-logo {
-    width: 25%;
-    position: relative;
-    margin-bottom: 40px;
-    min-width: 200px;
-    float: left;
-}
-#header-button {
-    position: relative;
-    margin-bottom: 40px;
-    float: right;
-}
-.myvotevalue {
-    position: relative;
-    float: left;
-    font-size: 25px;
-    font-weight: 500;
-    color: #ffffff;
-    margin-top: 10px;
-    width: 40%;
-    max-width: 400px;
-    min-width: 100px;
-    text-align: right;
-}
-#large-logo {
-    width: 200px;
-    height: 54px;
-    display: block;
-    float: left;
-    background:url(https://steemax.trade/images/steemaxlogo200.png);
-    background-repeat: no-repeat;
-}
-#ghost-button {
-    float: right;
-    border: 1px solid #8ac2f1;
-    background-color: transparent;
-    margin-top: 10px;
-    padding: 3px 5px;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: 0.8s;
-}
-#ghost-button:hover {
-    background-color: white;
-    color: #2f7fd2;
 }
 .memobox {
     display: none;
@@ -161,7 +91,7 @@ h1 {
     width: calc(100% - 400px);
     margin-left: auto;
     margin-right: auto;
-    margin-top: 20px;
+    padding-top: 120px;
 }
 .xbuttons {
 	position: relative;
@@ -323,7 +253,7 @@ option {
 #errormsg {
     color: #333333;
     font-weight: 300;
-    font-size: 18px;
+    font-size: 24px;
 }
 .slider {
     position: relative;

@@ -1,77 +1,9 @@
-body{
-    background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1)));
-    background: -webkit-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: -o-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 );
-    font-family: Lato, sans-serif;
-    height: 100vh;
-    margin: 0;
-}
 div {
     font-size: 22px;
     font-family: "LatoWeb";
 }
 h1 {
     text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
-}
-.header {
-    position: relative;
-    width: calc(100% - 50px);
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 15px;
-}
-#header-logo {
-    position: relative;
-    margin-bottom: 20px;
-    min-width: 70px;
-    float: left;
-}
-#header-button {
-    position: relative;
-    margin-top: 6px;
-    margin-bottom: 20px;
-    float: right;
-}
-.myvotevalue {
-    position: relative;
-    margin-top: 6px;
-    float: left;
-    font-size: 12px;
-    font-weight: 100;
-    color: #ffffff;
-    margin-left: 10px;
-    max-width: 700px;
-    min-width: 100px;
-    text-align: right;
-}
-#large-logo {
-    width: 70px;
-    height: 47px;
-    display: block;
-    float: left;
-    background:url(https://steemax.trade/images/axlogo70.png);
-}
-#ghost-button {
-    float: right;
-    border: 1px solid #8ac2f1;
-    background-color: transparent;
-    padding: 2px 4px;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: 300;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: 0.8s;
-}
-#ghost-button:hover {
-    background-color: white;
-    color: #2f7fd2;
 }
 .memobox {
     display: none;
@@ -158,6 +90,7 @@ h1 {
     width: calc(100% - 50px);
     margin-left: auto;
     margin-right: auto;
+    padding-top: 120px;
 }
 .xbuttons {
 	position: relative;
