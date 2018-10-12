@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://steemax.trade/favicon.ico' rel='icon' type='image/vnd.microsoft.icon'>
     <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css" />
-    <link rel="stylesheet" media="only screen and (max-width: 4000px) and (min-width: 1000px)" href="https://steemax.trade/css/main.css">
+    <link rel="stylesheet" media="only screen and (max-width: 6000px) and (min-width: 1000px)" href="https://steemax.trade/css/page_layout.css">
+    <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/page_layout600.css">
+    <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/page_layout380.css">
+    <link rel="stylesheet" media="only screen and (max-width: 6000px) and (min-width: 1000px)" href="https://steemax.trade/css/main.css">
     <link rel="stylesheet" media="only screen and (max-width: 999px) and (min-width: 600px)" href="https://steemax.trade/css/main600.css">
     <link rel="stylesheet" media="only screen and (max-width: 599px) and (min-width: 0px)" href="https://steemax.trade/css/main380.css">
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -26,30 +29,42 @@
         function get_all_votes() {  get_vote_value('ACCOUNT1', 100, 1); }
     </script>
 </head>
-<body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener);">
+<body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener); showInviteCount();">
     <div class="header">
-        <div id="header-logo" style="float: left;">
-            <a href="https://steemax.trade"><div id="large-logo"></div></a>
-        </div>
-        <div id="ACCOUNT1vote" class="myvotevalue"></div>
-        <div id="header-button" style="float: right;">
-            <a href="https://steemax.info/@ACCOUNT1">
-            <button id="ghost-button">See my exchanges</button>
-            </a>
+        <div class="header-container">
+            <div id="header-logo">
+                <a href="https://steemax.trade"><div id="large-logo"></div></a>
+            </div>
+            <div id="ACCOUNT1vote" class="myvotevalue"></div>
+            <div id="header-button">
+                <a href="https://steemax.info/@ACCOUNT1">
+                <div class="notice-bubble">INVITECOUNT</div>
+                <button id="ghost-button">My Invitations</button>
+                </a>
+            </div>
         </div>
     </div>
     <form action="https://steemax.trade/post.py" id="axform">
-    <input type="hidden" name="code" value="REFRESHTOKEN">
+    <input type="hidden" name="code" id="code" value="REFRESHTOKEN">
     <div class="container">
         <div id="errormsg">Invite a Steemian to exchange upvotes</div>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="vstable" style="display: none;"><tr>
+            <td id="showinviter"></td>
+            <td rowspan="2">vs.</td>
+            <td id="showinvitee"></td>
+            </tr><tr>
+            <td id="amt1"></td>
+            <td id="amt2"></td>
+            </tr>
+        </table>
         <div class="input-fields">
             <div class="tooltip">
-                <input type="text" placeholder="username" name="account" id="accountbox" onchange="get_vote_value(this.value, 100, 2);" class="inputshadow">
+                <input type="text" placeholder="Steemian to invite" name="account" id="accountbox" onchange="get_vote_value(this.value, 100, 2);" class="inputshadow">
                 <img class="input-icon" src="https://www.steemax.trade/images/user-icon.png">
                 <span class="tooltiptext">Enter the name of a Steemit.com account that you wish to exchange upvotes.</span>
             </div>
             <div class="tooltip">
-                <input placeholder="Percentage" pattern="[0-9]{3}" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
+                <input placeholder="Percentage of my upvote" pattern="[0-9]{3}" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
                 <span class="tooltiptext">This is the percentage of your upvote that you'd like to exchange. Exchanges are always negotiated using the inviter's upvote. The person you invite will have the opportunity to barter with you before they accept. It will always be the percentage of your (inviter's) upvote that is being bartered on.</span>
             </div>
@@ -71,11 +86,13 @@
                  <div class="g-recaptcha" data-sitekey="6Ld60V8UAAAAALQVrR4yBYDiDsYVHO1JRc4BdrxG"></div>
             </div>
             <div id="buttonholder">
-                <a href="javascript" onClick="verifyform(); return false;"><div id="exchange-button">Invite to exchange</div></a>
+                <a href="javascript" onClick="verifyform(); return false;"><div id="exchange-button">Create Invite</div></a>
                 <img src="https://steemax.trade/images/loader_small.gif" id="loadergif">
             </div>
-            <div id="powered">Powered by <a href="https://steemit.com/@learnelectronics">Artolabs</a></div>
         </div>
+    </div>
+    <div class="steemax-footer">
+        <p class="footer-text">Powered by <a href="https://www.steemit.com/@learnelectronics">ArtoLabs (@learnelectronics)</a></p>
     </div>
     </form>
 </body>
