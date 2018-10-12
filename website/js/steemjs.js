@@ -202,7 +202,8 @@ function verifyform() {
 }
 function verifyform_callback() {
     if (formstate === 1) {
-        document.getElementById('axform').submit();
+        //document.getElementById('axform').submit();
+        addInvite();
     }
     else { 
         alert("Please enter a valid account name.");
@@ -312,7 +313,15 @@ function compare_votes_index(id) {
         input_error(document.getElementById("ratio"));
     }
     else {
-        document.getElementById("errormsg").innerHTML = ("$"+vote1+" vs. $"+vote2);
+        if (document.getElementById("showinviter")) {
+            document.getElementById("showinviter").innerHTML = account1;
+            document.getElementById("showinvitee").innerHTML = account2;
+            document.getElementById("amt1").innerHTML = vote1;
+            document.getElementById("amt2").innerHTML = vote2;
+        }
+        if (document.getElementById("errormsg")) {
+            document.getElementById("errormsg").innerHTML = ("$"+vote1+" vs. $"+vote2);
+        }
         input_correct(document.getElementById("percentage"));
         input_correct(document.getElementById("ratio"));
     }
@@ -409,8 +418,7 @@ var myListener = function(myEvt) {
     // inserts it into the ratio box for further calculating.
     var ratio = 1;
     if (myEvt.target.value > 100) { ratio = myEvt.target.value - 100; }
-    else if (myEvt.target.value === 100) { ratio = 1; }
-    else if (myEvt.target.value < 100) { ratio = myEvt.target.value / 100; }
+    else if (myEvt.target.value <= 100) { ratio = myEvt.target.value / 100; }
     if (currentbarterid > 0) {
         document.getElementById("ratio"+currentbarterid).value = ratio;
     }
@@ -423,3 +431,107 @@ function sendSbdToSteemax(account, id) {
     var url = "https://steemconnect.com/sign/transfer?from="+account+"&to=steem-ax&amount=0.001%20SBD&memo="+memoid+"&redirect_uri=https://steemax.info/@"+account;
     window.location = (url);
 }
+/*  AJAX code used for submitting the invite creation form and incrementing
+ the notice counter
+*/
+var httpObject;
+function addInvite() {
+    var regex = new RegExp('[^0-9\\.]', 'g');
+    var per = document.getElementById("percentage").value.replace(regex, '');
+    var ratio = document.getElementById("ratio").value.replace(regex, '');
+    var dur = document.getElementById("duration").value.replace(regex, '');
+    var regex = new RegExp('[^A-Za-z0-9\\.\\-\\_]', 'g');
+    var acctname = document.getElementById("accountbox").value.replace(regex, '');
+    var code = document.getElementById("code").value.replace(regex, '');
+    var captcha = document.getElementById("g-recaptcha-response").value.replace(regex, '');
+	var url = "https://www.steemax.trade/post.py?code=" + code + "&account=" + acctname + "&percentage=" + per + "&ratio=" + ratio + "&duration=" + dur + "&g-recaptcha-response=" + captcha + "&ajax=1";
+    url = encodeURI(url);
+	httpObject = loadAddInviteAJAX();
+	getDynamicData(url);
+}
+function loadAddInviteAJAX() {
+	var xhr_object = null;
+	if(window.XMLHttpRequest) {xhr_object = new XMLHttpRequest();} 
+	else if(window.ActiveXObject) {xhr_object = new ActiveXObject("Microsoft.XMLHTTP");} 
+	else {alert("Your browser doesn't provide XMLHttprequest functionality"); return;}
+	return xhr_object;
+}
+function getDynamicData(url) {
+	httpObject.open('GET', url, true);
+	httpObject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	httpObject.onreadystatechange = callbackAddInviteFunction;
+	httpObject.send(null);
+}
+function callbackAddInviteFunction() {
+	if (httpObject.readyState != 4) {return 0;}
+	else {
+		var response = httpObject.responseText;
+        var regex = new RegExp('[^0-9]', 'g');
+		if (httpObject.status==200) {
+            if (response.replace(regex, '') === "1") {
+                addNotice(); 
+            }
+            else {
+                alert(response);
+                stopLoaderGif();
+            }
+        }
+		else {
+            alert(response);
+            stopLoaderGif();
+        }
+	}
+}
+/* Code for displaying the pending invite count and notification bubble */
+function showInviteCount() {
+    ele = document.querySelector('.notice-bubble');
+    var num = parseInt(ele.innerHTML);
+    if (num > 0) { 
+        ele.style.display = "block";
+    }
+    ele.classList.add('animating');
+    removeAnimation();
+}
+function addNotice() {
+    resetForm();
+    stopLoaderGif();
+    ele = document.querySelector('.notice-bubble');
+    var num = parseInt(ele.innerHTML);
+    if (num === 0) { 
+        ele.style.display = "block";
+    }
+    ele.innerHTML = num + 1;
+    ele.classList.add('animating');
+    removeAnimation();
+}
+function removeAnimation(){
+    setTimeout(function() {
+        ele = document.querySelector('.notice-bubble');
+        ele.classList.remove('animating');
+    }, 1000);           
+}
+function resetForm() {
+    document.getElementById("errormsg").style.color = "#ffffff";
+    document.getElementById("errormsg").innerHTML = "Make another exchange invite";
+    document.getElementById("percentage").value = "";
+    document.getElementById("ratio").value = "1";
+    document.getElementById("accountbox").value = "";
+    theirvote = 0;
+    exceeds = false;
+    vote1 = 0;
+    vote2 = 0;
+    votecut = 0;
+    account1 = "";
+    account2 = "";
+    formstate = 0;
+}
+function stopLoaderGif() {
+    grecaptcha.reset();
+    document.getElementById("loadergif").style.display = "none";
+    document.getElementById("exchange-button").style.display = "inline-block";
+    document.getElementById("accountbox").focus();
+}
+
+
+
+
