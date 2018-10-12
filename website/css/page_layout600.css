@@ -1,0 +1,138 @@
+body{
+    background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ie10+ */
+    background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */
+    font-family: LatoWeb, sans-serif;
+    height: 100vh;
+    margin: 0;
+    min-height: 700px;
+}
+.header {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    height: 70px;
+    border-bottom: 1px solid #ffffff;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f9f9f9+0,d0e5ef+100 */
+background: rgb(249,249,249); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(249,249,249,1) 0%, rgba(208,229,239,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(249,249,249,1) 0%,rgba(208,229,239,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(249,249,249,1) 0%,rgba(208,229,239,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#d0e5ef',GradientType=0 ); /* IE6-9 */
+}
+.header-container {
+    position: relative;
+    width: 600px;
+    height: 70px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#header-logo {
+    position: relative;
+    float: left;
+    width: 100px;
+    padding-left: 39px;
+    padding-top: 11px;
+    height: 53px;
+    border-right: 1px solid #aaaaaa;
+}
+#header-button {
+    position: relative;
+    float: left;
+    width: 119px;
+    padding-left: 15px;
+    height: 70px;
+    border-left: 1px solid #ffffff;
+}
+.myvotevalue {
+    position: relative;
+    padding-top: 20px;
+    float: left;
+    font-size: 16px;
+    color: #666666;
+    width: 318px;
+    height: 50px;
+    text-align: center;
+    text-shadow: 2px 2px 1px rgba(255,255,255,0.90);
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #aaaaaa;
+}
+.container {
+    position: relative;
+    max-width: 360px;
+    padding-top: 120px;
+    margin: auto;
+    clear: both;
+}
+#large-logo {
+    width: 70px;
+    height: 54px;
+    display: block;
+    float: left;
+    background:url(https://steemax.trade/images/axlogo70.png);
+    background-repeat: no-repeat;
+}
+#ghost-button {
+    float: left;
+    margin-top: 20px;
+    border: 1px solid #999999;
+    background-color: transparent;
+    padding: 3px 5px;
+    color: #666666;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.8s;
+}
+#ghost-button:hover {
+    background-color: #999999;
+    color: #ffffff;
+}
+.steemax-footer {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    background-color: #f1f1f1;
+    height: 65px;
+    text-align: center;
+    color: #7d7d7d;
+    font-size: 18px;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.09) inset; 
+}
+.footer-text > a {
+    color: #2366bd;
+    font-weight: 600;
+    text-decoration: none;
+}
+.notice-bubble {
+    display: none;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 5px;
+    background-color: #ff0000;
+    font-size: 12px;
+    text-align: center;
+    padding: 2px;
+    color: #ffffff;
+    left: 113px;
+    top: 10px;
+}
+.animating{
+    animation: animate 1s cubic-bezier(0,1,1,0);            
+}
+@keyframes animate{
+    from {
+       transform: scale(1);
+    }
+    to {
+       transform: scale(1.7);
+    }
+}
