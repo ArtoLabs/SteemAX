@@ -31,6 +31,7 @@
     margin-right: auto;
 }
 #input-fields {
+    clear: both;
     position: relative;
     height: 700px;
     min-height: 700px;
@@ -114,14 +115,12 @@ option {
     float: left;
     text-align: right;
     padding-right: 39px;
-    -webkit-box-shadow: 0px 0px 5px 1px rgba(50, 50, 255, 0.6);
-    -moz-box-shadow:    0px 0px 5px 1px rgba(50, 50, 255, 0.6);
-    box-shadow:         0px 0px 5px 1px rgba(50, 50, 255, 0.6);
 }
 #errormsg {
     color: #ffffff;
     font-weight: 300;
     font-size: 18px;
+    height: 40px;
 }
 #loadergif {
     position: relative;
