@@ -49,23 +49,14 @@
     <div id="myModal">
         <div id="modal-content">
             <span id="closemodal" onClick='close_modal();'>&times;</span>
-            <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-            <td id="showinviter"></td>
-            <td rowspan="2">vs.</td>
-            <td id="showinvitee"></td>
-            </tr><tr>
-            <td id="amt1"></td>
-            <td id="amt2"></td>
-            </tr>
-            </table>
-            <!--<div id="errormsg"></div>-->
+            <div id="errormsg"></div>
             <div class="infotip">
-                <input class="modal_input" pattern="[0-9]{3}" placeholder="Percentage" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index(currentbarterid);">
+                <input placeholder="Percentage of my upvote" pattern="[0-9]{3}" min="1" max="100" name="percentage" id="percentage" onchange="compare_votes_index();" class="inputshadow">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/percentage-icon.png">
             </div>
             <div class="infotip">
-                <input type="range" min="1" max="200" step="1" name="ratio-slider" id="ratio-slider" class="slider" value="100">
-                <input pattern="[0-9\\.]{8}" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index(currentbarterid);" value="1">
+                <input type="range" min="1" max="300" step="1" name="ratio-slider" id="ratio-slider" class="slider" value="100">
+                <input type="text" pattern="[0-9\\.]{8}" min="0.001" max="1000" step="0.001" name="ratio" id="ratio" onchange="compare_votes_index();" value="1">
                 <img class="input-icon-right" src="https://www.steemax.trade/images/1-icon.png">
             </div>
             <select name="duration" id="duration" class="inputshadow">
