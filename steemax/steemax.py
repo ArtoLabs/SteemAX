@@ -16,7 +16,7 @@ msg = Msg(default.logfilename,
 db = axdb.AXdb(default.dbuser,
                default.dbpass,
                default.dbname)
-xverify = axverify.AXverify()
+xverify = axverify.AXverify(screenmodeoverride="verbose")
 
 
 # Entry point
@@ -128,9 +128,9 @@ class Enter:
                           + 'as X ({}) to 1 ({}). X is: '.format(acct1, acct2))
             if (not re.match(r'^[0-9\.]+$', ratio)
                     or len(ratio) == 0
-                    or len(ratio) > 5
-                    or float(ratio) < 0.01
-                    or float(ratio) > 99):
+                    or len(ratio) > 8
+                    or float(ratio) < 0.001
+                    or float(ratio) > 1000):
                 msg.message('Please enter a one or two '
                             + 'digit number to represent a ratio in '
                             + 'the format x to 1 where x is your '
@@ -139,7 +139,7 @@ class Enter:
                             + 'e.g. 0.05 to 1')
             else:
                 if xverify.eligible_votes(acct1, acct2,
-                                          per, ratio, "", flag):
+                                          per, ratio, flag):
                     break
         return ratio
 
