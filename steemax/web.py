@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 from screenlogger.screenlogger import Msg
 from simplesteem.simplesteem import SimpleSteem
 from steemax import axdb
+from steemax import axverify
 from steemax import default
 from steemax import sec
 
@@ -95,36 +96,37 @@ class Web:
 
     def invite(self, token, account2, per,
                ratio, dur, response, ip, ajax):
-        """ Creates an invite
+        """ Creates an invite. First we filter the users
+        data then we create the invite in the database.
+        If the request was sent via ajax then the returned
+        result is simply the number one to indicate success.
         """
         ajax = sec.filter_number(int(ajax))
         response = sec.filter_token(response)
+        per = sec.filter_number(per)
+        ratio = sec.filter_number(ratio, 1000)
+        dur = sec.filter_number(dur, 365)
         if not self.verify_recaptcha(response, ip):
-            if (int(ajax) == 1):
-                return "\r\nInvalid captcha"
-            else:
-                return self.error_page("Invalid captcha.")
+            return self.error_page("Invalid captcha.", ajax)
+        if float(per) < 1 or float(per) > 100:
+           return self.error_page("The percentage can not be lower then "
+                                + "1 or greater than 100 and must be a whole number.", ajax)    
+        if float(dur) < 7 or float(dur) > 365:
+           return self.error_page("The duration must be between 7 and 365 days.", ajax)
+        if float(ratio) < 0.001 or float(ratio) > 1000:
+           return self.error_page("The ratio must be between 0.001 and 1000 to 1.", ajax)
         if self.verify_token(sec.filter_token(token)):
             account2 = sec.filter_account(account2)
             if self.steem.account(account2) is False:
-                if (int(ajax) == 1):
-                    return ("\r\n"+account2 
-                        + " is an invalid account name.")
-                else:
-                    return self.error_page(account2 
-                        + " is an invalid account name.")
+                return self.error_page(account2 
+                    + " is an invalid account name.", ajax)
             else:
-                memoid = self.db.add_invite(
-                    self.steem.username,
-                    account2,
-                    sec.filter_number(per),
-                    sec.filter_number(ratio, 1000),
-                    sec.filter_number(dur, 365))
+                verify = axverify.AXverify()
+                if verify.eligible_votes(self.steem.username, account2, per, ratio, 1) is False:
+                    return self.error_page(verify.response, ajax)
+                memoid = self.db.add_invite(self.steem.username, account2, per, ratio, dur)
                 if memoid is False:
-                    if (int(ajax) == 1):
-                        return "\r\n"+self.db.errmsg
-                    else:
-                        return self.error_page(self.db.errmsg)
+                    return self.error_page(self.db.errmsg, ajax)
                 elif int(memoid) > 0:
                     if (int(ajax) == 1):
                         return "\r\n1"
@@ -271,14 +273,20 @@ class Web:
         url = self.steem.connect.auth_url()
         return "Location: " + url + "\r\n"
 
-    def error_page(self, msg):
+    def error_page(self, msg, ajax):
         """ Returns the HTML page with the
         given error message
         """
-        return ("\r\n"
-                + self.make_page(
-                    self.load_template("templates/error.html"),
-                    ERRORMSG=msg))
+        if (int(ajax) == 1):
+            return "\r\n"+msg
+        else:
+            msg += ("<br><br>You may be receiving this error in this format "
+                + "because you have disabled javascript. Please enable javascript "
+                + "for a better user experience.")
+            return ("\r\n"
+                    + self.make_page(
+                        self.load_template("templates/error.html"),
+                        ERRORMSG=msg))
 
     def verify_recaptcha(self, response, remoteip):
         """ Verifies a Google recaptcha v2 token
