@@ -7,14 +7,14 @@ from steemax import axdb
 
 
 class AXverify:
-    def __init__(self):
+    def __init__(self, screenmodeoverride="quiet"):
         self.steem = SimpleSteem(client_id=default.client_id,
                                  client_secret=default.client_secret,
                                  callback_url=default.callback_url,
-                                 screenmode=default.msgmode)
+                                 screenmode=screenmodeoverride)
         self.msg = Msg(default.logfilename,
                        default.logpath,
-                       default.msgmode)
+                       screenmodeoverride)
         self.response = None
         self.post_one = ""
         self.post_two = ""
@@ -95,14 +95,10 @@ class AXverify:
         it is set by the system at the time
         the account last voted.
         """
-        self.steem.check_balances(acctname)
-        if votepower == 0:
-            votepower = self.steem.votepower
         self.votevalue = self.steem.current_vote_value(
-            lastvotetime=self.steem.lastvotetime,
-            steempower=self.steem.steempower,
+            accountname=acctname,
             voteweight=int(voteweight),
-            votepower=int(votepower))
+            votepoweroverride=int(votepower))
         self.voteweight = voteweight
         self.votepower = votepower
         return self.steem.rshares
@@ -141,9 +137,7 @@ class AXverify:
     def eligible_posts(self, account1, account2):
         """ Verify the posts of both accounts
         """
-
         post = self.verify_post(account1, account2)
-
         if post is False or post is None:
             self.msg.message(account1
                              + " does not have an eligible post.")
@@ -167,7 +161,7 @@ class AXverify:
         If ratio was not acheived return false 
         Otherwise display approximate 
         upvote matches
-        """
+        """        
         if flag == 1:
             vpow = 100
         else:
