@@ -15,6 +15,7 @@ var account2 = "";
 var formstate = 0;
 var itemshowing = 0;
 var currentbarterid = 0;
+var invalidratio = 0;
 /* Functions using steem.js to fetch global properties and account vote values */
 steem.api.getRewardFund("post", function(err, fund) {
     reward_fund = parseFloat(fund.reward_balance.replace(" STEEM", ""));
@@ -84,6 +85,7 @@ function get_vote_value(accountname, weight, flag, id) {
             var steem_power = vests_to_sp(totalvests);
             var rshares = sp_to_rshares(steem_power, 10000, weight);
             var vote_value = rshares_to_steem(rshares);
+
             // Flag 1 is raised when retreiving the vote value of the main account
             if (flag === 1) {
                 myvote = vote_value;
@@ -138,11 +140,15 @@ function disableform () {
 }
 function input_error(obj) {
     obj.className = "inputshadowerror";
-    document.getElementById("errormsg").style.color = "#ff9f51";
+    if (document.getElementById("errormsg")) {
+        document.getElementById("errormsg").style.color = "#ff9f51";
+    }
 } 
 function input_correct(obj) {
     obj.className = "inputshadow";
-    document.getElementById("errormsg").style.color = "#333333";
+    if (document.getElementById("errormsg")) {
+        document.getElementById("errormsg").style.color = "#333333";
+    }
 }
 function fix_values(per, ratio) {
     per = document.getElementById("percentage");
@@ -180,14 +186,20 @@ function verifyform() {
         return false;
     }
     else if ((per < 0) || (per > 100)) {
+        input_error(document.getElementById("percentage"));
         alert("Please enter a percentage between 1 and 100.");
         fix_values();
         return false;
     }
     else if ((ratio < 0.001) || (ratio > 1000)) {
+        input_error(document.getElementById("ratio"));
         alert("Please enter a ratio between 0.001 and 1000.");
         fix_values();
         return false;
+    }
+    else if (invalidratio === 1) {
+        input_error(document.getElementById("ratio"));
+        alert("Please enter a valid ratio.");
     }
     else if ((dur < 7) || (dur > 365)) {
         alert("Please enter a duration between 7 days and 365 days.");
@@ -239,12 +251,15 @@ function assign_votes(id) {
 }
 function calc_vote1(percentage) {
     vote1 = vote1 * (percentage / 100);
+    vote1 = parseFloat(vote1).toFixed(4);
 }
 function calc_vote2(ratio) {
     votecut = ((vote1 / vote2) * 100) / ratio;
-    if (votecut < 1) {votecut = 1; exceeds = true;}
-    if (votecut > 100) {votecut = 100; exceeds = true;}
+    if (votecut < 1) {exceeds = true;}
+    if (votecut > 100) {exceeds = true;}
     vote2 = vote2 * (votecut / 100);
+    vote2 = parseFloat(vote2).toFixed(4);
+    if (vote2 <= 0.0001) { exceeds = true; }
 }
 function calc_votes(id) {
     var regex = new RegExp('[^0-9\\.]', 'g');
@@ -252,27 +267,26 @@ function calc_votes(id) {
     var percentage = 0;
     if (id > 0) {
         percentage = document.getElementById("percentage"+id).value.replace(regex, '');
-        if (percentage > 100) { percentage = 100; }
-        document.getElementById("percentage"+id).value = percentage;
         ratio = document.getElementById("ratio"+id).value.replace(regex, '');
-        if (ratio > 1000) { ratio = 1000; }
-        if ((ratio < 0.001) && (ratio != 0)) { ratio = 0.001; }
-        document.getElementById("ratio"+id).value = ratio;
     }
     else {
         percentage = document.getElementById("percentage").value.replace(regex, '');
-        if (percentage > 100) { percentage = 100; }
-        document.getElementById("percentage").value = percentage;
         ratio = document.getElementById("ratio").value.replace(regex, '');
-        
-        if (ratio > 1000) { ratio = 1000; }
-        if ((ratio < 0.001) && (ratio != 0)) { ratio = 0.001; }
+    }
+    if (percentage > 100) { percentage = 100; }
+    if (percentage < 1) { percentage = 1; }
+    if (ratio > 1000) { ratio = 1000; }
+    if ((ratio < 0.001) && (ratio != 0)) { ratio = 0.001; }
+    if (id > 0) {
+        document.getElementById("percentage"+id).value = percentage;
+        document.getElementById("ratio"+id).value = ratio;
+    }
+    else {
+        document.getElementById("percentage").value = percentage;
         document.getElementById("ratio").value = ratio;
     }
     calc_vote1(percentage);
     calc_vote2(ratio);
-    vote1 = parseFloat(vote1).toFixed(4);
-    vote2 = parseFloat(vote2).toFixed(4);
 }
 function compare_votes_info_callback(id) {
     assign_votes(id);
@@ -290,40 +304,43 @@ function compare_votes_info(id) {
         get_vote_value(otheraccount, 100, 4, id);
     }
 }
-function compare_votes_index(id) {
-    if ((formstate === 0) && (id < 1)) {
+function compare_votes_index() {
+    if ((formstate === 0) && (currentbarterid < 1)) {
         return;
     }
     exceeds = false;
-    assign_votes(id);
+    assign_votes(currentbarterid);
     calc_votes();
     var votediff = 0;
     if (exceeds) {
-        if (votecut === 1) {
-            votediff = vote2 - vote1;
-            votediff = parseFloat(votediff).toFixed(6);
-            document.getElementById("errormsg").innerHTML = ("@" + account1 + " is too large by $" + votediff);
-        }
-        if (votecut === 100) {
+        if ((votecut < 1) || (vote2 <= 0.0001)) {
             votediff = vote1 - vote2;
             votediff = parseFloat(votediff).toFixed(6);
-            document.getElementById("errormsg").innerHTML = ("@" + account2 + " is too large by $" + votediff);
+            if (document.getElementById("errormsg")) {
+                document.getElementById("errormsg").innerHTML = ("Invalid ratio. Please lower by $" + votediff);
+            }
         }
-        input_error(document.getElementById("percentage"));
+        if (votecut > 100) {
+            votediff = vote2 - vote1;
+            votediff = parseFloat(votediff).toFixed(6);
+            if (document.getElementById("errormsg")) {
+                document.getElementById("errormsg").innerHTML = ("Invalid ratio. Please raise by $" + votediff);
+            }
+        }
         input_error(document.getElementById("ratio"));
+        invalidratio = 1;
     }
     else {
         if (document.getElementById("showinviter")) {
-            document.getElementById("showinviter").innerHTML = account1;
-            document.getElementById("showinvitee").innerHTML = account2;
-            document.getElementById("amt1").innerHTML = vote1;
-            document.getElementById("amt2").innerHTML = vote2;
+            document.getElementById("showinviter").innerHTML = account1+'<br>'+vote1;
+            document.getElementById("showinvitee").innerHTML = account2+'<br>'+vote2;
         }
         if (document.getElementById("errormsg")) {
-            document.getElementById("errormsg").innerHTML = ("$"+vote1+" vs. $"+vote2);
+            document.getElementById("errormsg").innerHTML = account1+" ("+vote1+") vs<br>"+account2+" ("+vote2+")";
         }
-        input_correct(document.getElementById("percentage"));
         input_correct(document.getElementById("ratio"));
+        input_correct(document.getElementById("percentage"));
+        invalidratio = 0;
     }
 }
 /* functions used for the barter window and for controlling
@@ -387,6 +404,11 @@ function make_barter_memo() {
         fix_values();
         return false;
     }
+    else if (invalidratio === 1) {
+        input_error(document.getElementById("ratio"));
+        alert("Please enter a valid ratio.");
+        return false;
+    }
     else if ((duration < 7) || (duration > 365)) {
         alert("Please enter a duration between 7 days and 365 days.");
         return false;
@@ -417,8 +439,13 @@ var myListener = function(myEvt) {
     // The listener callback function adjusts the sliders value then
     // inserts it into the ratio box for further calculating.
     var ratio = 1;
-    if (myEvt.target.value > 100) { ratio = myEvt.target.value - 100; }
-    else if (myEvt.target.value <= 100) { ratio = myEvt.target.value / 100; }
+    if (myEvt.target.value > 210) { ratio = myEvt.target.value - 200; }
+    else if ((myEvt.target.value <= 210) && (myEvt.target.value > 110)) { 
+        ratio = parseFloat((myEvt.target.value - 110) * 0.1).toFixed(1); 
+    }
+    else if ((myEvt.target.value <= 110) && (myEvt.target.value > 10)) { 
+        ratio = (myEvt.target.value - 10) / 100; 
+    }
     if (currentbarterid > 0) {
         document.getElementById("ratio"+currentbarterid).value = ratio;
     }
@@ -469,7 +496,7 @@ function callbackAddInviteFunction() {
         var regex = new RegExp('[^0-9]', 'g');
 		if (httpObject.status==200) {
             if (response.replace(regex, '') === "1") {
-                addNotice(); 
+                addNotice();
             }
             else {
                 alert(response);
