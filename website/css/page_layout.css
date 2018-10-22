@@ -1,3 +1,8 @@
+@charset "utf-8";
+/* CSS Document */
+@media screen and (-webkit-min-device-pixel-ratio: 3.0) and (max-width: 1080px), screen and (min-width: 380px) {
+//most phones including Galaxy S4
+}
 body{
     background: -moz-linear-gradient(90deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* ff3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(65,164,240,1)), color-stop(100%, rgba(28,87,177,1))); /* safari4+,chrome */
@@ -7,7 +12,6 @@ body{
     background: linear-gradient(0deg, rgba(28,87,177,1) 0%, rgba(65,164,240,1) 100%); /* w3c */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41a4f0', endColorstr='#1c57b1',GradientType=0 ); /* ie6-9 */
     font-family: LatoWeb, sans-serif;
-    height: 100vh;
     margin: 0;
     min-height: 700px;
 }
@@ -26,7 +30,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', end
 }
 .header-container {
     position: relative;
-    width: 840px;
+    width: 850px;
     height: 70px;
     margin-left: auto;
     margin-right: auto;
@@ -77,6 +81,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', end
 }
 #ghost-button {
     float: left;
+    width: 77px;
     margin-top: 20px;
     border: 1px solid #999999;
     background-color: transparent;
@@ -121,7 +126,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', end
     text-align: center;
     padding: 2px;
     color: #ffffff;
-    left: 113px;
+    left: 82px;
     top: 10px;
 }
 .animating{
@@ -134,4 +139,81 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', end
     to {
        transform: scale(1.7);
     }
+}
+#menu-icon {
+	display: block;
+	position: relative;
+	width: 18px;
+	float: right;
+    height: 18px;
+    z-index: 101;
+    margin-top: 20px;
+    -webkit-transition: -webkit-transform 1s ease-out;
+    -moz-transition:    -moz-transform 1s ease-out;
+    -o-transition:      -o-transform 1s ease-out;
+    -ms-transition:     -ms-transform 1s ease-out;
+    transition:         transform 1s ease-out;
+}
+#hamburger-icon {
+    -webkit-transition: -webkit-transform 1s ease-out;
+    -moz-transition:    -moz-transform 1s ease-out;
+    -o-transition:      -o-transform 1s ease-out;
+    -ms-transition:     -ms-transform 1s ease-out;
+    transition:         transform 1s ease-out;
+}
+#navmenu {
+	margin-left: auto;
+	margin-right: auto;
+    margin-top: 0px;
+ 	position: relative;
+ 	width: auto;
+	height: auto;
+ 	left: 200px;
+	opacity: 0;
+	-webkit-transition: left 1s, opacity 1s ease-in-out;
+	-moz-transition: left 1s, opacity 1s ease-in-out;
+	-o-transition: left 1s, opacity 1s ease-in-out;
+	-ms-transition: left 1s, opacity 1s ease-in-out;
+	transition: left 1s, opacity 1s ease-in-out;
+	z-index: 300;
+}
+.menuitem {
+	color: #6699CC;
+	border-bottom: solid 1px;
+	border-left: solid 1px;
+	border-color: #CCCCCC;
+	position: relative;
+	clear: both;
+	float: right;
+	top: 0px;
+	background-color: #FFFFFF;
+	width: 200px;
+	height: 35px;
+	margin-right:0px;
+	padding: 15px;
+	font-family: "LatoWeb";
+	font-size: 21px;
+	text-align: center;
+	line-height: 1;
+	-webkit-transition: background-color 0.3s ease-in-out;
+	-moz-transition: background-color 0.3s ease-in-out;
+	-o-transition: background-color 0.3s ease-in-out;
+	-ms-transition: background-color 0.3s ease-in-out;
+	transition: background-color 0.3s ease-in-out;
+	-webkit-transition: position 0.3s ease-in-out;
+	-moz-transition: position 0.3s ease-in-out;
+	-o-transition: position 0.3s ease-in-out;
+	-ms-transition: position 0.3s ease-in-out;
+	transition: position 0.3s ease-in-out;
+	background: rgb(255,255,255);
+}
+.menuitem:hover {
+	background-color: #999999;
+	border-color: #ffffff;
+	color: #FFFFFF;
+	-webkit-transition: background-color 0.3s ease-in-out;
+	-moz-transition: background-color 0.3s ease-in-out;
+	-o-transition: background-color 0.3s ease-in-out;
+	-ms-transition: background-color 0.3s ease-in-out;
+	transition: background-color 0.3s ease-in-out;
 }
