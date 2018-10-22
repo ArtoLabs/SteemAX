@@ -4,7 +4,7 @@
     <title>SteemAX</title>
     <meta name="description" content="An auto-upvote exchange system for the Steemit blockchain.">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <link href='https://steemax.trade/favicon.ico' rel='icon' type='image/vnd.microsoft.icon'>
     <link rel="stylesheet" type="text/css" href="https://steemax.trade/css/fonts.css">
     <link rel="stylesheet" media="only screen and (max-width: 6000px) and (min-width: 1000px)" href="https://steemax.trade/css/page_layout.css">
@@ -40,8 +40,17 @@
                 <a href="https://steemax.trade/login">
                 <button id="ghost-button">Exchange</button>
                 </a>
+                <div id="menu-icon"><a href="javascript" onClick="openMenu(); return false;">
+                    <img src="https://steemax.trade/images/menu.png" border="0" id="hamburger-icon"></a>
+                </div>
             </div>
         </div>
+        <div id="navmenu">
+            <a href="https://steemax.trade"><div class="menuitem">Home</div></a>
+            <a href="https://steemax.info/history"><div class="menuitem">History</div></a>
+            <a href="https://steemax.trade/login"><div class="menuitem">Invite</div></a>
+            <a href="https://discord.gg/97GKVFC"><div class="menuitem">Help (Discord)</div></a>
+		</div>
     </div>
     <div id="exchange_table">
     INFOBOX

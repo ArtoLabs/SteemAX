@@ -6,19 +6,33 @@
         <input type="hidden" id="inviteeAXID" value="INVITEE">
         <input type="hidden" id="otheraccountAXID" value="OTHERACCOUNT">
         <input type="hidden" id="storedmemoidAXID" value="MEMOID">
-        <div class="xinnerbox" style="width: 28%; min-width: 250px; max-width: 350px;">@ACCOUNT1 vs. @ACCOUNT2</div>
-        <div class="xinnerbox" id="clearit">PERCENTAGE%</div>
-        <div class="xinnerbox">DARATIO:1</div>
-        <div class="xinnerbox">DURATION</div>
-        <div class="xbuttons">BTNCODE</div>
+        <input type="hidden" value="MEMOID" id="memoidAXID">
+        <div class="duration">
+            <img src="https://steemax.trade/images/clock-icon.png" class="clock-icon">DURATION
+        </div>
+        <div class="versus1">
+            <b><a href="https://steemit.com/@ACCOUNT1">@ACCOUNT1</a></b>
+        </div>
+        <div class="exchange-icon-info">
+            <img src="https://steemax.trade/images/exchange-icon.png"> 
+        </div>
+        <div class="versus2">
+            <b><a href="https://steemit.com/@ACCOUNT2">@ACCOUNT2</a></b>
+        </div>
+        <div class="xbuttons">
+            BTNCODE
+        </div>
     </div>
     <div class="memobox" id="memoAXID">
-        <div class="minnerbox" id="compareAXID" style="min-width: 100px; max-width: 250px; padding-top: 15px; vertical-align: text-bottom; margin-right: 50px;"></div>
-        <div class="minnerbox" style="margin: 0px; padding-bottom: 5px; padding-top: 5px; font-size: 12px;">
-            <p style="float: left; padding-left: 10px;">Send $0.001 SBD with this in a memo to @steem-ax</p>
-            <input type="text" value="MEMOID" id="memoidAXID" style="clear: left; float: left;">
+        <div class="percentage-info">
+            ACCOUNT1 offers <b>PERCENTAGE%</b> of their upvote.<br>
+            At the ratio of <b>DARATIO:1</b> the values exchanged will be:<br>
+            <div class="votevalues" id="compareAXID"></div>
         </div>
-        <div class="minnerbox" style="padding-top: 45px;">
-            <div class="button" onClick="sendSbdToSteemax('MYACCOUNT', AXID);">Send using SteemConnect</div>
+        <div class="steem-connect-send">
+            <div class="button" onClick="sendSbdToSteemax('MYACCOUNT', AXID);" id="sendBtnAXID">Send using Steem Connect</div>
+        </div>
+        <div class="send-text" id="sendTextAXID">
+            <a href="javascript" onClick="manualSend(AXID); return false;">Send manually</a>
         </div>
     </div>
