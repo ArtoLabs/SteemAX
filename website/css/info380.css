@@ -1,5 +1,6 @@
+@charset "utf-8";
+/* CSS Document */
 div {
-    font-size: 22px;
     font-family: "LatoWeb";
 }
 h1 {
@@ -9,59 +10,225 @@ h1 {
     display: none;
 	position: relative;
     float: left;
-    width: 100%;
-    margin-bottom: 1px;
-    background-color: #cfcfcf;
+    width: calc(100% - 6px);
+    background-color: #ffffff;
+    border: 3px solid #bbbbbb;
     opacity: 0;
     transition: opacity 1s;
 }
-.minnerbox {
+.votevalues {
 	position: relative;
+    clear: left;
     float: left;
-    height: auto;
     text-align: left;
-    padding: 12px;
-    padding-bottom: 0px;
-    color: #333333;
+    color: #555555;
     font-size: 16px;
+    padding-top: 5px;
+    margin-bottom: 0px;
+    width: auto;
+}
+.percentage-info {
+	position: relative;
+    width: 320px;
+    float: left;
+    text-align: left;
+    color: #555555;
+    font-size: 16px;
+    padding-left: 20px;
+    margin-top: 20px;
+}
+.send-text {
+	position: relative;
+    clear: right;
+    width: 280px;
+    float: right;
+    text-align: left;
+    color: #555555;
+    font-size: 16px;
+    margin-right: 40px;
+    margin-top: 15px;
+    margin-bottom: 40px;
+}
+.send-text a {
+    text-decoration: none;
+    color: #555555;
+}
+.send-text input {
+    width: 280px;
+    height: 25px;
+    border-radius: 3px;
+    border-top: transparent !important;
+    border-left: transparent !important;
+    border-right: transparent !important;
+    border-bottom: transparent !important;
+    padding-left: 10px;
+    margin: 4px;
+    font-size: 12px;
+    font-family: Verdana, sans-serif;
+    color: #333333;
+    font-weight: 500;
+    background-color: #ffffff;
+}
+.steem-connect-send {
+	position: relative;
+    width: 280px;
+    float: right;
+    color: #555555;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-right: 40px;
+}
+#exchange_table {
+	position: relative;
+    width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 70px;
+    font-family: "LatoWebBold";
+    color: #989898;
 }
 .xbox {
     position: relative;
+    clear: left;
     float: left;
-    width: calc(100% - 24px);
-    margin-bottom: 1px;
-    background-color: #efefef;
-    padding: 12px;
+    width: 360px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f1f1f2;
+    padding: 0px;
 }
-.xinnerbox {
+.clock-icon {
+    position: relative; 
+    top: 5px; 
+    margin-right: 5px;
+}
+.duration {
 	position: relative;
     float: left;
-    text-align: left;
-    color: #333333;
-    font-family: sans-serif; 
-    font-size: 14px; 
-    margin-right: 15px;
-    margin-top: 3px;
-}
-.archivebox {
-	position: relative;
-    text-align: left;
-    color: #333333;
-    font-family: sans-serif; 
+    text-align: center;
+    height: 16px;
+    font-family: "LatoWebBold";
     font-size: 14px;
-    padding-left: 3px;
-    padding-right: 3px;
+    color: #989898;
+    margin-left: 0px;
+    padding-top: 5px;
+    width: 264px;
 }
-.tooltip {
-
+.versus1 {
+	position: relative;
+    clear: left;
+    float: left;
+    text-align: center;
+    height: 16px;
+    font-family: "LatoWebBold";
+    font-size: 16px;
+    color: #2366bd;
+    width: 264px;
+    margin-left: 0px;
+    padding-top: 10px;
+}
+.versus1 a {
+    text-decoration: none;
+    color: #2366bd;
+}
+.versus2 {
+	position: relative;
+    float: left;
+    text-align: center;
+    height: 16px;
+    font-family: "LatoWebBold";
+    font-size: 16px;
+    color: #2366bd;
+    width: 264px;
+    padding-top: 5px;
+    margin-bottom: 15px;
+}
+.versus2 a {
+    text-decoration: none;
+    color: #2366bd;
+}
+.exchange-icon-info {
+	position: relative;
+    clear: left;
+    text-align: center;
+    width: 264px;
+    float: left;
+    height: 16px;
+    padding-top: 3px;
+}
+.xbuttons {
+    position: absolute;
+    width: 80px;
+    left: 274px;
+}
+.datetime {
+    position: relative;
+    float: left;
+    height: 16px;
+    width: 360px;
+	position: relative;
+    font-family: "LatoWebBold";
+    font-size: 14px;
+    color: #989898;
+    padding-top: 10px;
+    text-align: center;
+    margin-left: 0px;
+}
+.inviter-left {
+    position: relative;
+    font-family: "LatoWebBold";
+    font-size: 16px;
+    font-weight: 600;
+    float: left;
+    height: 45px;
+    width: 145px;
+	position: relative;
+    padding: 5px;
+    padding-top: 20px;
+    text-align: right;
+    margin-left: 10px;
+}
+.inviter-left a {
+    text-decoration: none;
+    color: #2366bd;
+}
+.invitee-right {
+    position: relative;
+    font-family: "LatoWebBold";
+    font-size: 16px;
+    font-weight: 600;
+    float: left;
+    height: 45px;
+    width: 145px;
+	position: relative;
+    padding: 5px;
+    padding-top: 20px;
+    text-align: left;
+}
+.invitee-right a {
+    text-decoration: none;
+    color: #2366bd;
+}
+.archive-vote-value {
+    font-size: 13px;
+}
+.exchange-icon {
+    position: relative;
+    float: left;
+    height: 45px;
+    width: 25px;
+	position: relative;
+    padding: 5px;
+    padding-top: 30px;
 }
 .tooltip .tooltiptext {
     visibility: hidden;
     background-color: #2d2d2d;
     color: #fff;
     border-radius: 3px;
-    width: 220px;
+    width: 100px;
+    overflow: hidden;
     position: absolute;
+    left: 0px;
     z-index: 1;
     padding: 10px;
     font-weight: 300;
@@ -78,39 +245,82 @@ h1 {
 }
 #pending {
     color: #666666;
-    font-family: sans-serif; 
     font-size: 12px;
     position: relative;
     float: right;
-    margin-left: 15px;
-    margin-top: 3px;
+    margin-top: 20px;
+    margin-right: 10px;
 }
-#exchange_table {
+.send-button {
 	position: relative;
-    width: calc(100% - 50px);
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 120px;
-}
-.xbuttons {
-	position: relative;
-    width: 30%;
-    min-width: 300px;
-    max-width: 450px;
+    margin-top: 15px;
+    margin-right: 20px;
     float: right;
-    margin-top: 10px;
-}
-.button {
-	position: relative;
-    float: right;
-	padding-left: 5px;
-	padding-right: 5px;
-    margin-left: 10px;
+    padding: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
 	overflow: hidden;
 	font-family: "LatoWebBold";
-	font-size: 16px;
+	font-size: 15px;
+	color: #ffffff;
+	border: 1px solid #cccccc;
+	border-radius: 2px; 
+	-moz-border-radius: 2px; 
+	-webkit-border-radius: 2px; 
+    background: #a3beff; /* Old browsers */
+    background: -moz-linear-gradient(top, #a3beff 0%, #4778ff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #a3beff 0%,#4778ff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #a3beff 0%,#4778ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a3beff', endColorstr='#4778ff',GradientType=0 ); /* IE6-9 */
+}
+.send-button:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+}
+.accept-button {
+	position: relative;
+    margin-top: 10px;
+    margin-right: 0px;
+    float: left;
+    padding: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 15px;
+	color: #ffffff;
+	border: 1px solid #cccccc;
+	border-radius: 2px; 
+	-moz-border-radius: 2px; 
+	-webkit-border-radius: 2px; 
+    background: #a3beff; /* Old browsers */
+    background: -moz-linear-gradient(top, #a3beff 0%, #4778ff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #a3beff 0%,#4778ff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #a3beff 0%,#4778ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a3beff', endColorstr='#4778ff',GradientType=0 ); /* IE6-9 */
+}
+.accept-button:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+}
+.barter-button {
+	position: relative;
+    margin-top: 5px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    float: left;
+    padding: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 15px;
 	color: #555555;
-	border: 1px solid #999999;
+	border: 1px solid #cccccc;
 	border-radius: 2px; 
 	-moz-border-radius: 2px; 
 	-webkit-border-radius: 2px; 
@@ -119,13 +329,91 @@ h1 {
     background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
     background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 );
-    -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
-    -moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
-    box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.32);
+}
+.barter-button:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+}
+.button {
+	position: relative;
+    padding: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+    float: left;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 15px;
+	color: #555555;
+	border: 1px solid #cccccc;
+	border-radius: 2px; 
+	-moz-border-radius: 2px; 
+	-webkit-border-radius: 2px; 
+    background: rgb(238,238,238);
+    background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%);
+    background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
+    background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 );
 }
 .button:hover {
     cursor: pointer;
-    color: #999999;
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+}
+.button-blue {
+	position: relative;
+    padding: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+    float: left;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 15px;
+	color: #ffffff;
+	border: 1px solid #cccccc;
+	border-radius: 2px; 
+	-moz-border-radius: 2px; 
+	-webkit-border-radius: 2px; 
+    background: #a3beff; /* Old browsers */
+    background: -moz-linear-gradient(top, #a3beff 0%, #4778ff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #a3beff 0%,#4778ff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #a3beff 0%,#4778ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a3beff', endColorstr='#4778ff',GradientType=0 ); /* IE6-9 */
+}
+.button-blue:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+    box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
+}
+.button-red {
+	position: relative;
+    padding: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+    float: left;
+	overflow: hidden;
+	font-family: "LatoWebBold";
+	font-size: 15px;
+	color: #ffffff;
+	border: 1px solid #cccccc;
+	border-radius: 2px; 
+	-moz-border-radius: 2px; 
+	-webkit-border-radius: 2px; 
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffa3a3+0,ff4747+100 */
+    background: #ffa3a3; /* Old browsers */
+    background: -moz-linear-gradient(top, #ffa3a3 0%, #ff4747 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #ffa3a3 0%,#ff4747 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #ffa3a3 0%,#ff4747 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffa3a3', endColorstr='#ff4747',GradientType=0 ); /* IE6-9 */
+}
+.button-red:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(255, 0, 0, 0.75);
+    -moz-box-shadow:    0px 0px 1px 0px rgba(255, 0, 0, 0.75);
+    box-shadow:         0px 0px 1px 0px rgba(255, 0, 0, 0.75);
 }
 #buttonholder {
     position: relative;
@@ -149,22 +437,6 @@ h1 {
 }
 #exchange-button:hover {
     background-color: #353535;
-}
-.minnerbox input {
-    width: 240px;
-    height: 21px;
-    border-radius: 3px;
-    border-top: transparent !important;
-    border-left: transparent !important;
-    border-right: transparent !important;
-    border-bottom: transparent !important;
-    padding-left: 5px;
-    margin: 4px;
-    margin-left: 12px;
-    font-size: 8px;
-    font-family: Verdana, sans-serif;
-    color: #333333;
-    background-color: #ffffff;
 }
 #myModal {
     display: none;
@@ -192,6 +464,20 @@ h1 {
     border: 1px solid #888;
     overflow: auto;
     transition: opacity 1s;
+}
+.closemodal-info {
+    position: relative;
+    color: #aaa;
+    float: right;
+    font-size: 26px;
+    font-weight: bold;
+    
+}
+.closemodal-info:hover,
+.closemodal-info:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
 }
 #closemodal {
     color: #aaa;
@@ -253,6 +539,30 @@ option {
     color: #333333;
     font-weight: 300;
     font-size: 18px;
+}
+.slider {
+    position: relative;
+    width: 200px !important;
+    min-width: 200px !important;
+    padding-left: 20px !important;
+    padding-right: 20px;
+    float: left;
+    left: -11px;
+    -webkit-box-shadow: 0px 0px 5px 1px rgba(50, 50, 255, 0.6);
+    -moz-box-shadow:    0px 0px 5px 1px rgba(50, 50, 255, 0.6);
+    box-shadow:         0px 0px 5px 1px rgba(50, 50, 255, 0.6);
+}
+#ratio {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    width: 54px;
+    float: left;
+    text-align: right;
+    padding-right: 42px;
+    -webkit-box-shadow: 0px 0px 5px 1px rgba(50, 50, 255, 0.6);
+    -moz-box-shadow:    0px 0px 5px 1px rgba(50, 50, 255, 0.6);
+    box-shadow:         0px 0px 5px 1px rgba(50, 50, 255, 0.6);
 }
 .inputshadow {
     -webkit-box-shadow: 0px 0px 5px 1px rgba(50, 50, 255, 0.6);
