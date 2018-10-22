@@ -151,13 +151,14 @@ class Web:
         axlist = self.db.get_exchange_archive(account)
         boxtemplate = self.load_template("templates/archivebox.html")
         for trade in axlist:
-            date = (str(trade[6].hour) + ":"
-                    + str(trade[6].minute) + " "
-                    + str(trade[6].strftime("%B")) + " "
+            date = (str(trade[6].strftime("%B")) + " "
                     + str(trade[6].day) + ", "
-                    + str(trade[6].year) + " ")
+                    + str(trade[6].year))
+            time = (str(trade[6].hour) + ":"
+                    + str(trade[6].minute))
             box = self.make_page(boxtemplate,
-                                 TIMESTAMP=date,
+                                 DATE=date,
+                                 TIME=time,
                                  ACCOUNT1=trade[0],
                                  ACCOUNT2=trade[1],
                                  IDENT1=trade[2],
@@ -203,9 +204,15 @@ class Web:
                 invitee = 0
                 otheraccount = value[2]
                 myaccount = value[1]
+            buttoncode = """
+                <div class="closemodal-info" onClick="command('{}', '{}', '{}')">&times;</div>
+                """.format(
+                value[0],
+                otheraccount,
+                "cancel")
             if int(value[7]) == -1 and invitee == 0:
-                buttoncode = """
-                <div class="button" onClick="command('{}', '{}', '{}')">Start</div>
+                buttoncode += """
+                <div class="send-button" onClick="command('{}', '{}', '{}')">Send</div>
                     """.format(
                     value[0],
                     otheraccount,
@@ -213,9 +220,9 @@ class Web:
             if ((int(value[7]) == 0 and invitee == 1)
                     or (int(value[7]) == 2 and invitee == 1)
                     or (int(value[7]) == 3 and invitee == 0)):
-                buttoncode = """
-                <div class="button" onClick="command('{}', '{}', '{}')">Accept</div>
-                <div class="button" onClick="barter_window('{}');">Barter</div>
+                buttoncode += """
+                <div class="accept-button" onClick="command('{}', '{}', '{}')">Accept</div>
+                <div class="barter-button" onClick="barter_window('{}');">Barter</div>
                     """.format(
                     value[0],
                     otheraccount,
@@ -224,19 +231,12 @@ class Web:
             elif ((int(value[7]) == 0 and invitee == 0)
                     or (int(value[7]) == 3 and invitee == 1)
                     or (int(value[7]) == 2 and invitee == 0)):
-                buttoncode = '<div id="pending">Pending</div>\n'
+                buttoncode += '<div id="pending">Pending</div>\n'
             if int(value[7]) == 1:
-                buttoncode = '<div id="pending">Active</div>\n'
+                buttoncode += '<div id="pending">Active</div>\n'
                 exp = "Expires " + self.db.expiration_date(value[8], value[5])
             else:
                 exp = value[5] + " days"
-            buttoncode += """
-                <div class="button" onClick="command('{}', '{}', '{}')">
-                                Cancel</div>
-                """.format(
-                value[0],
-                otheraccount,
-                "cancel")
             if int(value[7]) != 4 and not (int(value[7]) == -1 and invitee == 1):
                 box = self.make_page(boxtemplate,
                                      AXID=value[0],
