@@ -47,7 +47,6 @@
 }
 input {
     width: calc(100% - 45px);
-    min-width: 200px;
     height: 40px;
     border-radius: 3px;
     padding-left: 42px;
@@ -98,7 +97,7 @@ option {
 }
 .slider {
     position: relative;
-    width: 200px;
+    width: 180px;
     padding-left: 20px;
     padding-right: 20px;
     float: left;
@@ -111,7 +110,7 @@ option {
     margin: 0px;
     padding: 0px;
     position: relative;
-    width: 51px !important;
+    width: 49px !important;
     min-width: 50px;
     float: left;
     text-align: right;
@@ -120,7 +119,7 @@ option {
 #errormsg {
     color: #ffffff;
     font-weight: 300;
-    font-size: 18px;
+    font-size: 22px;
     height: 40px;
 }
 #loadergif {
@@ -131,7 +130,7 @@ option {
 }
 #buttonholder {
     position: relative;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 #exchange-button {
     background-color: #2d2d2d;
