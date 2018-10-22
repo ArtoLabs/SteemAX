@@ -16,6 +16,7 @@ var formstate = 0;
 var itemshowing = 0;
 var currentbarterid = 0;
 var invalidratio = 0;
+var menuopen = false;
 /* Functions using steem.js to fetch global properties and account vote values */
 steem.api.getRewardFund("post", function(err, fund) {
     reward_fund = parseFloat(fund.reward_balance.replace(" STEEM", ""));
@@ -132,7 +133,7 @@ function get_vote_value(accountname, weight, flag, id) {
 }
 /* Functions for validating the the data entered into form on the index page */ 
 function enableform () {
-    document.getElementById("percentage").focus();
+    //document.getElementById("percentage").focus();
     formstate = 1;
 }
 function disableform () {
@@ -208,7 +209,7 @@ function verifyform() {
     else {
         document.getElementById("exchange-button").style.display = "none";
         document.getElementById("loadergif").style.display = "block";
-        document.getElementById("accountbox").focus();
+        //document.getElementById("accountbox").focus();
         get_vote_value(acctname, 100, 3, 0);
     }
 }
@@ -262,6 +263,7 @@ function calc_vote2(ratio) {
     if (vote2 <= 0.0001) { exceeds = true; }
 }
 function calc_votes(id) {
+
     var regex = new RegExp('[^0-9\\.]', 'g');
     var ratio = 0;
     var percentage = 0;
@@ -291,7 +293,7 @@ function calc_votes(id) {
 function compare_votes_info_callback(id) {
     assign_votes(id);
     calc_votes(id);
-    document.getElementById("compare"+id).innerHTML = ("$"+vote1+" vs. $"+vote2);
+    document.getElementById("compare"+id).innerHTML = ("("+account1+") <b>$"+vote1+"</b> vs. ("+account2+") <b>$"+vote2+"</b>");
     show_item(id);
 }
 function compare_votes_info(id) {
@@ -346,6 +348,24 @@ function compare_votes_index() {
 /* functions used for the barter window and for controlling
 css GUI features on steemax.info  */
 function command(id, account, command) {
+    if (command === "accept") {
+        obj = document.getElementById("sendBtn"+id);
+        obj.innerHTML = "Accept using Steem Connect";
+        obj.className = 'button-blue';
+        document.getElementById("sendText"+id).innerHTML = '<a href="javascript" onClick="manualSend('+id+'); return false;">Accept manually</a>';
+    }
+    else if (command === "cancel") {
+        obj = document.getElementById("sendBtn"+id);
+        obj.innerHTML = "Cancel using Steem Connect";
+        obj.className = 'button-red';
+        document.getElementById("sendText"+id).innerHTML = '<a href="javascript" onClick="manualSend('+id+'); return false;">Cancel manually</a>';
+    }
+    else if (command === "start") {
+        obj = document.getElementById("sendBtn"+id);
+        obj.innerHTML = "Send invite using Steem Connect";
+        obj.className = 'button-blue';
+        document.getElementById("sendText"+id).innerHTML = '<a href="javascript" onClick="manualSend('+id+'); return false;">Send invite manually</a>';
+    }
     var memoid = document.getElementById("storedmemoid"+id).value;
     var memomsg = memoid + ":" + command;
     document.getElementById("memoid"+id).value = memomsg;
@@ -383,6 +403,7 @@ function barter_window(id) {
     }
     else {
         get_vote_value(document.getElementById("otheraccount"+id).value, 100, 5, id);
+        compare_votes_info(id);
     }
 }
 function close_modal() {
@@ -413,11 +434,15 @@ function make_barter_memo() {
         alert("Please enter a duration between 7 days and 365 days.");
         return false;
     }
-    close_modal();
+    
+    obj = document.getElementById("sendBtn"+currentbarterid);
+    obj.innerHTML = "Send barter offer using Steem Connect";
+    obj.className = 'button';
     var memomsg = memoid + ":barter" + ":" + percentage + ":" + ratio + ":" + duration;
     document.getElementById("memoid"+currentbarterid).value = memomsg;
-    document.getElementById("votevalue"+currentbarterid).value = 0;
-    compare_votes_info(currentbarterid);
+    document.getElementById("sendText"+currentbarterid).innerHTML = '<a href="javascript" onClick="manualSend('+currentbarterid+'); return false;">Send barter offer manually</a>';
+    close_modal();
+    show_item(currentbarterid);
 }
 function onRangeChange(rangeInputElmt, listener, id) {
     // We create an event listener for both input and change in order
@@ -446,9 +471,10 @@ var myListener = function(myEvt) {
     else if ((myEvt.target.value <= 110) && (myEvt.target.value > 10)) { 
         ratio = (myEvt.target.value - 10) / 100; 
     }
-    if (currentbarterid > 0) {
-        document.getElementById("ratio"+currentbarterid).value = ratio;
+    else {
+        ratio = 0.01;
     }
+
     document.getElementById("ratio").value = ratio;
     compare_votes_index(currentbarterid);
 };
@@ -556,9 +582,26 @@ function stopLoaderGif() {
     grecaptcha.reset();
     document.getElementById("loadergif").style.display = "none";
     document.getElementById("exchange-button").style.display = "inline-block";
-    document.getElementById("accountbox").focus();
+    //document.getElementById("accountbox").focus();
 }
-
-
-
+function manualSend(id) {
+    var memoid = document.getElementById("memoid"+id).value;
+    document.getElementById("sendText"+id).innerHTML = "Send $0.001 SBD to @steem-ax with this in the memo:<br><input type='text' value='"+memoid+"'>";
+    return false;
+}
+function openMenu () {
+	if (menuopen) {
+		document.getElementById("navmenu").style.left = "230px";
+		document.getElementById("navmenu").style.opacity = "0";
+		document.getElementById("hamburger-icon").style.transform = "rotate(0deg)"; 
+		menuopen = false;
+	}
+	else {
+		document.getElementById("navmenu").style.left = "0px";
+		document.getElementById("navmenu").style.opacity = "1";
+		document.getElementById("hamburger-icon").style.transform = "rotate(90deg)";
+		menuopen = true;
+	}
+    return false;
+}
 
