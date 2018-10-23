@@ -71,7 +71,7 @@ class MemoMsg:
             pronoun = "their"
         else:
             pronoun = "your"
-        # ADd the new values to the database
+        # Add the new values to the database
         self.db.update_invite(per, ratio,
                               dur, memoid, status)
         self.returnmsg = (
@@ -91,17 +91,22 @@ class MemoMsg:
         self.reaction = "refund"
         self.returnmsg = reason
 
-    def cancel(self, canceller, memoid, rstatus):
+    def cancel(self, canceller, memoid, rstatus, acct2):
         """ The cancel command can be 
         given at any time by either party
         """
         if int(rstatus) == 4:
             self.ignore("The exchange has already been canceled.")
+        elif int(rstatus) == -1:
+            self.reaction = "refund"
+            self.db.update_status(4, memoid)
+            self.returnmsg = ("The exchange between you and "
+                            + acct2 + " has been canceled.")
         else:
             self.reaction = "cancelled"
             self.db.update_status(4, memoid)
             self.returnmsg = ("@" + canceller
-                              + " has cancelled the exchange.")
+                            + " has canceled the exchange.")
 
 
 class Reaction(MemoMsg):
@@ -294,7 +299,7 @@ class AXtrans:
                              rstatus,
                              self.memoid)
         elif self.action == "cancel":
-            self.react.cancel(self.memofrom, self.memoid, rstatus)
+            self.react.cancel(self.memofrom, self.memoid, rstatus, acct2)
         elif self.action == "accept":
             self.react.accept(acct1, acct2, self.memofrom, rstatus, self.memoid)
         elif self.action == "barter":
