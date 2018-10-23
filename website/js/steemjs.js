@@ -464,17 +464,18 @@ var myListener = function(myEvt) {
     // The listener callback function adjusts the sliders value then
     // inserts it into the ratio box for further calculating.
     var ratio = 1;
-    if (myEvt.target.value > 210) { ratio = myEvt.target.value - 200; }
-    else if ((myEvt.target.value <= 210) && (myEvt.target.value > 110)) { 
+    if (myEvt.target.value >= 210) { ratio = myEvt.target.value - 200; }
+    else if (myEvt.target.value == 209) { ratio = 9.9; }
+    else if ((myEvt.target.value < 209) && (myEvt.target.value > 120)) { 
         ratio = parseFloat((myEvt.target.value - 110) * 0.1).toFixed(1); 
     }
-    else if ((myEvt.target.value <= 110) && (myEvt.target.value > 10)) { 
-        ratio = (myEvt.target.value - 10) / 100; 
+    else if (myEvt.target.value == 120) { ratio = 1; }
+    else if ((myEvt.target.value <= 119) && (myEvt.target.value > 21)) { 
+        ratio = (myEvt.target.value - 20) / 100; 
     }
     else {
         ratio = 0.01;
     }
-
     document.getElementById("ratio").value = ratio;
     compare_votes_index(currentbarterid);
 };
