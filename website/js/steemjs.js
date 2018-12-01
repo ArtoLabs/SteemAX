@@ -485,6 +485,43 @@ function sendSbdToSteemax(account, id) {
     var url = "https://steemconnect.com/sign/transfer?from="+account+"&to=steem-ax&amount=0.001%20SBD&memo="+memoid+"&redirect_uri=https://steemax.info/@"+account;
     window.location = (url);
 }
+function sendAll(command) {
+    regex = new RegExp('[^A-Za-z0-9\\:\\.]', 'g');
+    var ids;
+    if (command === "accept") {
+        ids = document.getElementById("allacceptids").value.split(",");
+    }
+    else if (command === "start") {
+        ids = document.getElementById("allsendids").value.split(",");
+    }
+    else if (command === "cancel") {
+        ids = document.getElementById("allcancelids").value.split(",");
+    } 
+    var memoid = document.getElementById("memoid"+ids[0]).value.replace(regex, '');
+    memo = memoid+":"+command;
+    for(i=1;i<ids.length;i++) {
+        memoid = document.getElementById("memoid"+ids[i]).value.replace(regex, '');
+        memo += "_"+memoid+":"+command;
+    }
+    sendamount = ids.length / 1000;
+    var url = "https://steemconnect.com/sign/transfer?from="+myaccountname+"&to=steem-ax&amount="+sendamount+"%20SBD&memo="+memo+"&redirect_uri=https://steemax.info/@"+myaccountname;
+    window.location = (url);
+}
+function showAllButtons() {
+    var acceptids = document.getElementById("allacceptids").value.split(",");
+    var sendids = document.getElementById("allsendids").value.split(",");
+    var cancelids = document.getElementById("allcancelids").value.split(",");
+    if (sendids.length > 1) {
+        document.getElementById("sendall-button").style.display = 'block';
+    }
+    if (acceptids.length > 1) {
+        document.getElementById("acceptall-button").style.display = 'block';
+    }
+    if (cancelids.length > 1) {
+        document.getElementById("cancelall-button").style.display = 'block';
+    }
+}
+
 /*  AJAX code used for submitting the invite creation form and incrementing
  the notice counter
 */

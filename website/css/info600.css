@@ -246,7 +246,7 @@ h1 {
     margin-top: 20px;
     margin-right: 10px;
 }
-.send-button {
+.send-button, #sendall-button {
 	position: relative;
     margin-top: 15px;
     margin-right: 20px;
@@ -268,13 +268,19 @@ h1 {
     background: linear-gradient(to bottom, #a3beff 0%,#4778ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a3beff', endColorstr='#4778ff',GradientType=0 ); /* IE6-9 */
 }
-.send-button:hover {
+#sendall-button {
+    display: none;
+    margin: 15px;
+    margin-right: 30px;
+    margin-bottom: 30px;
+}
+.send-button:hover, #sendall-button:hover {
     cursor: pointer;
     -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
     -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
     box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
 }
-.accept-button {
+.accept-button, #acceptall-button {
 	position: relative;
     margin-top: 10px;
     margin-right: 0px;
@@ -296,7 +302,12 @@ h1 {
     background: linear-gradient(to bottom, #a3beff 0%,#4778ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a3beff', endColorstr='#4778ff',GradientType=0 ); /* IE6-9 */
 }
-.accept-button:hover {
+#acceptall-button {
+    display: none;
+    margin: 15px;
+    margin-bottom: 30px;
+}
+.accept-button:hover, #acceptall-button:hover {
     cursor: pointer;
     -webkit-box-shadow: 0px 0px 1px 0px rgba(0, 0, 255, 0.75);
     -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
@@ -383,7 +394,7 @@ h1 {
     -moz-box-shadow:    0px 0px 1px 0px rgba(0, 0, 255, 0.75);
     box-shadow:         0px 0px 1px 0px rgba(0, 0, 255, 0.75);
 }
-.button-red {
+.button-red, #cancelall-button {
 	position: relative;
     padding: 4px;
 	padding-left: 6px;
@@ -404,7 +415,13 @@ h1 {
     background: linear-gradient(to bottom, #ffa3a3 0%,#ff4747 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffa3a3', endColorstr='#ff4747',GradientType=0 ); /* IE6-9 */
 }
-.button-red:hover {
+#cancelall-button {
+    display: none;
+    margin: 15px;
+    margin-left: 30px;
+    margin-bottom: 30px;
+}
+.button-red:hover, #cancelall-button:hover {
     cursor: pointer;
     -webkit-box-shadow: 0px 0px 1px 0px rgba(255, 0, 0, 0.75);
     -moz-box-shadow:    0px 0px 1px 0px rgba(255, 0, 0, 0.75);

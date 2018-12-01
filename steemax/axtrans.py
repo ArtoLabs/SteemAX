@@ -36,7 +36,7 @@ class MemoMsg:
         msg = ("Hello @{}, @{} has invited you "
                + " to an auto-upvote exchange. "
                + "They have offered {}% of their upvote "
-               + "At a ratio of {}:1 for {} days. "
+               + "at a ratio of {}:1 for {} days. "
                ).format(acct2, acct1,
                         invite[0], invite[1], invite[2])
         # Verify the user has an account. If they do,
@@ -108,7 +108,6 @@ class MemoMsg:
             self.returnmsg = ("@" + canceller
                             + " has canceled the exchange.")
 
-
 class Reaction(MemoMsg):
     def start(self, acct1, acct2, memofrom,
               rstatus, memoid):
@@ -123,7 +122,7 @@ class Reaction(MemoMsg):
                 self.invite_msg(acct1, acct2, memoid)
             else:
                 self.ignore("@{} has already".format(acct1)
-                            + "started this exchange.")
+                            + " started this exchange.")
         # If the invitee sent the memo we tell them to wait.
         elif acct2 == memofrom:
             self.ignore("Invalid action. @{} ".format(acct1)
@@ -147,7 +146,7 @@ class Reaction(MemoMsg):
                 # The accept message is sent
                 self.accepted_msg(acct1, memoid)
             else:
-                self.ignore("Invalid command.")
+                self.ignore("Invalid command. This invite is not waiting to be accepted.")
         # The memo is from the invitee
         elif acct2 == memofrom:
             # The invite has been initially sent
@@ -157,7 +156,7 @@ class Reaction(MemoMsg):
                 # The accept message is sent
                 self.accepted_msg(acct2, memoid)
             else:
-                self.ignore("Invalid command.")
+                self.ignore("Invalid command. This invite is not waiting to be accepted.")
         # If the memo is from neither party it is invalid.              
         else:
             self.ignore("Invalid Memo ID.")
@@ -223,7 +222,6 @@ class Reaction(MemoMsg):
                         + "please wait for the other side to "
                         + "respond.")
 
-
 class AXtrans:
     def __init__(self):
         self.msg = Msg(default.logfilename,
@@ -234,39 +232,53 @@ class AXtrans:
                             default.dbname)
         self.steem = SimpleSteem()
         self.react = Reaction()
-        self.memoid = ""
-        self.action = ""
-        self.percentage = ""
-        self.ratio = ""
-        self.duration = ""
+        self.memolist = []
         self.sendto = ""
+        self.memofrom = ""
 
-    def parse_memo(self, **kwargs):
+    def parse_memo(self, memo=None):
         """ Parses the memo message in a transaction
         for the appropriate action.
         """
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        try:
-            memo = self.memo.split(":")
-        # A broad exception is used because any exception
-        # should return false.
-        except:
-            return False
-        # Everything from the outside world is 
-        # filtered for security
-        self.memoid = sec.filter_token(memo[0])
-        if len(memo) == 2:
-            self.action = sec.filter_account(memo[1])
-            return True
-        elif len(memo) == 5:
-            self.action = sec.filter_account(memo[1])
-            self.percentage = sec.filter_number(memo[2])
-            self.ratio = sec.filter_number(memo[3], 1000)
-            self.duration = sec.filter_number(memo[4], 365)
-            return True
+        memodict = {}
+        memos = []
+        self.memolist = []
+        if re.search(r'_', memo): 
+            try:
+                memos = memo.split("_")
+            # A broad exception is used because any exception
+            # should return false.
+            except:
+                self.msg.error_message("Unable to parse memo. Error code 1.")
+                return False
         else:
-            return False
+            memos.append(memo)
+        for i in range(0, len(memos)):
+            if i == len(memos):
+                break
+            try:
+                memo_parts = memos[i].split(":")
+            # A broad exception is used because any exception
+            # should return false.
+            except:
+                self.msg.error_message("Unable to parse memo. Error code 2.")
+                return False
+            # Everything from the outside world is 
+            # filtered for security and added to a dictionary
+            memodict['memoid'] = sec.filter_token(memo_parts[0])
+            if len(memo_parts) == 2:
+                memodict['action'] = sec.filter_account(memo_parts[1])
+            elif len(memo_parts) == 5:
+                memodict['action'] = sec.filter_account(memo_parts[1])
+                memodict['percentage'] = sec.filter_number(memo_parts[2])
+                memodict['ratio'] = sec.filter_number(memo_parts[3], 1000)
+                memodict['duration'] = sec.filter_number(memo_parts[4], 365)
+            else:
+                self.msg.error_message("Unable to parse memo. Error code 3.")
+                return False
+            # The dictionary is added to a list
+            self.memolist.append(memodict.copy())
+        return True
 
     def send(self, to="artopium",
              amt="0.001 SBD",
@@ -283,8 +295,8 @@ class AXtrans:
                               "{} to {} with the memo: "
                               "{}").format(r[0], r[1], to, msg))
 
-    def act(self, acct1, acct2, rstatus, sendto):
-        """ Decides how to react baed on the action
+    def act(self, acct1, acct2, rstatus, sendto, i):
+        """ Decides how to react based on the action
         present in the memo message
         """
         if not self.db.get_user_token(self.memofrom):
@@ -292,19 +304,19 @@ class AXtrans:
                 ("@{} is not a current member of "
                  + " https://steemax.trade !!Join now!! "
                  + "using SteemConnect.").format(self.memofrom))
-        elif self.action == "start":
+        elif self.memolist[i]['action'] == "start":
             self.react.start(acct1,
                              acct2,
                              self.memofrom,
                              rstatus,
-                             self.memoid)
-        elif self.action == "cancel":
-            self.react.cancel(self.memofrom, self.memoid, rstatus, acct2)
-        elif self.action == "accept":
-            self.react.accept(acct1, acct2, self.memofrom, rstatus, self.memoid)
-        elif self.action == "barter":
-            self.react.barter(acct1, acct2, self.memoid, self.memofrom, rstatus,
-                              self.percentage, self.ratio, self.duration)
+                             self.memolist[i]['memoid'])
+        elif self.memolist[i]['action'] == "cancel":
+            self.react.cancel(self.memofrom, self.memolist[i]['memoid'], rstatus, acct2)
+        elif self.memolist[i]['action'] == "accept":
+            self.react.accept(acct1, acct2, self.memofrom, rstatus, self.memolist[i]['memoid'])
+        elif self.memolist[i]['action'] == "barter":
+            self.react.barter(acct1, acct2, self.memolist[i]['memoid'], self.memofrom, rstatus,
+                              self.memolist[i]['percentage'], self.memolist[i]['ratio'], self.memolist[i]['duration'])
         else:
             self.react.ignore("Invalid action.")
         if self.react.reaction == "refund":
@@ -330,38 +342,85 @@ class AXtrans:
             return False
 
     def fetch_history(self):
-        """ Processes the transaction history. 
+        """ Processes the transaction history of @steem-ax. 
         The memo message is parsed for a valid 
         command and performs the 
         directed action.
         """
         rt = self.db.get_most_recent_trans()
         for a in self.steem.get_my_history():
+            # We check to see if it's a new transaction. If not we
+            # do nothing.
             if self.parse_history_record(a, rt):
-                if self.parse_memo(memofrom=a[1]['op'][1]['from'],
-                                   memo=a[1]['op'][1]['memo'],
-                                   amount=a[1]['op'][1]['amount'],
-                                   trxid=a[1]['trx_id'],
-                                   txtime=a[1]['timestamp']):
-                    if self.db.verify_memoid(self.memofrom, self.memoid):
-                        self.act(self.db.dbresults[0][0],
-                                 self.db.dbresults[0][1],
-                                 int(self.db.dbresults[0][2]),
-                                 self.db.sendto)
+                self.memofrom = a[1]['op'][1]['from']
+                r = a[1]['op'][1]['amount'].split(" ")
+                received_amount = r[0]
+                trxid = a[1]['trx_id']
+                txtime = a[1]['timestamp']
+                # If so we parse it. multiple actions are parsed into
+                # self.memolist
+                if self.parse_memo(memo=a[1]['op'][1]['memo']):
+                    # Make sure enough SBD was sent to cover sending
+                    # multiple transactions.
+                    if float(received_amount) * 1000 >= len(self.memolist):
+                        # We divide the amount sent by the number of messages
+                        # that must be sent.
+                        send_amount = int((float(received_amount) * 1000) / len(self.memolist)) / 1000
+                        # self.parse_memo creates self.memolist which we 
+                        # then iterate through.
+                        for i in range(0, len(self.memolist)):
+                            if self.db.verify_memoid(self.memofrom, self.memolist[i]['memoid']):
+                                # After verifying the memoid matches the account the 
+                                # memo was sent from, the verify_memoid method
+                                # returns account1, account2, 
+                                # and the current transaction status. It also sets the 
+                                # "sendto" account. This info is sent to self.act where
+                                # it is parsed further based on action.
+                                self.act(self.db.dbresults[0][0],
+                                         self.db.dbresults[0][1],
+                                         int(self.db.dbresults[0][2]),
+                                         self.db.sendto, i)
+                            else:
+                                self.react.ignore("Invalid Memo ID.")
+                                self.sendto = self.memofrom
+                            print("Sending $"+str(send_amount) + " SBD to " + self.sendto  + " because "+self.react.returnmsg)
+                            self.send(self.sendto,
+                                      str(send_amount)+" SBD",
+                                      self.react.returnmsg)
+                            self.db.add_trans(trxid,
+                                              self.memofrom,
+                                              str(send_amount)+" SBD",
+                                              self.memolist[i]['memoid'],
+                                              self.react.reaction,
+                                              txtime)
+                            print(self.react.returnmsg)
                     else:
-                        self.react.ignore("Invalid Memo ID.")
-                        self.sendto = self.memofrom
+                        self.react.ignore("Insufficient funds. Please send at least $" 
+                                        + str(len(self.memolist)/1000) 
+                                        + " SBD to send these invites.")
+                        self.sendto = a[1]['op'][1]['from']
+                        self.send(self.sendto,
+                                  str(received_amount)+" SBD",
+                                  self.react.returnmsg)
+                        self.db.add_trans(trxid,
+                                          self.memofrom,
+                                          str(received_amount)+" SBD",
+                                          a[1]['op'][1]['memo'],
+                                          self.react.reaction,
+                                          txtime)
+                        print(self.react.returnmsg)
                 else:
-                    self.react.ignore("Invalid Memo.")
-                    self.sendto = self.memofrom
-                self.send(self.sendto,
-                          self.amount,
-                          self.react.returnmsg)
-                self.db.add_trans(self.trxid,
-                                  self.memofrom,
-                                  self.amount,
-                                  self.memoid,
-                                  self.react.reaction,
-                                  self.txtime)
+                    self.react.ignore("Invalid Memo: "+a[1]['op'][1]['memo'])
+                    self.sendto = a[1]['op'][1]['from']
+                    self.send(self.sendto,
+                              str(received_amount)+" SBD",
+                              self.react.returnmsg)
+                    self.db.add_trans(trxid,
+                                      self.memofrom,
+                                      str(received_amount)+" SBD",
+                                      a[1]['op'][1]['memo'],
+                                      self.react.reaction,
+                                      txtime)
+                    print(self.react.returnmsg)
 
 # EOF

@@ -29,7 +29,7 @@
         function get_all_votes() {  get_vote_value('ACCOUNT1', 100, 1); }
     </script>
 </head>
-<body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener);">
+<body onLoad="onRangeChange(document.getElementById('ratio-slider'), myListener); showAllButtons();">
     <div class="header">
         <div class="header-container">
             <div id="header-logo">
@@ -53,7 +53,15 @@
 		</div>
     </div>
     <div id="exchange_table">
-    INFOBOX
+    <div class="xbox">
+        <div id="sendall-button" onClick="sendAll('start')">Send All</div>
+        <input type="hidden" id="allsendids" value="SENDALL">
+        <div id="acceptall-button" onClick="sendAll('accept')">Accept All</div>
+        <input type="hidden" id="allacceptids" value="ACCEPTALL">
+        <div id="cancelall-button" onClick="sendAll('cancel')">Cancel All</div>
+        <input type="hidden" id="allcancelids" value="CANCELALL">
+    </div>
+INFOBOX
     </div>
     <div id="myModal">
         <div id="modal-content">

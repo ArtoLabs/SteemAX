@@ -195,6 +195,9 @@ class Web:
         otheraccount = ""
         buttoncode = ""
         exp = ""
+        sendall = []
+        acceptall = []
+        cancelall = []
         for value in axlist:
             if account == value[2]:
                 invitee = 1
@@ -210,6 +213,7 @@ class Web:
                 value[0],
                 otheraccount,
                 "cancel")
+            cancelall.append(value[0])
             if int(value[7]) == -1 and invitee == 0:
                 buttoncode += """
                 <div class="send-button" onClick="command('{}', '{}', '{}')">Send</div>
@@ -217,6 +221,7 @@ class Web:
                     value[0],
                     otheraccount,
                     "start")
+                sendall.append(value[0])
             if ((int(value[7]) == 0 and invitee == 1)
                     or (int(value[7]) == 2 and invitee == 1)
                     or (int(value[7]) == 3 and invitee == 0)):
@@ -228,6 +233,7 @@ class Web:
                     otheraccount,
                     "accept",
                     value[0])
+                acceptall.append(value[0])
             elif ((int(value[7]) == 0 and invitee == 0)
                     or (int(value[7]) == 3 and invitee == 1)
                     or (int(value[7]) == 2 and invitee == 0)):
@@ -239,20 +245,25 @@ class Web:
                 exp = value[5] + " days"
             if int(value[7]) != 4 and not (int(value[7]) == -1 and invitee == 1):
                 box = self.make_page(boxtemplate,
-                                     AXID=value[0],
-                                     ACCOUNT1=value[1],
-                                     ACCOUNT2=value[2],
-                                     PERCENTAGE=value[3],
-                                     DURATION=exp,
-                                     DARATIO=value[4],
-                                     MEMOID=value[6],
-                                     INVITEE=invitee,
-                                     OTHERACCOUNT=otheraccount,
-                                     MYACCOUNT=myaccount,
-                                     BTNCODE=buttoncode)
+                                    AXID=value[0],
+                                    ACCOUNT1=value[1],
+                                    ACCOUNT2=value[2],
+                                    PERCENTAGE=value[3],
+                                    DURATION=exp,
+                                    DARATIO=value[4],
+                                    MEMOID=value[6],
+                                    INVITEE=invitee,
+                                    OTHERACCOUNT=otheraccount,
+                                    MYACCOUNT=myaccount,
+                                    BTNCODE=buttoncode)
                 infobox = infobox + box
         pagetemplate = self.load_template("templates/info.html")
-        return ("\r\n" + self.make_page(pagetemplate, ACCOUNT1=account, INFOBOX=infobox))
+        return ("\r\n" + self.make_page(pagetemplate, 
+                                    ACCOUNT1=account,
+                                    SENDALL=','.join(map(str, sendall)),
+                                    CANCELALL=','.join(map(str, cancelall)),
+                                    ACCEPTALL=','.join(map(str, acceptall)),
+                                    INFOBOX=infobox))
 
     def verify_token(self, token):
         """ cleans and verifies a SteemConnect
