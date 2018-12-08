@@ -22,7 +22,7 @@ steem.api.getRewardFund("post", function(err, fund) {
     reward_fund = parseFloat(fund.reward_balance.replace(" STEEM", ""));
     recent_claims = parseInt(fund.recent_claims, 10);
     steem.api.getCurrentMedianHistoryPrice(function(err, price) {
-        price_of_steem = parseFloat(price.base.replace(" SBD", ""));
+        price_of_steem = parseFloat(price.base.replace(" SBD", "")) / parseFloat(price.quote.replace(" STEEM", ""));
         steem.api.getDynamicGlobalProperties(function(err, gprops) {
             var vfs = parseFloat(gprops.total_vesting_fund_steem.replace(" STEEM", ""));
             var tvs = parseFloat(gprops.total_vesting_shares.replace(" STEEM", ""));

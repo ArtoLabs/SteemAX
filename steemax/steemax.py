@@ -364,7 +364,7 @@ class MyPrompt(Cmd):
     ------------------------------------------------
             """.format(xverify.steem.reward_balance,
                        xverify.steem.recent_claims,
-                       xverify.steem.base))
+                       xverify.steem.price_of_steem))
 
     def do_quit(self, args):
         """Quits the program."""
