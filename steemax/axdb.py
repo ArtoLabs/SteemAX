@@ -186,8 +186,8 @@ class AXdb(DB):
             return False
 
     def get_ratio(self, memoid):
-        """ Gets a user's SteemConnect tokens 
-        and Private Posting Key
+        """ Returns the ratio set for a particular
+        memoid
         """
         if self.get_results('SELECT Ratio '
                             + 'FROM axlist WHERE MemoID = %s;',
@@ -207,12 +207,29 @@ class AXdb(DB):
         else:
             return False
 
+    def get_users(self):
+        """ Returns a list of top 100 users
+        """
+        if self.get_results('SELECT users.Account, users.AutoAccept, users.Time, '
+                            + 'a.Total + b.Total AS TheTotal '
+                            + 'FROM users LEFT JOIN '
+                            + '(SELECT Account1, COUNT(*) AS Total '
+                            + 'FROM axlist GROUP BY Account1) AS a '
+                            + 'ON users.Account = a.Account1 '
+                            + 'LEFT JOIN (SELECT Account2, COUNT(*) AS Total '
+                            + 'FROM axlist GROUP BY Account2) AS b '
+                            + 'ON users.Account = b.Account2 '
+                            + 'WHERE 1 ORDER BY TheTotal DESC LIMIT 100;'):
+            return self.dbresults
+        else:
+            return False
+
     def set_settings(self, acct, value):
         """ Sets the auto accept feature to on or off.
         """
         if float(value) != 1: 
             value = "0"
-        if self.get_results('UPDATE users SET AutoAccept = %s'
+        if self.commit('UPDATE users SET AutoAccept = %s'
                             + ' WHERE Account = %s;',
                             value, acct):
             return True

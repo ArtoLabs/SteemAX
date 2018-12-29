@@ -187,6 +187,25 @@ class Web:
                                         ACCOUNT=account,
                                         INFOBOX=infobox))
 
+    def users_page(self):
+        """ Creates a page that displays the top 100 users
+        """
+        users = self.db.get_users()
+        boxtemplate = self.load_template("templates/userbox.html")
+        userbox = ""
+        for user in users:
+            autoaccept = "No"
+            if int(user[1]) == 1:
+                autoaccept = "Yes"
+            box = self.make_page(boxtemplate,
+                                ACCOUNT=user[0],
+                                AUTOACCEPT=autoaccept,
+                                TOTAL=user[3])
+            userbox = userbox + box
+        pagetemplate = self.load_template("templates/user.html")
+        return ("\r\n" + self.make_page(pagetemplate, 
+                                    USERBOX=userbox))
+
     def info_page(self, account):
         """ Creates the page at steemax.info that displays
         all the exchanges a user is involved in and which
