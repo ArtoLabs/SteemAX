@@ -6,6 +6,21 @@ div {
 h1 {
     text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.32);
 }
+.user {
+    position: relative;
+    float: left;
+    font-size: 18px;
+    font-family: "LatoWebBold";
+    color: #2366bd;
+    width: 33%;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.user a {
+    text-decoration: none;
+    color: #2366bd;
+}
 .memobox {
     display: none;
 	position: relative;
