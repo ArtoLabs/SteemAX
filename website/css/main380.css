@@ -150,3 +150,26 @@ option {
 #exchange-button:hover {
     background-color: #353535;
 }
+#settingscontainer {
+    position: relative;
+    font-size: 24px;
+    color: #ffffff;
+    margin-top: 30px;
+    margin-bottom: 300px;
+}
+.setting {
+    position: relative;
+    margin-top: 20px;
+}
+.settingtext {
+    position: relative;
+    float: left;
+    width: auto;
+    margin-top: 13px;
+    font-size: 18px;
+}
+#autoaccept {
+    position: relative;
+    float: left;
+    width: 25px;
+}
