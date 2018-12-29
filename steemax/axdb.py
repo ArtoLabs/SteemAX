@@ -32,6 +32,7 @@ class AXdb(DB):
                         + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
                         + 'Account varchar(50), PrivateKey varchar(100), '
                         + 'RefreshToken varchar(400), Token varchar(400), '
+                        + 'AutoAccept varchar(5) DEFAULT "0",'
                         + 'Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);')
         if not self.get_results("SELECT * FROM axlist WHERE 1;"):
             self.commit('CREATE TABLE IF NOT EXISTS axlist '
@@ -184,6 +185,17 @@ class AXdb(DB):
         else:
             return False
 
+    def get_ratio(self, memoid):
+        """ Gets a user's SteemConnect tokens 
+        and Private Posting Key
+        """
+        if self.get_results('SELECT Ratio '
+                            + 'FROM axlist WHERE MemoID = %s;',
+                            memoid):
+            return self.dbresults[0][0]
+        else:
+            return False
+
     def get_user_token(self, acct):
         """ Gets a user's SteemConnect tokens 
         and Private Posting Key
@@ -192,6 +204,31 @@ class AXdb(DB):
                             + 'FROM users WHERE Account = %s;',
                             acct):
             return self.dbresults[0][1]
+        else:
+            return False
+
+    def set_settings(self, acct, value):
+        """ Sets the auto accept feature to on or off.
+        """
+        if float(value) != 1: 
+            value = "0"
+        if self.get_results('UPDATE users SET AutoAccept = %s'
+                            + ' WHERE Account = %s;',
+                            value, acct):
+            return True
+        else:
+            return False
+
+    def auto_accept(self, acct):
+        """ Determines if auto accept is on or off
+        """
+        if self.get_results('SELECT AutoAccept FROM users'
+                            + ' WHERE Account = %s;',
+                            acct):
+            if self.dbresults[0][0] == "1":
+                return True
+            else:
+                return False
         else:
             return False
 
@@ -282,7 +319,7 @@ class AXdb(DB):
         self.get_results("SELECT ID, Duration, Time, Account1, Account2 FROM axlist WHERE 1;")
         for row in self.dbresults:
             if (datetime.strptime(str(row[2]), '%Y-%m-%d %H:%M:%S')
-                    + timedelta(days=int(row[1])) < datetime.now()):
+                    + timedelta(days=int(row[1])) < datetime.now()) and int(row[1]) > 0:
                 self.commit("UPDATE axlist SET Status = 4 WHERE ID = %s;", row[0])
                 self.msg.message(row[3] + " vs. " + row[4] + " has expired.")
 

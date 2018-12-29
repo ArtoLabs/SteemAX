@@ -33,12 +33,16 @@ class MemoMsg:
         self.reaction = "started"
         self.db.update_status(0, memoid)
         invite = self.db.get_invite(memoid)
+        if int(invite[2]) == 0:
+            msgend = "until canceled."
+        else:
+            msgend = "for "+invite[2]+" days." 
         msg = ("Hello @{}, @{} has invited you "
                + " to an auto-upvote exchange. "
                + "They have offered {}% of their upvote "
-               + "at a ratio of {}:1 for {} days. "
+               + "at a ratio of {}:1 {}"
                ).format(acct2, acct1,
-                        invite[0], invite[1], invite[2])
+                        invite[0], invite[1], msgend)
         # Verify the user has an account. If they do,
         # send them the memo id code
         if self.db.get_user_token(acct2):
@@ -74,16 +78,20 @@ class MemoMsg:
         # Add the new values to the database
         self.db.update_invite(per, ratio,
                               dur, memoid, status)
+        if int(dur) == 0:
+            msgend = "until canceled."
+        else:
+            msgend = "for "+dur+" days." 
         self.returnmsg = (
             ("@{} has offered to barter. They offer "
              + "{}% of {} upvote at a ratio of "
-             + "{}:1 for {} days. "
+             + "{}:1 {} "
              + "Send any SBD along with this "
              + "memo code to @steem-ax to accept this invite: "
              + "\n\n'{}:accept'. "
              + "To generate your own barter offer, "
              + "please visit https://steemax.info/@{}").format(
-                acct, per, pronoun, ratio, dur, memoid, acct2))
+                acct, per, pronoun, ratio, msgend, memoid, acct2))
 
     def ignore(self, reason):
         """ Creates the ignore message 
@@ -110,7 +118,7 @@ class MemoMsg:
 
 class Reaction(MemoMsg):
     def start(self, acct1, acct2, memofrom,
-              rstatus, memoid):
+              rstatus, memoid, ratio):
         """ The start method grants the authority to the 
         exchange from the inviter. 
         """
@@ -118,7 +126,11 @@ class Reaction(MemoMsg):
         if acct1 == memofrom:
             # if the rstatus is -1 then the exchange invite has been
             # created in the database but not yet sent to the invitee.
-            if rstatus < 0:
+            if self.db.auto_accept(acct2) is True and int(ratio) == 1 and rstatus < 0:
+                # The accept message is sent
+                self.accepted_msg(acct2, memoid)
+                self.reaction = "refund"
+            elif rstatus < 0:
                 self.invite_msg(acct1, acct2, memoid)
             else:
                 self.ignore("@{} has already".format(acct1)
@@ -142,7 +154,7 @@ class Reaction(MemoMsg):
         if acct1 == memofrom:
             # The invite is pending
             # on the inviter to accept a barter
-            if int(rstatus) == 3:
+            if int(rstatus) == 3 :
                 # The accept message is sent
                 self.accepted_msg(acct1, memoid)
             else:
@@ -309,7 +321,8 @@ class AXtrans:
                              acct2,
                              self.memofrom,
                              rstatus,
-                             self.memolist[i]['memoid'])
+                             self.memolist[i]['memoid'],
+                             self.db.get_ratio(self.memolist[i]['memoid']))
         elif self.memolist[i]['action'] == "cancel":
             self.react.cancel(self.memofrom, self.memolist[i]['memoid'], rstatus, acct2)
         elif self.memolist[i]['action'] == "accept":

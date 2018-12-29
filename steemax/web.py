@@ -85,17 +85,24 @@ class Web:
                 return ("\r\n"
                         + self.info_page(self.steem.username))
             else:
+                autocheck = ""
+                if self.db.auto_accept(self.steem.username) is True:
+                    autocheck = "checked"
+                settings = (self.make_page(self.load_template(
+                            "templates/settings.html"),
+                            AUTOCHECK=autocheck))
                 return ("\r\n"
                         + self.make_page(self.load_template(
                             "templates/invite_form.html"),
                             ACCOUNT1=self.steem.username,
                             REFRESHTOKEN=self.steem.refreshtoken,
-                            INVITECOUNT=self.db.number_of_invites(self.steem.username)))
+                            INVITECOUNT=self.db.number_of_invites(self.steem.username),
+                            SETTINGS=settings))
         else:
             return self.auth_url()
 
     def invite(self, token, account2, per,
-               ratio, dur, response, ip, ajax):
+               ratio, dur, response, ip, ajax, autocheck):
         """ Creates an invite. First we filter the users
         data then we create the invite in the database.
         If the request was sent via ajax then the returned
@@ -106,12 +113,13 @@ class Web:
         per = sec.filter_number(per)
         ratio = sec.filter_number(ratio, 1000)
         dur = sec.filter_number(dur, 365)
+        autocheck = sec.filter_number(int(autocheck))
         if not self.verify_recaptcha(response, ip):
             return self.error_page("Invalid captcha.", ajax)
         if float(per) < 1 or float(per) > 100:
            return self.error_page("The percentage can not be lower then "
                                 + "1 or greater than 100 and must be a whole number.", ajax)    
-        if float(dur) < 7 or float(dur) > 365:
+        if float(dur) < 0 or float(dur) > 365:
            return self.error_page("The duration must be between 7 and 365 days.", ajax)
         if float(ratio) < 0.001 or float(ratio) > 1000:
            return self.error_page("The ratio must be between 0.001 and 1000 to 1.", ajax)
@@ -125,6 +133,7 @@ class Web:
                 if verify.eligible_votes(self.steem.username, account2, per, ratio, 1) is False:
                     return self.error_page(verify.response, ajax)
                 memoid = self.db.add_invite(self.steem.username, account2, per, ratio, dur)
+                self.db.set_settings(self.steem.username, autocheck)
                 if memoid is False:
                     return self.error_page(self.db.errmsg, ajax)
                 elif int(memoid) > 0:
@@ -240,9 +249,13 @@ class Web:
                 buttoncode += '<div id="pending">Pending</div>\n'
             if int(value[7]) == 1:
                 buttoncode += '<div id="pending">Active</div>\n'
-                exp = "Expires " + self.db.expiration_date(value[8], value[5])
+            if int(value[5]) > 0:
+                if int(value[7]) == 1:
+                    exp = "Expires " + self.db.expiration_date(value[8], value[5])
+                else:
+                    exp = value[5] + " days"
             else:
-                exp = value[5] + " days"
+                exp = "Until canceled"
             if int(value[7]) != 4 and not (int(value[7]) == -1 and invitee == 1):
                 box = self.make_page(boxtemplate,
                                     AXID=value[0],
