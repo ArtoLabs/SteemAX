@@ -202,8 +202,8 @@ function verifyform() {
         input_error(document.getElementById("ratio"));
         alert("Please enter a valid ratio.");
     }
-    else if ((dur < 7) || (dur > 365)) {
-        alert("Please enter a duration between 7 days and 365 days.");
+    else if ((dur < 0) || (dur > 365)) {
+        alert("Please enter a duration.");
         return false;
     }
     else {
@@ -531,11 +531,15 @@ function addInvite() {
     var per = document.getElementById("percentage").value.replace(regex, '');
     var ratio = document.getElementById("ratio").value.replace(regex, '');
     var dur = document.getElementById("duration").value.replace(regex, '');
+    var autoaccept = 0;
+    if (document.getElementById("autoaccept").checked) {
+        autoaccept = 1;
+    }
     var regex = new RegExp('[^A-Za-z0-9\\.\\-\\_]', 'g');
     var acctname = document.getElementById("accountbox").value.replace(regex, '');
     var code = document.getElementById("code").value.replace(regex, '');
     var captcha = document.getElementById("g-recaptcha-response").value.replace(regex, '');
-	var url = "https://www.steemax.trade/post.py?code=" + code + "&account=" + acctname + "&percentage=" + per + "&ratio=" + ratio + "&duration=" + dur + "&g-recaptcha-response=" + captcha + "&ajax=1";
+	var url = "https://www.steemax.trade/post.py?code=" + code + "&account=" + acctname + "&percentage=" + per + "&ratio=" + ratio + "&duration=" + dur + "&g-recaptcha-response=" + captcha + "&ajax=1&autoaccept=" + autoaccept;
     url = encodeURI(url);
 	httpObject = loadAddInviteAJAX();
 	getDynamicData(url);
