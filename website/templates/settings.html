@@ -1,6 +1,14 @@
             <div id="settingscontainer">
                 Settings
-                <div class="setting">
-                    <input type="checkbox" id="autoaccept" name="autoaccept" value="1" AUTOCHECK> <div class="settingtext">Auto accept 1:1 invites</div>
+                <div class="setting" style="font-size: 14px;">Settings are saved when an invite is created.</div>
+                <div class="setting tooltip">
+                    <input type="checkbox" id="autoaccept" name="autoaccept" value="1" AUTOCHECK> 
+                    <div class="settingtext">Auto accept 1:1 invites</div>
+                    <span class="tooltiptext">Check this box if you would like to automatically accept all exchange invitations that have a ratio of 1:1.</span>
+                </div>
+                <div class="setting tooltip">
+                    <input type="text" pattern="[0-9]{2}" min="0" max="100" step="1" name="threshold" id="threshold" value="THRESHOLD">
+                    <div class="settingtext">Vote power threshold</div>
+                    <span class="tooltiptext">Enter a number between 0 and 100 percent as the threshold for your vote power. If your vote power drops below your threshold exchanges will not occur.</span>
                 </div>
             </div>
