@@ -531,6 +531,7 @@ function addInvite() {
     var per = document.getElementById("percentage").value.replace(regex, '');
     var ratio = document.getElementById("ratio").value.replace(regex, '');
     var dur = document.getElementById("duration").value.replace(regex, '');
+    var threshold = document.getElementById("threshold").value.replace(regex, '');
     var autoaccept = 0;
     if (document.getElementById("autoaccept").checked) {
         autoaccept = 1;
@@ -539,7 +540,7 @@ function addInvite() {
     var acctname = document.getElementById("accountbox").value.replace(regex, '');
     var code = document.getElementById("code").value.replace(regex, '');
     var captcha = document.getElementById("g-recaptcha-response").value.replace(regex, '');
-	var url = "https://www.steemax.trade/post.py?code=" + code + "&account=" + acctname + "&percentage=" + per + "&ratio=" + ratio + "&duration=" + dur + "&g-recaptcha-response=" + captcha + "&ajax=1&autoaccept=" + autoaccept;
+	var url = "https://www.steemax.trade/post.py?code=" + code + "&account=" + acctname + "&percentage=" + per + "&ratio=" + ratio + "&duration=" + dur + "&g-recaptcha-response=" + captcha + "&ajax=1&autoaccept=" + autoaccept + "&threshold=" + threshold;
     url = encodeURI(url);
 	httpObject = loadAddInviteAJAX();
 	getDynamicData(url);
