@@ -32,7 +32,8 @@ class AXdb(DB):
                         + '(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
                         + 'Account varchar(50), PrivateKey varchar(100), '
                         + 'RefreshToken varchar(400), Token varchar(400), '
-                        + 'AutoAccept varchar(5) DEFAULT "0",'
+                        + 'AutoAccept varchar(5) NOT NULL DEFAULT "0",'
+                        + 'Threshold varchar(5) NOT NULL DEFAULT "80",'
                         + 'Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);')
         if not self.get_results("SELECT * FROM axlist WHERE 1;"):
             self.commit('CREATE TABLE IF NOT EXISTS axlist '
@@ -224,14 +225,16 @@ class AXdb(DB):
         else:
             return False
 
-    def set_settings(self, acct, value):
+    def set_settings(self, acct, autoaccept, threshold):
         """ Sets the auto accept feature to on or off.
         """
-        if float(value) != 1: 
-            value = "0"
-        if self.commit('UPDATE users SET AutoAccept = %s'
+        if float(autoaccept) != 1: 
+            autoaccept = "0"
+        if int(threshold) > 100 or int(threshold) < 0:
+            threshold = "80"
+        if self.commit('UPDATE users SET AutoAccept = %s, Threshold = %s'
                             + ' WHERE Account = %s;',
-                            value, acct):
+                            autoaccept, threshold, acct):
             return True
         else:
             return False
@@ -246,6 +249,16 @@ class AXdb(DB):
                 return True
             else:
                 return False
+        else:
+            return False
+
+    def threshold(self, acct):
+        """ Returns the threshold value for votepower
+        """
+        if self.get_results('SELECT Threshold FROM users'
+                            + ' WHERE Account = %s;',
+                            acct):
+            return self.dbresults[0][0]
         else:
             return False
 

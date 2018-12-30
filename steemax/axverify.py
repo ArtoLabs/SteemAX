@@ -161,13 +161,30 @@ class AXverify:
         If ratio was not acheived return false 
         Otherwise display approximate 
         upvote matches
-        """        
+        """
+        db = axdb.AXdb(default.dbuser,
+                       default.dbpass,
+                       default.dbname)
         if flag == 1:
             vpow = 100
         else:
             vpow = 0
         v1 = self.get_vote_value(account1, percentage, vpow)
+        threshold = db.threshold(account1)
+        if int(self.steem.vpow) < int(threshold):
+            self.msg.message(account1 + " has a vote power of " 
+                            + str(self.steem.vpow) 
+                            + " which is below their threshold of " 
+                            + threshold)
+            return False
         v2 = self.get_vote_value(account2, 100, vpow)
+        threshold = db.threshold(account2)
+        if int(self.steem.vpow) < int(threshold):
+            self.msg.message(account2 + " has a vote power of " 
+                            + str(self.steem.vpow) 
+                            + " which is below their threshold of " 
+                            + threshold)
+            return False
         v3 = ((v1 / v2) * 100) / float(ratio)
         v3a = round(v3, 2)
         exceeds = False

@@ -90,7 +90,8 @@ class Web:
                     autocheck = "checked"
                 settings = (self.make_page(self.load_template(
                             "templates/settings.html"),
-                            AUTOCHECK=autocheck))
+                            AUTOCHECK=autocheck,
+                            THRESHOLD=self.db.threshold(self.steem.username)))
                 return ("\r\n"
                         + self.make_page(self.load_template(
                             "templates/invite_form.html"),
@@ -102,7 +103,7 @@ class Web:
             return self.auth_url()
 
     def invite(self, token, account2, per,
-               ratio, dur, response, ip, ajax, autocheck):
+               ratio, dur, response, ip, ajax, autocheck, threshold):
         """ Creates an invite. First we filter the users
         data then we create the invite in the database.
         If the request was sent via ajax then the returned
@@ -114,6 +115,7 @@ class Web:
         ratio = sec.filter_number(ratio, 1000)
         dur = sec.filter_number(dur, 365)
         autocheck = sec.filter_number(int(autocheck))
+        threshold = sec.filter_number(int(threshold))
         if not self.verify_recaptcha(response, ip):
             return self.error_page("Invalid captcha.", ajax)
         if float(per) < 1 or float(per) > 100:
@@ -133,7 +135,7 @@ class Web:
                 if verify.eligible_votes(self.steem.username, account2, per, ratio, 1) is False:
                     return self.error_page(verify.response, ajax)
                 memoid = self.db.add_invite(self.steem.username, account2, per, ratio, dur)
-                self.db.set_settings(self.steem.username, autocheck)
+                self.db.set_settings(self.steem.username, autocheck, threshold)
                 if memoid is False:
                     return self.error_page(self.db.errmsg, ajax)
                 elif int(memoid) > 0:
