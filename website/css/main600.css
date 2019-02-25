@@ -101,7 +101,7 @@ option {
     padding-left: 20px;
     padding-right: 20px;
     float: left;
-    left: -11px;
+    margin-right: 20px;
     -webkit-box-shadow: 0px 0px 5px 1px rgba(50, 50, 255, 0.6);
     -moz-box-shadow:    0px 0px 5px 1px rgba(50, 50, 255, 0.6);
     box-shadow:         0px 0px 5px 1px rgba(50, 50, 255, 0.6);
