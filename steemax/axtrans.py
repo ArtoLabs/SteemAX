@@ -126,7 +126,7 @@ class Reaction(MemoMsg):
         if acct1 == memofrom:
             # if the rstatus is -1 then the exchange invite has been
             # created in the database but not yet sent to the invitee.
-            if self.db.auto_accept(acct2) is True and int(ratio) == 1 and rstatus < 0:
+            if self.db.auto_accept(acct2) is True and ratio == 1 and rstatus < 0:
                 # The accept message is sent
                 self.accepted_msg(acct2, memoid)
                 self.reaction = "refund"
